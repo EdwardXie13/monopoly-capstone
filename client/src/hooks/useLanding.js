@@ -11,6 +11,7 @@ const useLanding = () => {
             <div>
                 <Link to="/signup" className="btn">Sign Up</Link>
                 <Link to="/signin" className="btn">Sign In</Link>
+                <Link to="/lobby" className="btn">Lobby</Link>
             </div>
         ) : (
             <div>
