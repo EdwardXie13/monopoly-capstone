@@ -1,5 +1,6 @@
 export default [
-    //Railroads
+//28 Title Deed cards
+    //4 Railroads
     {
         name: "Reading Railroad",
         type: "Railroad",
@@ -44,7 +45,7 @@ export default [
         owner: "Bank",
         mortgaged: false
     },
-    //Utilities
+    //2 Utilities
     {
         name: "Electric Company",
         type: "Utilities",
@@ -63,7 +64,7 @@ export default [
         owner: "Bank",
         mortgaged: false
     },
-    //Properties
+    //22 Properties
     {
         name: "Mediterranean Avenue",
         color: "Brown",

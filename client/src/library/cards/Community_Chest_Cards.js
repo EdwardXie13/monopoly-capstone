@@ -1,4 +1,5 @@
 export default [
+    //17 Community Chest cards
     {
         text: "Advance to Go (Collect $200)"  
     },
