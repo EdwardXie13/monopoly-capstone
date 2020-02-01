@@ -1,32 +1,3 @@
-import AtlanticAvenue from  '../assets/cards/Atlantic Avenue.png'
-import BandORailroad from  '../assets/cards/B and O Railroad.png'
-import BalticAvenue from  '../assets/cards/Baltic Avenue.png'
-import Boardwalk from  '../assets/cards/Boardwalk.png'
-import ConnecticutAvenue from  '../assets/cards/Connecticut Avenue.png'
-import ElectricCompany from  '../assets/cards/Electric Company.png'
-import IllinoisAvenue from  '../assets/cards/Illinois Avenue.png'
-import IndianaAvenue from  '../assets/cards/Indiana Avenue.png'
-import KentuckyAvenue from  '../assets/cards/Kentucky Avenue.png'
-import MarvinGardens from  '../assets/cards/Marvin Gardens.png'
-import MediterraneanAvenue from  '../assets/cards/Mediterranean Avenue.png'
-import NewYorkAvenue from  '../assets/cards/New York Avenue.png'
-import NorthCarolinaAvenue from  '../assets/cards/North Carolina Avenue.png'
-import OrientalAvenue from  '../assets/cards/Oriental Avenue.png'
-import PacficAvenue from  '../assets/cards/Pacfic Avenue.png'
-import ParkPlace from  '../assets/cards/Park Place.png'
-import PennsylvaniaAvenue from  '../assets/cards/Pennsylvania Avenue.png'
-import PennsylvaniaRailroad from  '../assets/cards/Pennsylvania Railroad.png'
-import ReadingRailroad from  '../assets/cards/Reading Railroad.png'
-import ShortLineRailroad from  '../assets/cards/Short Line Railroad.png'
-import StCharlesPlace from  '../assets/cards/St Charles Place.png'
-import StJamesPlace from  '../assets/cards/St James Place.png'
-import StatesAvenue from  '../assets/cards/States Avenue.png'
-import TennesseeAvenue from  '../assets/cards/Tennessee Avenue.png'
-import VentnorAvenue from  '../assets/cards/Ventnor Avenue.png'
-import VermontAvenue from  '../assets/cards/Vermont Avenue.png'
-import VirginiaAvenue from  '../assets/cards/Virginia Avenue.png'
-import WaterWorks from  '../assets/cards/Water Works.png'
-
 export default [
 //28 Title Deed cards
     //4 Railroads
@@ -39,8 +10,7 @@ export default [
         rentRR3: 100,
         rentRR4: 200,
         owner: "Bank",
-        mortgaged: false,
-        image: ReadingRailroad
+        mortgaged: false
     },
     {
         name: "Pennsylvania Railroad",
@@ -51,8 +21,7 @@ export default [
         rentRR3: 100,
         rentRR4: 200,
         owner: "Bank",
-        mortgaged: false,
-        image: PennsylvaniaRailroad
+        mortgaged: false
     },
     {
         name: "B. & O. Railroad",
@@ -63,8 +32,7 @@ export default [
         rentRR3: 100,
         rentRR4: 200,
         owner: "Bank",
-        mortgaged: false,
-        image: BandORailroad
+        mortgaged: false
     },
     {
         name: "Short Line",
@@ -75,8 +43,7 @@ export default [
         rentRR3: 100,
         rentRR4: 200,
         owner: "Bank",
-        mortgaged: false,
-        image: ShortLineRailroad
+        mortgaged: false
     },
     //2 Utilities
     {
@@ -86,8 +53,7 @@ export default [
         rentNormal: 4,
         rentBoth: 10,
         owner: "Bank",
-        mortgaged: false,
-        image: ElectricCompany
+        mortgaged: false
     },
     {
         name: "Water Works",
@@ -96,8 +62,7 @@ export default [
         rentNormal: 4,
         rentBoth: 10,
         owner: "Bank",
-        mortgaged: false,
-        image: WaterWorks
+        mortgaged: false
     },
     //22 Properties
     {
@@ -113,8 +78,7 @@ export default [
         rentHotel: 250,
         owner: "Bank",
         buildingCosts: 50,
-        mortgaged: false,
-        image: MediterraneanAvenue
+        mortgaged: false
     },
     {
         name: "Baltic Avenue",
@@ -129,8 +93,7 @@ export default [
         rentHotel: 450,
         owner: "Banl",
         buildingCosts: 50,
-        mortgaged: false,
-        image: BalticAvenue
+        mortgaged: false
     },
     {
         name: "Oriental Avenue",
@@ -145,8 +108,7 @@ export default [
         rentHotel: 550,
         owner: "Bank",
         buildingCosts: 50,
-        mortgaged: false,
-        image: OrientalAvenue
+        mortgaged: false
     },
     {
         name: "Vermont Avenue",
@@ -161,8 +123,7 @@ export default [
         rentHotel: 550,
         owner: "Bank",
         buildingCosts: 50,
-        mortgaged: false,
-        image: VermontAvenue
+        mortgaged: false
     },
     {
         name: "Connecticut Avenue",
@@ -177,8 +138,7 @@ export default [
         rentHotel: 600,
         owner: "Bank",
         buildingCosts: 50,
-        mortgaged: false,
-        image: ConnecticutAvenue
+        mortgaged: false
     },
     {
         name: "St. Charles Place",
@@ -193,8 +153,7 @@ export default [
         rentHotel: 750,
         owner: "Bank",
         buildingCosts: 100,
-        mortgaged: false,
-        image: StCharlesPlace
+        mortgaged: false
     },
     {
         name: "States Avenue",
@@ -209,8 +168,7 @@ export default [
         rentHotel: 750,
         owner: "Bank",
         buildingCosts: 100,
-        mortgaged: false,
-        image: StatesAvenue
+        mortgaged: false
     },
     {
         name: "Virginia Avenue",
@@ -225,8 +183,7 @@ export default [
         rentHotel: 900,
         owner: "Bank",
         buildingCosts: 100,
-        mortgaged: false,
-        image: VirginiaAvenue
+        mortgaged: false
     },
     {
         name: "St. James Place",
@@ -241,8 +198,7 @@ export default [
         rentHotel: 950,
         owner: "Bank",
         buildingCosts: 100,
-        mortgaged: false,
-        image: StJamesPlace
+        mortgaged: false
     },
     {
         name: "Tennessee Avenue",
@@ -257,8 +213,7 @@ export default [
         rentHotel: 950,
         owner: "Bank",
         buildingCosts: 100,
-        mortgaged: false,
-        image: TennesseeAvenue
+        mortgaged: false
     },
     {
         name: "New York Avenue",
@@ -273,8 +228,7 @@ export default [
         rentHotel: 1000,
         owner: "Bank",
         buildingCosts: 100,
-        mortgaged: false,
-        image: NewYorkAvenue
+        mortgaged: false
     },
     {
         name: "Kentucky Avenue",
@@ -289,8 +243,7 @@ export default [
         rentHotel: 1050,
         owner: "Bank",
         buildingCosts: 150,
-        mortgaged: false,
-        image: KentuckyAvenue
+        mortgaged: false
     },
     {
         name: "Indiana Avenue",
@@ -305,8 +258,7 @@ export default [
         rentHotel: 1050,
         owner: "Bank",
         buildingCosts: 150,
-        mortgaged: false,
-        image: IndianaAvenue
+        mortgaged: false
     },
     {
         name: "Illinois Avenue",
@@ -321,8 +273,7 @@ export default [
         rentHotel: 1100,
         owner: "Bank",
         buildingCosts: 150,
-        mortgaged: false,
-        image: IllinoisAvenue
+        mortgaged: false
     },
     {
         name: "Atlantic Avenue",
@@ -337,8 +288,7 @@ export default [
         rentHotel: 1150,
         owner: "Bank",
         buildingCosts: 150,
-        mortgaged: false,
-        image: AtlanticAvenue
+        mortgaged: false
     },
     {
         name: "Ventor Avenue",
@@ -353,8 +303,7 @@ export default [
         rentHotel: 1150,
         owner: "Bank",
         buildingCosts: 150,
-        mortgaged: false,
-        image: VentnorAvenue
+        mortgaged: false
     },
     {
         name: "Marvin Gardens",
@@ -369,8 +318,7 @@ export default [
         rentHotel: 1200,
         owner: "Bank",
         buildingCosts: 150,
-        mortgaged: false,
-        image: MarvinGardens
+        mortgaged: false
     },
     {
         name: "Pacific Avenue",
@@ -385,8 +333,7 @@ export default [
         rentHotel: 1275,
         owner: "Bank",
         buildingCosts: 200,
-        mortgaged: false,
-        image: PacficAvenue
+        mortgaged: false
     },
     {
         name: "North Carolina Avenue",
@@ -401,8 +348,7 @@ export default [
         rentHotel: 1275,
         owner: "Bank",
         buildingCosts: 200,
-        mortgaged: false,
-        image: NorthCarolinaAvenue
+        mortgaged: false
     },
     {
         name: "Pennsylvania Avenue",
@@ -417,8 +363,7 @@ export default [
         rentHotel: 1400,
         owner: "Bank",
         buildingCosts: 200,
-        mortgaged: false,
-        image: PennsylvaniaAvenue
+        mortgaged: false
     },
     {
         name: "Park Place",
@@ -433,8 +378,7 @@ export default [
         rentHotel: 1500,
         owner: "Bank",
         buildingCosts: 200,
-        mortgaged: false,
-        image: ParkPlace
+        mortgaged: false
     },
     {
         name: "Boardwalk",
@@ -449,7 +393,6 @@ export default [
         rentHotel: 2000,
         owner: "Bank",
         buildingCosts: 200,
-        mortgaged: false,
-        image: Boardwalk
+        mortgaged: false
     }
 ];
