@@ -13,7 +13,7 @@ const useSignup = () => {
 
     const handleSubmit = e => {
         e.preventDefault();
-        backend.post('/signin', form)
+        backend.post('/auth/signin', form)
             .then(() => setIsAuth(true))
             .catch(() => setIsAuth(false));
     }

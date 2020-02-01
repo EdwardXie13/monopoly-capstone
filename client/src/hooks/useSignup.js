@@ -12,14 +12,10 @@ const useSignup = () => {
     }
 
     const handleSubmit = e => {
-        if (form.password === form.Cpassword) {
-            e.preventDefault();
-            backend.post('/signup', form)
-                .then(() => setIsAuth(true))
-                .catch(() => setIsAuth(false));
-        } else {
-            MessageChannel.error('adad');
-        }
+        e.preventDefault();
+        backend.post('/auth/signup', form)
+            .then(() => setIsAuth(true))
+            .catch(() => setIsAuth(false));
     }
 
     return [handleChange, handleSubmit];

@@ -18,7 +18,7 @@ const SignupPage = () => {
                     <label htmlFor="password"> Password </label>
                 </div>
                 <div className="input-field col s12 offset-s1 offset-m12">
-                    <input id="Cpassword" name="Cpassword" type="Cpassword" onChange={handleChange} required />
+                    <input id="Cpassword" name="Cpassword" type="password" onChange={handleChange} required />
                     <label htmlFor="Cpassword"> Confirm Password </label>
                 </div>
                 <div className="input-field col s12 offset-s1 offset-m12">

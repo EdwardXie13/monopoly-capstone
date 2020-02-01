@@ -9,8 +9,6 @@ import SigninPage from './SigninPage';
 import LobbyPage from './LobbyPage';
 
 const App = () => {
-    fetch('/api/signup');
-
     return (
         <Router history={history}>
             <Switch>
