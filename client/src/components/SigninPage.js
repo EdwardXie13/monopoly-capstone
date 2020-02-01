@@ -1,10 +1,10 @@
 import React from 'react';
 
 import '../styles/SigninPage.css';
-import useSignup from '../hooks/useSignup';
+import useSignin from '../hooks/useSignin';
 
 const SignupPage = () => {
-    const [handleChange, handleSubmit] = useSignup();
+    const [handleChange, handleSubmit] = useSignin();
 
     return (
         <div className="row">

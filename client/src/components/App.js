@@ -6,12 +6,14 @@ import { AuthProvider } from '../contexts/AuthContext';
 import LandingPage from './LandingPage';
 import SignupPage from './SignupPage';
 import SigninPage from './SigninPage';
+import SignoutPage from './SignoutPage';
 import LobbyPage from './LobbyPage';
 
 const App = () => {
     return (
         <Router history={history}>
             <Switch>
+                <Route path="/signout" component={SignoutPage} />
                 <Route path="/signup" component={SignupPage} />
                 <Route path="/signin" component={SigninPage} /> 
                 <Route path="/lobby" component={LobbyPage} />
