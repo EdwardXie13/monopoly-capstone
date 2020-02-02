@@ -1,7 +1,11 @@
+#board-container {
+    transform: translateX(-25%);
+}
+
 #AtlanticAvenue {
     position: absolute;
     width: 75px;
-    height: 120px;
+    height: 123px;
     top: 0%;
     left: 54%;
 }
@@ -13,9 +17,9 @@
 #BandORailroad {
     position: absolute;
     width: 75px;
-    height: 120px;
+    height: 123px;
     top: 0%;
-    left: 46%;
+    left: 45.9%;
 }
 
 #BandORailroad:hover {
@@ -25,9 +29,9 @@
 #BalticAvenue {
     position: absolute;
     width: 75px;
-    height: 120px;
-    top: 86.5%;
-    left: 62.2%;
+    height: 123px;
+    top: 86%;
+    left: 62%;
 }
 
 #BalticAvenue:hover {
@@ -36,10 +40,10 @@
 
 #Boardwalk {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
-    top: 78.2%;
-    left: 87%;
+    top: 77.8%;
+    left: 86.3%;
 }
 
 #Boardwalk:hover {
@@ -49,9 +53,9 @@
 #ConnecticutAvenue {
     position: absolute;
     width: 75px;
-    height: 120px;
-    top: 86.5%;
-    left: 13.1%;
+    height: 123px;
+    top: 86%;
+    left: 13.5%;
 }
 
 #ConnecticutAvenue:hover {
@@ -60,9 +64,9 @@
 
 #ElectricCompany {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
-    top: 70%;
+    top: 69.7%;
     left: 0%;
 }
 
@@ -73,9 +77,9 @@
 #IllinoisAvenue {
     position: absolute;
     width: 75px;
-    height: 120px;
+    height: 123px;
     top: 0%;
-    left: 37.5%;
+    left: 37.7%;
 }
 
 #IllinoisAvenue:hover {
@@ -85,9 +89,9 @@
 #IndianaAvenue {
     position: absolute;
     width: 75px;
-    height: 120px;
+    height: 123px;
     top: 0%;
-    left: 29.5%;
+    left: 29.7%;
 }
 
 #IndianaAvenue:hover {
@@ -97,9 +101,9 @@
 #KentuckyAvenue {
     position: absolute;
     width: 75px;
-    height: 120px;
+    height: 123px;
     top: 0%;
-    left: 13%;
+    left: 13.5%;
 }
 
 #KentuckyAvenue:hover {
@@ -109,9 +113,9 @@
 #MarvinGardens {
     position: absolute;
     width: 75px;
-    height: 120px;
+    height: 123px;
     top: 0%;
-    left: 78.5%;
+    left: 78.2%;
 }
 
 #MarvinGardens:hover {
@@ -121,9 +125,9 @@
 #MediterraneanAvenue {
     position: absolute;
     width: 75px;
-    height: 120px;
-    top: 86.5%;
-    left: 78.5%;
+    height: 123px;
+    top: 86%;
+    left: 78.3%;
 }
 
 #MediterraneanAvenue:hover {
@@ -132,9 +136,9 @@
 
 #NewYorkAvenue {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
-    top: 13%;
+    top: 13.4%;
     left: 0%;
 }
 
@@ -144,10 +148,10 @@
 
 #NorthCarolinaAvenue {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
-    top: 21.1%;
-    left: 87%;
+    top: 21.5%;
+    left: 86.3%;
 }
 
 #NorthCarolinaAvenue:hover {
@@ -157,9 +161,9 @@
 #OrientalAvenue {
     position: absolute;
     width: 75px;
-    height: 120px;
-    top: 86.5%;
-    left: 37.5%;
+    height: 123px;
+    top: 86%;
+    left: 37.8%;
 }
 
 #OrientalAvenue:hover {
@@ -168,10 +172,10 @@
 
 #PacificAvenue {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
-    top: 13%;
-    left: 87%;
+    top: 13.5%;
+    left: 86.3%;
 }
 
 #PacificAvenue:hover {
@@ -180,10 +184,10 @@
 
 #ParkPlace {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
-    top: 62%;
-    left: 87%;
+    top: 61.8%;
+    left: 86.3%;
 }
 
 #ParkPace:hover {
@@ -192,10 +196,10 @@
 
 #PennsylvaniaAvenue {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
-    top: 37.5%;
-    left: 87%;
+    top: 37.6%;
+    left: 86.3%;
 }
 
 #PennsylvaniaAvenue:hover {
@@ -204,9 +208,9 @@
 
 #PennsylvaniaRailroad {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
-    top: 45.5%;
+    top: 45.6%;
     left: 0%;
 }
 
@@ -217,8 +221,8 @@
 #ReadingRailroad {
     position: absolute;
     width: 75px;
-    height: 120px;
-    top: 86.5%;
+    height: 123px;
+    top: 86%;
     left: 45.9%;
 }
 
@@ -228,10 +232,10 @@
 
 #ShortLineRailroad {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
     top: 45.5%;
-    left: 87%;
+    left: 86.3%;
 }
 
 #ShortLineRailroad:hover {
@@ -240,9 +244,9 @@
 
 #StCharlesPlace {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
-    top: 78.2%;
+    top: 77.8%;
     left: 0%;
 }
 
@@ -252,7 +256,7 @@
 
 #StJamesPlace {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
     top: 37.5%;
     left: 0%;
@@ -264,9 +268,9 @@
 
 #StatesAvenue {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
-    top: 62%;
+    top: 61.8%;
     left: 0%;
 }
 
@@ -276,9 +280,9 @@
 
 #TennesseeAvenue {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
-    top: 21.2%;
+    top: 21.5%;
     left: 0%;
 }
 
@@ -289,9 +293,9 @@
 #VentnorAvenue {
     position: absolute;
     width: 75px;
-    height: 120px;
+    height: 123px;
     top: 0%;
-    left: 62.3%;
+    left: 62%;
 }
 
 #VentnorAvenue:hover {
@@ -301,9 +305,9 @@
 #VermontAvenue {
     position: absolute;
     width: 75px;
-    height: 120px;
-    top: 86.5%;
-    left: 21.2%;
+    height: 123px;
+    top: 86%;
+    left: 21.5%;
 }
 
 #VermontAvenue:hover {
@@ -312,9 +316,9 @@
 
 #VirginiaAvenue {
     position: absolute;
-    width: 120px;
+    width: 123px;
     height: 75px;
-    top: 53.8%;
+    top: 53.7%;
     left: 0%;
 }
 
@@ -325,9 +329,9 @@
 #WaterWorks {
     position: absolute;
     width: 75px;
-    height: 120px;
+    height: 123px;
     top: 0%;
-    left: 70.4%;
+    left: 70.1%;
 }
 
 #WaterWorks:hover {

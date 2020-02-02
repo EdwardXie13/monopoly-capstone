@@ -56,7 +56,7 @@ const Lobby = () => {
                     <div className="row" style={{ width: "inherit" }}>
                         <div className="col s12" style={{ display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
                             { showThumbnail(imageSource) }
-                            <div style={{ position: "relative" }}>
+                            <div id="board-container" style={{ position: "relative"}}>
                                 <img alt="Cannot load board." src={boardImage} style={{width: "900px", height: "auto"}} />
                                 <div id="AtlanticAvenue" onMouseEnter={() => setImageSource(AtlanticAvenue)} onMouseLeave={() => setImageSource('')}></div> 
                                 <div id="BandORailroad" onMouseEnter={() => setImageSource(BandORailroad)} onMouseLeave={() => setImageSource('')}></div> 
