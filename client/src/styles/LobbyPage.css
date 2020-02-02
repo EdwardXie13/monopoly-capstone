@@ -1,11 +1,335 @@
-#parking {
-    position: absolute; 
-    /* border: 1px solid black; */
-    width: 120px;
+#AtlanticAvenue {
+    position: absolute;
+    width: 75px;
     height: 120px;
     top: 0%;
+    left: 54%;
 }
 
-#parking:hover {
+#AtlanticAvenue:hover {
+    cursor: pointer;
+}
+
+#BandORailroad {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 0%;
+    left: 46%;
+}
+
+#BandORailroad:hover {
+    cursor: pointer;
+}
+
+#BalticAvenue {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 86.5%;
+    left: 62.2%;
+}
+
+#BalticAvenue:hover {
+    cursor: pointer;
+}
+
+#Boardwalk {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 78.2%;
+    left: 87%;
+}
+
+#Boardwalk:hover {
+    cursor: pointer;
+}
+
+#ConnecticutAvenue {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 86.5%;
+    left: 13.1%;
+}
+
+#ConnecticutAvenue:hover {
+    cursor: pointer;
+}
+
+#ElectricCompany {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 70%;
+    left: 0%;
+}
+
+#ElectricCompany:hover {
+    cursor: pointer;
+}
+
+#IllinoisAvenue {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 0%;
+    left: 37.5%;
+}
+
+#IllinoisAvenue:hover {
+    cursor: pointer;
+}
+
+#IndianaAvenue {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 0%;
+    left: 29.5%;
+}
+
+#IndianaAvenue:hover {
+    cursor: pointer;
+}
+
+#KentuckyAvenue {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 0%;
+    left: 13%;
+}
+
+#KentuckyAvenue:hover {
+    cursor: pointer;
+}
+
+#MarvinGardens {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 0%;
+    left: 78.5%;
+}
+
+#MarvinGardens:hover {
+    cursor: pointer;
+}
+
+#MediterraneanAvenue {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 86.5%;
+    left: 78.5%;
+}
+
+#MediterraneanAvenue:hover {
+    cursor: pointer;
+}
+
+#NewYorkAvenue {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 13%;
+    left: 0%;
+}
+
+#NewYorkAvenue:hover {
+    cursor: pointer;
+}
+
+#NorthCarolinaAvenue {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 21.1%;
+    left: 87%;
+}
+
+#NorthCarolinaAvenue:hover {
+    cursor: pointer;
+}
+
+#OrientalAvenue {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 86.5%;
+    left: 37.5%;
+}
+
+#OrientalAvenue:hover {
+    cursor: pointer;
+}
+
+#PacificAvenue {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 13%;
+    left: 87%;
+}
+
+#PacificAvenue:hover {
+    cursor: pointer;
+}
+
+#ParkPlace {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 62%;
+    left: 87%;
+}
+
+#ParkPace:hover {
+    cursor: pointer;
+}
+
+#PennsylvaniaAvenue {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 37.5%;
+    left: 87%;
+}
+
+#PennsylvaniaAvenue:hover {
+    cursor: pointer;
+}
+
+#PennsylvaniaRailroad {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 45.5%;
+    left: 0%;
+}
+
+#PennsylvaniaRailroad:hover {
+    cursor: pointer;
+}
+
+#ReadingRailroad {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 86.5%;
+    left: 45.9%;
+}
+
+#ReadingRailroad:hover {
+    cursor: pointer;
+}
+
+#ShortLineRailroad {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 45.5%;
+    left: 87%;
+}
+
+#ShortLineRailroad:hover {
+    cursor: pointer;
+}
+
+#StCharlesPlace {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 78.2%;
+    left: 0%;
+}
+
+#StCharlesPlace:hover {
+    cursor: pointer;
+}
+
+#StJamesPlace {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 37.5%;
+    left: 0%;
+}
+
+#StJamesPlace:hover {
+    cursor: pointer;
+}
+
+#StatesAvenue {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 62%;
+    left: 0%;
+}
+
+#StatesAvenue:hover {
+    cursor: pointer;
+}
+
+#TennesseeAvenue {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 21.2%;
+    left: 0%;
+}
+
+#TennesseeAvenue:hover {
+    cursor: pointer;
+}
+
+#VentnorAvenue {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 0%;
+    left: 62.3%;
+}
+
+#VentnorAvenue:hover {
+    cursor: pointer;
+}
+
+#VermontAvenue {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 86.5%;
+    left: 21.2%;
+}
+
+#VermontAvenue:hover {
+    cursor: pointer;
+}
+
+#VirginiaAvenue {
+    position: absolute;
+    width: 120px;
+    height: 75px;
+    top: 53.8%;
+    left: 0%;
+}
+
+#VirginiaAvenue:hover {
+    cursor: pointer;
+}
+
+#WaterWorks {
+    position: absolute;
+    width: 75px;
+    height: 120px;
+    top: 0%;
+    left: 70.4%;
+}
+
+#WaterWorks:hover {
     cursor: pointer;
 }
