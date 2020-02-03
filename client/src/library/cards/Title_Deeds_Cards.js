@@ -1,427 +1,88 @@
-import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
-import BandORailroad from '../assets/cards/B and O Railroad.png';
-import BalticAvenue from '../assets/cards/Baltic Avenue.png';
-import Boardwalk from '../assets/cards/Boardwalk.png';
-import ConnecticutAvenue from '../assets/cards/Connecticut Avenue.png';
-import ElectricCompany from '../assets/cards/Electric Company.png';
-import IllinoisAvenue from '../assets/cards/Illinois Avenue.png';
-import IndianaAvenue from '../assets/cards/Indiana Avenue.png';
-import KentuckyAvenue from '../assets/cards/Kentucky Avenue.png';
-import MarvinGardens from '../assets/cards/Marvin Gardens.png';
-import MediterraneanAvenue from '../assets/cards/Mediterranean Avenue.png';
-import NewYorkAvenue from '../assets/cards/New York Avenue.png';
-import NorthCarolinaAvenue from '../assets/cards/North Carolina Avenue.png';
-import OrientalAvenue from '../assets/cards/Oriental Avenue.png';
-import PacificAvenue from '../assets/cards/Pacific Avenue.png';
-import ParkPlace from '../assets/cards/Park Place.png';
-import PennsylvaniaAvenue from '../assets/cards/Pennsylvania Avenue.png';
-import PennsylvaniaRailroad from '../assets/cards/Pennsylvania Railroad.png';
-import ReadingRailroad from '../assets/cards/Reading Railroad.png';
-import ShortLineRailroad from '../assets/cards/Short Line Railroad.png';
-import StCharlesPlace from '../assets/cards/St Charles Place.png';
-import StJamesPlace from '../assets/cards/St James Place.png';
-import StatesAvenue from '../assets/cards/States Avenue.png';
-import TennesseeAvenue from '../assets/cards/Tennessee Avenue.png';
-import VentnorAvenue from '../assets/cards/Ventnor Avenue.png';
-import VermontAvenue from '../assets/cards/Vermont Avenue.png';
-import VirginiaAvenue from '../assets/cards/Virginia Avenue.png';
-import WaterWorks from '../assets/cards/Water Works.png';
-
-export default [
-//28 Title Deed cards
-    //4 Railroads
-    {
-        name: "Reading Railroad",
-        type: "Railroad",
-        price: 200,
-        rentNormal: 25,
-        rentRR2: 50,
-        rentRR3: 100,
-        rentRR4: 200,
-        owner: "Bank",
-        mortgaged: false
-    },
-    {
-        name: "Pennsylvania Railroad",
-        type: "Railroad",
-        price: 200,
-        rentNormal: 25,
-        rentRR2: 50,
-        rentRR3: 100,
-        rentRR4: 200,
-        owner: "Bank",
-        mortgaged: false
-    },
-    {
-        name: "B. & O. Railroad",
-        type: "Railroad",
-        price: 200,
-        rentNormal: 25,
-        rentRR2: 50,
-        rentRR3: 100,
-        rentRR4: 200,
-        owner: "Bank",
-        mortgaged: false
-    },
-    {
-        name: "Short Line",
-        type: "Railroad",
-        price: 200,
-        rentNormal: 25,
-        rentRR2: 50,
-        rentRR3: 100,
-        rentRR4: 200,
-        owner: "Bank",
-        mortgaged: false
-    },
-    //2 Utilities
-    {
-        name: "Electric Company",
-        type: "Utilities",
-        price: 150,
-        rentNormal: 4,
-        rentBoth: 10,
-        owner: "Bank",
-        mortgaged: false
-    },
-    {
-        name: "Water Works",
-        type: "Utilities",
-        price: 150,
-        rentNormal: 4,
-        rentBoth: 10,
-        owner: "Bank",
-        mortgaged: false
-    },
-    //22 Properties
-    {
-        name: "Mediterranean Avenue",
-        color: "Brown",
-        type: "Property",
-        price: 60,
-        rentNormal: 2,
-        rentHouse1: 10,
-        rentHouse2: 30,
-        rentHouse3: 90,
-        rentHouse4: 160,
-        rentHotel: 250,
-        owner: "Bank",
-        buildingCosts: 50,
-        mortgaged: false
-    },
-    {
-        name: "Baltic Avenue",
-        color: "Brown",
-        type: "Property",
-        price: 60,
-        rentNormal: 4,
-        rentHouse1: 20,
-        rentHouse2: 60,
-        rentHouse3: 180,
-        rentHouse4: 320,
-        rentHotel: 450,
-        owner: "Banl",
-        buildingCosts: 50,
-        mortgaged: false
-    },
-    {
-        name: "Oriental Avenue",
-        color: "Light Blue",
-        type: "Property",
-        price: 100,
-        rentNormal: 6,
-        rentHouse1: 30,
-        rentHouse2: 90,
-        rentHouse3: 270,
-        rentHouse4: 400,
-        rentHotel: 550,
-        owner: "Bank",
-        buildingCosts: 50,
-        mortgaged: false
-    },
-    {
-        name: "Vermont Avenue",
-        color: "Light Blue",
-        type: "Property",
-        price: 100,
-        rentNormal: 6,
-        rentHouse1: 30,
-        rentHouse2: 90,
-        rentHouse3: 270,
-        rentHouse4: 400,
-        rentHotel: 550,
-        owner: "Bank",
-        buildingCosts: 50,
-        mortgaged: false
-    },
-    {
-        name: "Connecticut Avenue",
-        color: "Light Blue",
-        type: "Property",
-        price: 120,
-        rentNormal: 8,
-        rentHouse1: 40,
-        rentHouse2: 100,
-        rentHouse3: 300,
-        rentHouse4: 450,
-        rentHotel: 600,
-        owner: "Bank",
-        buildingCosts: 50,
-        mortgaged: false
-    },
-    {
-        name: "St. Charles Place",
-        color: "Pink",
-        type: "Property",
-        price: 140,
-        rentNormal: 10,
-        rentHouse1: 50,
-        rentHouse2: 150,
-        rentHouse3: 450,
-        rentHouse4: 625,
-        rentHotel: 750,
-        owner: "Bank",
-        buildingCosts: 100,
-        mortgaged: false
-    },
-    {
-        name: "States Avenue",
-        color: "Pink",
-        type: "Property",
-        price: 140,
-        rentNormal: 10,
-        rentHouse1: 50,
-        rentHouse2: 150,
-        rentHouse3: 450,
-        rentHouse4: 625,
-        rentHotel: 750,
-        owner: "Bank",
-        buildingCosts: 100,
-        mortgaged: false
-    },
-    {
-        name: "Virginia Avenue",
-        color: "Pink",
-        type: "Property",
-        price: 160,
-        rentNormal: 12,
-        rentHouse1: 60,
-        rentHouse2: 180,
-        rentHouse3: 500,
-        rentHouse4: 700,
-        rentHotel: 900,
-        owner: "Bank",
-        buildingCosts: 100,
-        mortgaged: false
-    },
-    {
-        name: "St. James Place",
-        color: "Orange",
-        type: "Property",
-        price: 180,
-        rentNormal: 14,
-        rentHouse1: 70,
-        rentHouse2: 200,
-        rentHouse3: 550,
-        rentHouse4: 750,
-        rentHotel: 950,
-        owner: "Bank",
-        buildingCosts: 100,
-        mortgaged: false
-    },
-    {
-        name: "Tennessee Avenue",
-        color: "Orange",
-        type: "Property",
-        price: 180,
-        rentNormal: 14,
-        rentHouse1: 70,
-        rentHouse2: 200,
-        rentHouse3: 550,
-        rentHouse4: 750,
-        rentHotel: 950,
-        owner: "Bank",
-        buildingCosts: 100,
-        mortgaged: false
-    },
-    {
-        name: "New York Avenue",
-        color: "Orange",
-        type: "Property",
-        price: 200,
-        rentNormal: 16,
-        rentHouse1: 80,
-        rentHouse2: 220,
-        rentHouse3: 600,
-        rentHouse4: 800,
-        rentHotel: 1000,
-        owner: "Bank",
-        buildingCosts: 100,
-        mortgaged: false
-    },
-    {
-        name: "Kentucky Avenue",
-        color: "Red",
-        type: "Property",
-        price: 220,
-        rentNormal: 18,
-        rentHouse1: 90,
-        rentHouse2: 250,
-        rentHouse3: 700,
-        rentHouse4: 875,
-        rentHotel: 1050,
-        owner: "Bank",
-        buildingCosts: 150,
-        mortgaged: false
-    },
-    {
-        name: "Indiana Avenue",
-        color: "Red",
-        type: "Property",
-        price: 220,
-        rentNormal: 18,
-        rentHouse1: 90,
-        rentHouse2: 250,
-        rentHouse3: 700,
-        rentHouse4: 875,
-        rentHotel: 1050,
-        owner: "Bank",
-        buildingCosts: 150,
-        mortgaged: false
-    },
-    {
-        name: "Illinois Avenue",
-        color: "Red",
-        type: "Property",
-        price: 240,
-        rentNormal: 20,
-        rentHouse1: 100,
-        rentHouse2: 300,
-        rentHouse3: 750,
-        rentHouse4: 925,
-        rentHotel: 1100,
-        owner: "Bank",
-        buildingCosts: 150,
-        mortgaged: false
-    },
-    {
-        name: "Atlantic Avenue",
-        color: "Yellow",
-        type: "Property",
-        price: 260,
-        rentNormal: 22,
-        rentHouse1: 110,
-        rentHouse2: 330,
-        rentHouse3: 800,
-        rentHouse4: 975,
-        rentHotel: 1150,
-        owner: "Bank",
-        buildingCosts: 150,
-        mortgaged: false
-    },
-    {
-        name: "Ventor Avenue",
-        color: "Yellow",
-        type: "Property",
-        price: 260,
-        rentNormal: 22,
-        rentHouse1: 110,
-        rentHouse2: 330,
-        rentHouse3: 800,
-        rentHouse4: 975,
-        rentHotel: 1150,
-        owner: "Bank",
-        buildingCosts: 150,
-        mortgaged: false
-    },
-    {
-        name: "Marvin Gardens",
-        color: "Yellow",
-        type: "Property",
-        price: 280,
-        rentNormal: 24,
-        rentHouse1: 120,
-        rentHouse2: 360,
-        rentHouse3: 850,
-        rentHouse4: 1025,
-        rentHotel: 1200,
-        owner: "Bank",
-        buildingCosts: 150,
-        mortgaged: false
-    },
-    {
-        name: "Pacific Avenue",
-        color: "Green",
-        type: "Property",
-        price: 300,
-        rentNormal: 26,
-        rentHouse1: 130,
-        rentHouse2: 390,
-        rentHouse3: 900,
-        rentHouse4: 110,
-        rentHotel: 1275,
-        owner: "Bank",
-        buildingCosts: 200,
-        mortgaged: false
-    },
-    {
-        name: "North Carolina Avenue",
-        color: "Green",
-        type: "Property",
-        price: 300,
-        rentNormal: 26,
-        rentHouse1: 130,
-        rentHouse2: 390,
-        rentHouse3: 900,
-        rentHouse4: 110,
-        rentHotel: 1275,
-        owner: "Bank",
-        buildingCosts: 200,
-        mortgaged: false
-    },
-    {
-        name: "Pennsylvania Avenue",
-        color: "Green",
-        type: "Property",
-        price: 320,
-        rentNormal: 28,
-        rentHouse1: 150,
-        rentHouse2: 450,
-        rentHouse3: 1000,
-        rentHouse4: 1200,
-        rentHotel: 1400,
-        owner: "Bank",
-        buildingCosts: 200,
-        mortgaged: false
-    },
-    {
-        name: "Park Place",
-        color: "Dark Blue",
-        type: "Property",
-        price: 350,
-        rentNormal: 35,
-        rentHouse1: 175,
-        rentHouse2: 500,
-        rentHouse3: 1100,
-        rentHouse4: 1300,
-        rentHotel: 1500,
-        owner: "Bank",
-        buildingCosts: 200,
-        mortgaged: false
-    },
-    {
-        name: "Boardwalk",
-        color: "Dark Blue",
-        type: "Property",
-        price: 400,
-        rentNormal: 50,
-        rentHouse1: 200,
-        rentHouse2: 600,
-        rentHouse3: 1400,
-        rentHouse4: 1700,
-        rentHotel: 2000,
-        owner: "Bank",
-        buildingCosts: 200,
-        mortgaged: false
+class Tiles {
+    //Tiles
+    constructor(name, type) {
+        this.name = name;
+        this.type = type;
     }
-];
+    //Utilities
+    constructor(name, type, price, rentNormal, rentBoth) {
+        this.name = name,
+        this.type = type,
+        this.price = price,
+        this.rentNormal = rentNormal,
+        this.rentBoth = rentBoth;
+        this.owner = "Bank",
+        this.mortgaged = false;
+    }
+    //Railroad
+    constructor(name, type, price, rentNormal, rentRR2, rentRR3,rentRR4) {
+        this.name = name,
+        this.type = type,
+        this.price = price,
+        this.rentNormal = rentNormal,
+        this.rentRR2 = rentRR2,
+        this.rentRR3 = rentRR3,
+        this.rentRR4 =rentRR4,
+        this.owner = "Bank",
+        this.mortgaged = false;
+    }
+    //Property
+    constructor(name, type, price, rentNormal, rentHouse1, rentHouse2, 
+        rentHouse3,rentHouse4, rentHotel, buildingCosts) {
+        this.name = name,
+        this.type = type,
+        this.price = price,
+        this.rentNormal = rentNormal,
+        this.rentHouse1 = rentHouse1,
+        this.rentHouse2 = rentHouse2,
+        this.rentHouse3 = rentHouse3,
+        this.rentHouse4 = rentHouse4,
+        this.rentHotel = rentHotel,
+        this.buildingCosts = buildingCosts,
+        this.owner = "Bank",
+        this.mortgaged = false;
+    }
+}
+
+export default board = [
+    new Tiles("Go", null, null),
+    new Tiles("MediterraneanAvenue", "Property", 60, 2, 10, 30, 90, 160, 250, 50),
+    new Tiles("CommunityChest", null, null),
+    new Tiles("BalticAvenue", "Property", 60, 4, 20, 60, 180, 320, 450, 50),
+    new Tiles("IncomeTax", null, null),
+    new Tiles("ReadingRailroad", "Railroad", 200, 25, 50, 100, 200),
+    new Tiles("OrientalAvenue", "Property", 100, 6, 30, 90, 270, 400, 550, 50),
+    new Tiles("Chance", null, null),
+    new Tiles("VermontAvenue", "Property", 100, 6, 30, 90, 270, 400, 550, 50),
+    new Tiles("ConnecticutAvenue", "Property", 120, 8, 40, 100, 300, 450, 600, 50),
+    new Tiles("JustVisiting", null, null),
+    new Tiles("StCharlesPlace", "Property", 140, 10, 50, 150, 450, 625, 750, 100),
+    new Tiles("ElectricCompany", "Utilities", 150),
+    new Tiles("StatesAvenue", "Property", 140, 10, 50, 150, 450, 625, 750, 100),
+    new Tiles("VirginiaAvenue", "Property", 160, 12, 60, 180, 500, 700, 900, 100),
+    new Tiles("PennsylvaniaRailroad", "Railroad", 200, 200, 25, 50, 100, 200),
+    new Tiles("StJamesPlace", "Property", 180, 14, 70, 200, 550, 750, 950, 100),
+    new Tiles("CommunityChest", null, null),
+    new Tiles("TennesseeAvenue", "Property", 180, 14, 70, 200, 550, 750, 950, 100),
+    new Tiles("NewYorkAvenue", "Property", 200, 16, 80, 220, 600, 800, 1000, 100),
+    new Tiles("FreeParking", null, null),
+    new Tiles("KentuckyAvenue", "Property", 220, 18, 90, 250, 700, 875, 1050, 150),
+    new Tiles("Chance", null, null),
+    new Tiles("IndianaAvenue", "Property", 220, 18, 90, 250, 700, 875, 1050, 150),
+    new Tiles("IllinoisAvenue", "Property", 240, 20, 100, 300, 750, 925, 1100, 150),
+    new Tiles("BandORailroad", "Railroad", 200, 200, 25, 50, 100, 200),
+    new Tiles("AtlanticAvenue", "Property", 260, 22, 110, 330, 800, 975, 1150 ,150),
+    new Tiles("VentnorAvenue", "Property", 260, 22, 110, 330, 800, 975, 1150 ,150),
+    new Tiles("WaterWorks", "Utilities", 150),
+    new Tiles("MarvinGardens", "Property", 280, 24, 120, 360, 850, 1025, 1200, 150),
+    new Tiles("GoToJail", null, null),
+    new Tiles("PacficAvenue", "Property", 300, 26, 130, 390, 900, 110, 1275, 200),
+    new Tiles("NorthCarolinaAvenue", "Property", 300, 26, 130, 390, 900, 110, 1275, 200),
+    new Tiles("CommunityChest", null, null),
+    new Tiles("PennsylvaniaAvenue", "Property", 320, 28, 150, 450, 1000, 1200, 1400, 200),
+    new Tiles("ShortLineRailroad", "Railroad", 200, 200, 25, 50, 100, 200),
+    new Tiles("Chance", null, null),
+    new Tiles("ParkPlace", "Property", 350, 35, 175, 500, 1100, 1300, 1500, 200),
+    new Tiles("LuxuryTax", null, null),
+    new Tiles("Boardwalk", "Property", 400, 50, 200, 600, 1400, 1700, 2000, 200) 
+]
