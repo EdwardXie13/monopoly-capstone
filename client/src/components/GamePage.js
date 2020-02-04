@@ -35,7 +35,7 @@ const GamePage = () => {
   const diceRoll = () => {
     var die1 = Math.floor(Math.random() * 6) + 1;
     var die2 = Math.floor(Math.random() * 6) + 1;
-    // console.log(die1+die2);
+    //console.log(die1+die2);
     movePlayer(die1 + die2);
   }
 
