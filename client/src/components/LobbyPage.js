@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import '../styles/LobbyPage.css';
 import usePubNub from '../hooks/useLobby';
 import boardImage from '../assets/boards/Classic.jpg';
+import GamePage from './GamePage';
 
 import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
 import BandORailroad from '../assets/cards/B and O Railroad.png';
@@ -39,6 +40,8 @@ const Lobby = () => {
     const [imageSource, setImageSource] = useState('');
     const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying);
 
+    const [diceRoll, movePlayer, checkOwner] = GamePage();
+
     const showThumbnail = src => {
         return <img src={src} style={{ position: "absolute", left: "0" }} />
     }
@@ -58,6 +61,7 @@ const Lobby = () => {
                             { showThumbnail(imageSource) }
                             <div id="board-container" style={{ position: "relative"}}>
                                 <img alt="Cannot load board." src={boardImage} style={{width: "900px", height: "auto"}} />
+                                <button onClick={diceRoll}> Roll </button>
                                 <div id="AtlanticAvenue" onMouseEnter={() => setImageSource(AtlanticAvenue)} onMouseLeave={() => setImageSource('')}></div> 
                                 <div id="BandORailroad" onMouseEnter={() => setImageSource(BandORailroad)} onMouseLeave={() => setImageSource('')}></div> 
                                 <div id="BalticAvenue" onMouseEnter={() => setImageSource(BalticAvenue)} onMouseLeave={() => setImageSource('')}></div> 

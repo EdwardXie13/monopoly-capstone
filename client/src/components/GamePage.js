@@ -42,7 +42,7 @@ const GamePage = () => {
   const movePlayer = (roll) => {
     //save state here maybe?
     p1.setLocation( board[((p1.index+roll)%40)].name, ((p1.index+roll)%40));
-    if (board[p1.index].type != "Tile" && board[p1.index].type != "Event")
+    if (board[p1.index].type !== "Tile" && board[p1.index].type !== "Event")
       checkOwner(p1.index);
     else {
       if (board[p1.index].name === "Community Chest") {
@@ -100,8 +100,8 @@ const GamePage = () => {
       //pay the dude
     }
   }
-  return (
-    <button onClick={diceRoll}> Roll </button>
-  )
+  return [diceRoll, movePlayer, checkOwner];
+    //<button onClick={diceRoll}> Roll </button>
+  //)
 }
 export default GamePage;
