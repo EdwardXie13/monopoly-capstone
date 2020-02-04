@@ -5,46 +5,46 @@ class Tiles {
         this.type = type;
     }
     //Utilities
-    constructor(name, type, price, rentNormal, rentBoth) {
-        this.name = name,
-        this.type = type,
-        this.price = price,
-        this.rentNormal = rentNormal,
+    utilities(name, type, price, rentNormal, rentBoth) {
+        this.name = name;
+        this.type = type;
+        this.price = price;
+        this.rentNormal = rentNormal;
         this.rentBoth = rentBoth;
-        this.owner = "Bank",
+        this.owner = "Bank";
         this.mortgaged = false;
     }
     //Railroad
-    constructor(name, type, price, rentNormal, rentRR2, rentRR3,rentRR4) {
-        this.name = name,
-        this.type = type,
-        this.price = price,
-        this.rentNormal = rentNormal,
-        this.rentRR2 = rentRR2,
-        this.rentRR3 = rentRR3,
-        this.rentRR4 =rentRR4,
-        this.owner = "Bank",
+    railroad(name, type, price, rentNormal, rentRR2, rentRR3,rentRR4) {
+        this.name = name;
+        this.type = type;
+        this.price = price;
+        this.rentNormal = rentNormal;
+        this.rentRR2 = rentRR2;
+        this.rentRR3 = rentRR3;
+        this.rentRR4 =rentRR4;
+        this.owner = "Bank";
         this.mortgaged = false;
     }
     //Property
-    constructor(name, type, price, rentNormal, rentHouse1, rentHouse2, 
+    property(name, type, price, rentNormal, rentHouse1, rentHouse2, 
         rentHouse3,rentHouse4, rentHotel, buildingCosts) {
-        this.name = name,
-        this.type = type,
-        this.price = price,
-        this.rentNormal = rentNormal,
-        this.rentHouse1 = rentHouse1,
-        this.rentHouse2 = rentHouse2,
-        this.rentHouse3 = rentHouse3,
-        this.rentHouse4 = rentHouse4,
-        this.rentHotel = rentHotel,
-        this.buildingCosts = buildingCosts,
-        this.owner = "Bank",
+        this.name = name;
+        this.type = type;
+        this.price = price;
+        this.rentNormal = rentNormal;
+        this.rentHouse1 = rentHouse1;
+        this.rentHouse2 = rentHouse2;
+        this.rentHouse3 = rentHouse3;
+        this.rentHouse4 = rentHouse4;
+        this.rentHotel = rentHotel;
+        this.buildingCosts = buildingCosts;
+        this.owner = "Bank";
         this.mortgaged = false;
     }
 }
 
-export default board = [
+export default [
     new Tiles("Go", null, null),
     new Tiles("MediterraneanAvenue", "Property", 60, 2, 10, 30, 90, 160, 250, 50),
     new Tiles("CommunityChest", null, null),

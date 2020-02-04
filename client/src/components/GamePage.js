@@ -1,8 +1,7 @@
 import React from 'react';
 import Swal from "sweetalert2";
 
-import Tiles from '../assets/cards/Title_Deeds_Cards';
-import board from '../assets/cards/Title_Deeds_Cards';
+import board from '../library/cards/Title_Deeds_Cards';
 
 //import titleDeeds from '../assets/cards/Title_Deeds_Cards';
 //import communityChest from '../library/cards/Community_Chest_Cards';
@@ -10,18 +9,6 @@ import board from '../assets/cards/Title_Deeds_Cards';
 
 // create a class tile and useState
 const GamePage = () => {
-
-  class Tile {
-    constructor(name, owned, price) {
-      this.name = name;
-      this.owned = owned;
-      this.price = price;
-    }
-    ownership(owned) {
-      this.owned = owned;
-    }
-  }
-
   class Player {
     constructor(name, location, index) {
       this.name = name;
