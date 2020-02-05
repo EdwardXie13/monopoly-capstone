@@ -2,8 +2,7 @@ import React from 'react';
 import Swal from "sweetalert2";
 
 import board from '../library/board/board.js';
-import communityChest from '../library/cards/Community_Chest_Cards';
-import chance from '../library/cards/Chance_Cards';
+import useEffects from '../hooks/useEffects';
 
 const GamePage = () => {
   class Player {
@@ -11,7 +10,7 @@ const GamePage = () => {
       this.name = name;
       this.location = location;
       this.index = index;
-      this.money = 0;
+      this.money = 1500;
       this.jail = false;
       this.jailroll = 0;
       this.cc_JailCard = false;
@@ -31,7 +30,8 @@ const GamePage = () => {
   }
     
   let p1 = new Player("Player 1", "Go", 0);
-
+  
+  const [communityEffect] = useEffects();
   const diceRoll = () => {
     var die1 = Math.floor(Math.random() * 6) + 1;
     var die2 = Math.floor(Math.random() * 6) + 1;
@@ -42,12 +42,13 @@ const GamePage = () => {
   const movePlayer = (roll) => {
     //save state here maybe?
     p1.setLocation( board[((p1.index+roll)%40)].name, ((p1.index+roll)%40));
-    if (board[p1.index].type !== "Tile" && board[p1.index].type !== "Event")
-      checkOwner(p1.index);
+    if (board[p1.index].type !== "Tile" && board[p1.index].type !== "Event");
+      //checkOwner(p1.index);
     else {
       if (board[p1.index].name === "Community Chest") {
         //Community Chest component
         console.log("CC");
+        communityEffect(p1);  
       }
       else if (board[p1.index].name === "Chance") {
         //Chance component
@@ -100,8 +101,8 @@ const GamePage = () => {
       //pay the dude
     }
   }
-  return [diceRoll, movePlayer, checkOwner];
-    //<button onClick={diceRoll}> Roll </button>
-  //)
+  return( //[diceRoll, movePlayer, checkOwner];
+    <button onClick={diceRoll}> Roll </button>
+  )
 }
 export default GamePage;
