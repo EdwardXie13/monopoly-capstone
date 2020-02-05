@@ -31,7 +31,7 @@ const GamePage = () => {
     
   let p1 = new Player("Player 1", "Go", 0);
   
-  const [communityEffect] = useEffects();
+  const [communityEffect, chanceEffect] = useEffects();
   const diceRoll = () => {
     var die1 = Math.floor(Math.random() * 6) + 1;
     var die2 = Math.floor(Math.random() * 6) + 1;
