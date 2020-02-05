@@ -132,6 +132,8 @@ const useEffects = () => {
         //15 = Pennsylvania Railroad
         //25 = B. & O. Railroad
         //35 = Short Line Railroad
+        //
+        //or check current index and just Tp to next RR spot
         break;
       case 4:
         console.log(card.text);
@@ -160,6 +162,7 @@ const useEffects = () => {
         player.setMoney(200);
         player.setLocation("Go", 0);
         break;
+    }
   }
   return [communityEffect, chanceEffect];
 }
