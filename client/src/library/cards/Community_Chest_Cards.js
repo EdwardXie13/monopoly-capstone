@@ -5,11 +5,11 @@ export default [
         number: 0
     },
     {
-        text: "Bank error in your favor—Collect $200",
+        text: "Bank error in your favor. Collect $200",
         number: 1
     },
     {
-        text: "Doctor's fee—Pay $50",
+        text: "Doctor's fee. Pay $50",
         number: 2
     },
     {

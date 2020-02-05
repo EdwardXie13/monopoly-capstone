@@ -40,8 +40,6 @@ const Lobby = () => {
     const [imageSource, setImageSource] = useState('');
     const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying);
 
-    const [diceRoll, movePlayer, checkOwner] = GamePage();
-
     const showThumbnail = src => {
         return <img src={src} style={{ position: "absolute", left: "0" }} />
     }
