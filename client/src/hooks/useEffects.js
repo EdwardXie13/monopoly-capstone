@@ -1,5 +1,3 @@
-import Swal from "sweetalert2";
-
 import board from '../library/board/board.js';
 import communityChest from '../library/cards/Community_Chest_Cards';
 import chance from '../library/cards/Chance_Cards';
