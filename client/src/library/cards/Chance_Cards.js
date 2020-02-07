@@ -65,7 +65,7 @@ export default [
     number: 15
   },
   {
-    text:"Advance token to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay the owner twice the rental to which they are otherwise entitled",
-    number: 5
+    text:"deck is stacked",
+    number: 3
   },
 ];

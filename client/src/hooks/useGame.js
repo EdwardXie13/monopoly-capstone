@@ -45,8 +45,7 @@ const useGame = () => {
   }
   
   let p1 = new Player("Player 1", "Go", 0);
-  p1.setLocation("test", 29);
-  p1.setJail(false);
+  p1.setLocation("test", 21);
   //insert player table here
 
   const diceRoll = () => {

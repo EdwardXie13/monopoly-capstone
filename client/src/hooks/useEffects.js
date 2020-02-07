@@ -1,3 +1,5 @@
+import Swal from 'sweetalert2';
+
 import board from '../library/board/board.js';
 import communityChest from '../library/cards/Community_Chest_Cards';
 import chance from '../library/cards/Chance_Cards';
@@ -147,31 +149,137 @@ const useEffects = () => {
         if (player.index === 36) {
           console.log("RRR");
           player.setLocation("Reading Railroad", 5); //does collect 200?
+          player.setMoney(200);
+          if(board[5].owned === false) {
+            Swal.fire({
+              position: 'center',
+              allowOutsideClick: false,
+              showCancelButton: true,
+              title: "Do you want to buy?",
+              text: "Reading Railroad costs $200",
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'No'
+            }).then((result) => {
+              if (result.value === true) {
+                player.setMoney(-200);
+                board[5].owned = true;
+                board[5].owner = player.name;
+              }
+            })
+          }
+          else {
+            //pay board[5].owner
+          }
         }
         else if (player.index === 7) {
           console.log("PRR");
-          player.setLocation("Pennsylvania Railroad", 15)
-          //if owned false
-          //else pay board[player.index].owner
+          player.setLocation("Pennsylvania Railroad", 15);
+          if(board[15].owned === false) {
+            Swal.fire({
+              position: 'center',
+              allowOutsideClick: false,
+              showCancelButton: true,
+              title: "Do you want to buy?",
+              text: "Pennsylvania Railroad costs $200",
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'No'
+            }).then((result) => {
+              if (result.value === true) {
+                player.setMoney(-200);
+                board[15].owned = true;
+                board[15].owner = player.name;
+              }
+            })
+          }
+          else {
+            //pay board[15].owner
+          }
         }
         else if (player.index === 22){
           console.log("BORR")
-          player.setLocation("B. & O. Railroad", 15)
+          player.setLocation("B. & O. Railroad", 25);
+          if(board[25].owned === false) {
+            Swal.fire({
+              position: 'center',
+              allowOutsideClick: false,
+              showCancelButton: true,
+              title: "Do you want to buy?",
+              text: "B. & O. Railroad costs $200",
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'No'
+            }).then((result) => {
+              if (result.value === true) {
+                player.setMoney(-200);
+                board[25].owned = true;
+                board[25].owner = player.name;
+              }
+            })
+          }
+          else {
+            //pay board[25].owner
+          }
         }
         //cant get advance to short line
         break;
       case 4:
         console.log(card.text);
-        //Advance token to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay the owner twice the rental to which they are otherwise entitled
-        break;
+        //copy paste case 5 when done since same
       case 3:
         console.log(card.text);
         //Advance to the nearest Utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total ten times the amount thrown
+        if (player.index === 36|| player. index === 7) {
+          player.setLocation("Electric Company", 12)
+          if(board[12].owned === true) {
+            Swal.fire({
+              position: 'center',
+              allowOutsideClick: false,
+              showCancelButton: true,
+              title: "Do you want to buy?",
+              text: "Electric company costs $200",
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'No'
+            }).then((result) => {
+              if (result.value === true) {
+                player.setMoney(-150);
+                board[12].owned = true;
+                board[12].owner = player.name;
+              }
+            })
+          }
+          else {
+            payUtilities(player);
+            //pay the owner pay 10x dice
+          }
+        }
+        else if (player.index === 22) {
+          player.setLocation("Water Works", 28)
+          if(board[22].owned === true) {
+            Swal.fire({
+              position: 'center',
+              allowOutsideClick: false,
+              showCancelButton: true,
+              title: "Do you want to buy?",
+              text: "Water Works costs $200",
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'No'
+            }).then((result) => {
+              if (result.value === true) {
+                player.setMoney(-150);
+                board[22].owned = true;
+                board[22].owner = player.name;
+              }
+            })
+          }
+          else {
+            payUtilities(player);
+            //pay the owner pay 10x dice
+          }
+        }
         break;
       case 2:
         console.log(card.text);
         //Advance to St. Charles Place. If you pass 'GO' collect $200
-        if (player.index >21)
+        if (player.index > 21)
           player.setMoney(200);
         player.setLocation("St. Charles Place", 11)
         break;
@@ -190,6 +298,33 @@ const useEffects = () => {
         break;
     }
   }
+
+  const payUtilities = (player) => {
+    var die1 = Math.floor(Math.random() * 6) + 1;
+    var die2 = Math.floor(Math.random() * 6) + 1;
+    var temp = (die1+die2)*10;
+    console.log(temp);
+    player.setMoney(-temp);
+  }
+ 
+
+  //fix async later
+  const promptUnowned = (index) => {
+    Swal.fire({
+      position: 'center',
+      allowOutsideClick: false,
+      showCancelButton: true,
+      title: "Do you want to buy?",
+      text: board[index].name + " costs " + board[index].price + " dollars",
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No'
+    }).then((result) => {
+      if (result.value === true) {
+        return true;
+      }
+    })
+  }
+
   return [communityEffect, chanceEffect];
 }
 export default useEffects;
