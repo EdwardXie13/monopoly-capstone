@@ -146,12 +146,21 @@ const useEffects = () => {
       case 5:
         console.log(card.text);
         //Advance token to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay the owner twice the rental to which they are otherwise entitled
-        //5 = Reading Railroad
-        //15 = Pennsylvania Railroad
-        //25 = B. & O. Railroad
-        //35 = Short Line Railroad
-        //
-        //or check current index and just Tp to next RR spot
+        if (player.index === 36) {
+          console.log("RRR");
+          player.setLocation("Reading Railroad", 5); //does collect 200?
+        }
+        else if (player.index === 7) {
+          console.log("PRR");
+          player.setLocation("Pennsylvania Railroad", 15)
+          //if owned false
+          //else pay board[player.index].owner
+        }
+        else if (player.index === 22){
+          console.log("BORR")
+          player.setLocation("B. & O. Railroad", 15)
+        }
+        //cant get advance to short line
         break;
       case 4:
         console.log(card.text);
