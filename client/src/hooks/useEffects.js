@@ -90,7 +90,7 @@ const useEffects = () => {
     }
   }
 
-  const chanceEffect = (player) => {
+  const chanceEffect = async (player) => {
     const card = chance.pop()
     switch(card.number) {
       case 15:
@@ -151,21 +151,7 @@ const useEffects = () => {
           player.setLocation("Reading Railroad", 5); //does collect 200?
           player.setMoney(200);
           if(board[5].owned === false) {
-            Swal.fire({
-              position: 'center',
-              allowOutsideClick: false,
-              showCancelButton: true,
-              title: "Do you want to buy?",
-              text: "Reading Railroad costs $200",
-              confirmButtonText: 'Yes',
-              cancelButtonText: 'No'
-            }).then((result) => {
-              if (result.value === true) {
-                player.setMoney(-200);
-                board[5].owned = true;
-                board[5].owner = player.name;
-              }
-            })
+            await promptUnowned(5);
           }
           else {
             //pay board[5].owner
@@ -175,21 +161,7 @@ const useEffects = () => {
           console.log("PRR");
           player.setLocation("Pennsylvania Railroad", 15);
           if(board[15].owned === false) {
-            Swal.fire({
-              position: 'center',
-              allowOutsideClick: false,
-              showCancelButton: true,
-              title: "Do you want to buy?",
-              text: "Pennsylvania Railroad costs $200",
-              confirmButtonText: 'Yes',
-              cancelButtonText: 'No'
-            }).then((result) => {
-              if (result.value === true) {
-                player.setMoney(-200);
-                board[15].owned = true;
-                board[15].owner = player.name;
-              }
-            })
+            await promptUnowned(15);
           }
           else {
             //pay board[15].owner
@@ -199,21 +171,7 @@ const useEffects = () => {
           console.log("BORR")
           player.setLocation("B. & O. Railroad", 25);
           if(board[25].owned === false) {
-            Swal.fire({
-              position: 'center',
-              allowOutsideClick: false,
-              showCancelButton: true,
-              title: "Do you want to buy?",
-              text: "B. & O. Railroad costs $200",
-              confirmButtonText: 'Yes',
-              cancelButtonText: 'No'
-            }).then((result) => {
-              if (result.value === true) {
-                player.setMoney(-200);
-                board[25].owned = true;
-                board[25].owner = player.name;
-              }
-            })
+            await promptUnowned(25);
           }
           else {
             //pay board[25].owner
@@ -230,21 +188,7 @@ const useEffects = () => {
         if (player.index === 36|| player. index === 7) {
           player.setLocation("Electric Company", 12)
           if(board[12].owned === true) {
-            Swal.fire({
-              position: 'center',
-              allowOutsideClick: false,
-              showCancelButton: true,
-              title: "Do you want to buy?",
-              text: "Electric company costs $200",
-              confirmButtonText: 'Yes',
-              cancelButtonText: 'No'
-            }).then((result) => {
-              if (result.value === true) {
-                player.setMoney(-150);
-                board[12].owned = true;
-                board[12].owner = player.name;
-              }
-            })
+            await promptUnowned(12);
           }
           else {
             payUtilities(player);
@@ -254,21 +198,7 @@ const useEffects = () => {
         else if (player.index === 22) {
           player.setLocation("Water Works", 28)
           if(board[22].owned === true) {
-            Swal.fire({
-              position: 'center',
-              allowOutsideClick: false,
-              showCancelButton: true,
-              title: "Do you want to buy?",
-              text: "Water Works costs $200",
-              confirmButtonText: 'Yes',
-              cancelButtonText: 'No'
-            }).then((result) => {
-              if (result.value === true) {
-                player.setMoney(-150);
-                board[22].owned = true;
-                board[22].owner = player.name;
-              }
-            })
+            await promptUnowned(22);
           }
           else {
             payUtilities(player);
@@ -309,7 +239,7 @@ const useEffects = () => {
  
 
   //fix async later
-  const promptUnowned = (index) => {
+  const promptUnowned = (index) => new Promise(function(resolve, reject) {
     Swal.fire({
       position: 'center',
       allowOutsideClick: false,
@@ -323,7 +253,7 @@ const useEffects = () => {
         return true;
       }
     })
-  }
+  })
 
   return [communityEffect, chanceEffect];
 }

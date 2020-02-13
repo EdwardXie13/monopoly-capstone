@@ -12,7 +12,8 @@ const useGame = () => {
       this.name = name;
       this.location = location;
       this.index = index;
-      this.money = 1500;
+      //this.money = 1500;
+      this.money = 10000;
       this.jail = false;
       this.jailroll = 0;
       this.doubles = 0;
@@ -45,18 +46,21 @@ const useGame = () => {
   }
   
   let p1 = new Player("Player 1", "Go", 0);
-  p1.setLocation("test", 21);
+  //p1.setLocation("test", 29);
+  //p1.setJail(true);
   //insert player table here
 
   const diceRoll = () => {
-    //die1 = Math.floor(Math.random() * 6) + 1;
-    //die2 = Math.floor(Math.random() * 6) + 1;
-    die1=1;
-    die2=0;
+    die1 = Math.floor(Math.random() * 6) + 1;
+    die2 = Math.floor(Math.random() * 6) + 1;
+    console.log(die1 + die2);
+    //die1=1;
+    //die2=0;
   }
 
-  const rollEvent = () => {
-    //payJail
+  const rollEvent = async () => {
+    await payJail();
+
     if (p1.jail === false) {
       diceRoll();
       movePlayer(die1+die2);
@@ -86,9 +90,9 @@ const useGame = () => {
     }
   }
 
-  const payJail = () => {
+  const payJail = () => new Promise(function(resolve, reject) {
     if (p1.jail === false)
-      return false;
+      resolve (false);
     else { 
       Swal.fire({
         position: 'center',
@@ -103,21 +107,22 @@ const useGame = () => {
           p1.setMoney(-50);
           p1.setLocation("Just Visiting", 10)
           console.log(p1.money);
-          return true;
+          resolve(true);
         }
         else {
-          return false;
+          resolve (false);
         }
       })
     }
-  }
+  })
 
-  const movePlayer = (roll) => {
+  const movePlayer = async (roll) => {
     //save state here maybe?
     p1.setLocation( board[((p1.index+roll)%40)].name, ((p1.index+roll)%40));
     console.log(p1.location);
-    if (board[p1.index].type !== "Tile" && board[p1.index].type !== "Event");
-      //checkOwner(p1.index);
+    if (board[p1.index].type !== "Tile" && board[p1.index].type !== "Event") {
+      await checkOwner(p1.index);
+    }
     else {
       if (board[p1.index].name === "Community Chest") {
         console.log("CC");
@@ -146,7 +151,7 @@ const useGame = () => {
     }
   }
 
-  const checkOwner = (index) => {
+  const checkOwner = (index) => new Promise(function(resolve, reject) {
     if (board[index].owned === false && p1.money > board[index].price) {
       Swal.fire({
         position: 'center',
@@ -173,7 +178,7 @@ const useGame = () => {
     else if (board[index].owned === true) {
       //pay the dude
     }
-  }
+  })
   //return [Player, rollEvent]//, trade, endturn];
   return [rollEvent];
 }
