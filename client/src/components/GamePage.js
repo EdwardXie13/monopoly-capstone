@@ -4,7 +4,7 @@ import useGame from '../hooks/useGame';
 
 const GamePage = () => {
   //const [Player, rollEvent, trade, endturn] = useGame();
-  const[rollEvent] = useGame();
+  const[rollEvent, checkOwner] = useGame();
 
   //get list of players 
 

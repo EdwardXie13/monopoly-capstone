@@ -110,7 +110,7 @@ const useEffects = () => {
       case 12:
         console.log(card.text);
         //Take a trip to Reading Railroad. If you pass 'GO' collect $200
-        if (player.index > 6)
+        if (player.index > 7)
           player.setMoney(200);
         player.setLocation("Reading Railroad", 5);
         break;
@@ -132,6 +132,7 @@ const useEffects = () => {
         console.log(card.text);
         //Go Back 3 Spaces
         player.setLocation(board[player.index-3].name , player.index-3);
+        //console.log(board[player.index].name);
         break;
       case 7:
         console.log(card.text);

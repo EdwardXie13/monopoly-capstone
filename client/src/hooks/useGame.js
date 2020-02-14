@@ -53,7 +53,7 @@ const useGame = () => {
   const diceRoll = () => {
     die1 = Math.floor(Math.random() * 6) + 1;
     die2 = Math.floor(Math.random() * 6) + 1;
-    console.log(die1 + die2);
+    console.log(die1, die2);
     //die1=1;
     //die2=0;
   }
@@ -71,6 +71,7 @@ const useGame = () => {
         console.log("freed from jail");
         p1.setJail(false);
         p1.resetJailroll();
+        p1.setLocation("Just Visiting", 10);
         movePlayer(die1+die2);
       }
       else {
@@ -121,7 +122,7 @@ const useGame = () => {
     p1.setLocation( board[((p1.index+roll)%40)].name, ((p1.index+roll)%40));
     console.log(p1.location);
     if (board[p1.index].type !== "Tile" && board[p1.index].type !== "Event") {
-      await checkOwner(p1.index);
+      //await checkOwner(p1.index);
     }
     else {
       if (board[p1.index].name === "Community Chest") {
@@ -150,7 +151,7 @@ const useGame = () => {
       }
     }
   }
-
+  
   const checkOwner = (index) => new Promise(function(resolve, reject) {
     if (board[index].owned === false && p1.money > board[index].price) {
       Swal.fire({
