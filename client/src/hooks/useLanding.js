@@ -9,9 +9,9 @@ const useLanding = () => {
     const renderAuthButtons = () => {
         return !isAuth? (
             <div>
-                <Link to="/signup" className="btn">Sign Up</Link>
-                <Link to="/signin" className="btn">Sign In</Link>
-                <Link to="/lobby" className="btn">Lobby</Link>
+                <Link to="/signin" className="btn-large" style={{margin: "50px 50px 50px 50px"}}>Sign In</Link>
+                <Link to="/signup" className="btn-large">Sign Up</Link>
+                <Link to="/lobby" className="btn-large" style={{margin: "50px 50px 50px 50px"}}>Lobby</Link>
             </div>
         ) : (
             <div>

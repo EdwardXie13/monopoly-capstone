@@ -35,19 +35,38 @@ import VermontAvenue from '../assets/cards/Vermont Avenue.png';
 import VirginiaAvenue from '../assets/cards/Virginia Avenue.png';
 import WaterWorks from '../assets/cards/Water Works.png';
 
+import { useLayoutEffect} from 'react';
+import Card from './Card'
+
+function useWindowSize() {
+  const [size, setSize] = useState([0, 0]);
+  useLayoutEffect(() => {
+    function updateSize() {
+      setSize([window.innerWidth, window.innerHeight]);
+    }
+    window.addEventListener('resize', updateSize);
+    updateSize();
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+  return size;
+}
+
+
 const Lobby = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [imageSource, setImageSource] = useState('');
     const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying);
 
     const [diceRoll, movePlayer, checkOwner] = GamePage();
-
+    const [width, height] = useWindowSize();
     const showThumbnail = src => {
-        return <img src={src} style={{ position: "absolute", left: "0" }} />
+        return <img src={src} style={{ position: "relative", height:window.innerHeight/2.5}}/>
+        // style={{ position: "absolute", top:"2px",left: "5px", width:"17.5%" }} 
     }
 
     return (
-        <div style={{ background: "#f5f5f5", minHeight: "100vh", width: "100%", display: "flex", flexDirection: "column", justifyContent: "space-around", margin: "0" }}>
+        
+        <div style={{  minHeight: "100vh", width: "100%", display: "flex", flexDirection: "column", justifyContent: "space-around", margin: "0" }}>
             {
                 !isPlaying? (
                     <div style={{ textAlign: "center" }}>
@@ -56,11 +75,46 @@ const Lobby = () => {
                         <button className="btn blue lighten-3" onClick={handleJoinRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Join Room</button>
                     </div>
                 ): (
+                //     <div>
+                
+                //         <div style={{backgroundColor:"blue", width:"80%",height:"80%",position: "absolute",left:"10%",top:"10%"}}>
+                //         <div style={{backgroundColor:"gray", width:"30%",height:"80%",position: "absolute",left:"40%", top:"10%"}}>
+                        
+                //             hello
+                //         </div>
+                            
+                //         </div>
+
+                
+                // </div>
+                        
                     <div className="row" style={{ width: "inherit" }}>
-                        <div className="col s12" style={{ display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
+                        <div className="col s12" style={{ display: "flex", flexDirection: "row"}}>
+                            <div style={{ position: "relative", height: "100%", top:"5px", right: "2px" }} >
                             { showThumbnail(imageSource) }
-                            <div id="board-container" style={{ position: "relative"}}>
-                                <img alt="Cannot load board." src={boardImage} style={{width: "900px", height: "auto"}} />
+
+                            <div style={{textAlign: "center",display:"inline-block",backgroundColor:"gray",  width:"100%", height:window.innerHeight/1.74, padding:"15px", marginTop:"10px"}}>
+                            <div class="chat-popup" id="myForm">
+                                <form action="/action_page.php" class="form-container">
+                                    <h1>Chat</h1>
+
+                                    <label for="msg"><b>Message</b></label>
+                                    <textarea placeholder="Type message.." name="msg" required></textarea>
+
+                                    <button type="button" class="btn">Send</button>
+                                </form>
+                            </div>
+
+
+                            </div>
+                            </div>
+                            
+                            <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
+                            
+                                <img alt="Cannot load board." src={boardImage} style={{zIndex:"10",width: "auto", height: window.innerHeight, marginBottom: "0px"}} />
+                                <div style={{position:"absolute", zIndex:"100",backgroundColor:"gray",width:"16%",left:"42%",bottom:"25%"}}>
+                                    <a class="waves-effect waves-light btn-large" STYLE={{}}>   Roll Dice   asdasj </a>
+                                </div>
                                 <div id="AtlanticAvenue" onMouseEnter={() => setImageSource(AtlanticAvenue)} onMouseLeave={() => setImageSource('')}></div> 
                                 <div id="BandORailroad" onMouseEnter={() => setImageSource(BandORailroad)} onMouseLeave={() => setImageSource('')}></div> 
                                 <div id="BalticAvenue" onMouseEnter={() => setImageSource(BalticAvenue)} onMouseLeave={() => setImageSource('')}></div> 
@@ -90,10 +144,19 @@ const Lobby = () => {
                                 <div id="VirginiaAvenue" onMouseEnter={() => setImageSource(VirginiaAvenue)} onMouseLeave={() => setImageSource('')}></div> 
                                 <div id="WaterWorks" onMouseEnter={() => setImageSource(WaterWorks)} onMouseLeave={() => setImageSource('')}></div> 
                             </div>
+                            <Card style={{ position: "relative",  height:"50%"}}></Card>
+                        </div>
+
+                        
+                        
+                        <div class="row">
+        
                         </div>
                     </div>
                 )
+                
             }
+            
         </div>
     );
 };
