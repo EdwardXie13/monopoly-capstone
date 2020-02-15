@@ -416,7 +416,7 @@ export default [
     mortgaged: false
   },
   {
-    name: "Short Line",
+    name: "Short Line Railroad",
     type: "Railroad",
     price: 200,
     rentNormal: 25,

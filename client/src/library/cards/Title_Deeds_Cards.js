@@ -91,7 +91,7 @@ export default [
     rentHouse3: 180,
     rentHouse4: 320,
     rentHotel: 450,
-    owner: "Banl",
+    owner: "Bank",
     buildingCosts: 50,
     mortgaged: false
   },
