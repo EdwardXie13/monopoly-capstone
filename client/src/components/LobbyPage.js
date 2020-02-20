@@ -75,18 +75,6 @@ const Lobby = () => {
                         <button className="btn blue lighten-3" onClick={handleJoinRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Join Room</button>
                     </div>
                 ): (
-                //     <div>
-                
-                //         <div style={{backgroundColor:"blue", width:"80%",height:"80%",position: "absolute",left:"10%",top:"10%"}}>
-                //         <div style={{backgroundColor:"gray", width:"30%",height:"80%",position: "absolute",left:"40%", top:"10%"}}>
-                        
-                //             hello
-                //         </div>
-                            
-                //         </div>
-
-                
-                // </div>
                         
                     <div className="row" style={{ width: "inherit" }}>
                         <div className="col s12" style={{ display: "flex", flexDirection: "row"}}>
