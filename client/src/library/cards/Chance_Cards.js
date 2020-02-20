@@ -63,9 +63,5 @@ export default [
   {
     text:"Your building and loan matures. Collect $150",
     number: 15
-  },
-  {
-    text:"deck is stacked",
-    number: 3
-  },
+  }
 ];

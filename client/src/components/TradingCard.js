@@ -29,7 +29,10 @@ const TradingCard = props => {
     let newCards = [];
     for (let card of props.cards) {
       if (card.name === props.name) {
-        card.location = 'Trade';
+        if (card.location === "Trade")
+          card.location = "Inventory";
+        else if (card.location === "Inventory")
+          card.location = "Trade";
       }
       
       newCards.push(card);

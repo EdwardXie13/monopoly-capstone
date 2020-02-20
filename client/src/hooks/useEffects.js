@@ -96,7 +96,9 @@ const useEffects = () => {
       case 15:
         console.log(card.text);
         //Your building and loan matures. Collect $150
+        console.log(player.money, "before");
         player.setMoney(150);
+        console.log(player.money, "after");
         break;
       case 14:
         console.log(card.text);
