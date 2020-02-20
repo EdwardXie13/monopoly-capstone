@@ -11,45 +11,60 @@ const useGame = () => {
     die1 = Math.floor(Math.random() * 6) + 1;
     die2 = Math.floor(Math.random() * 6) + 1;
     console.log(die1, die2);
-    //die1=1;
-    //die2=0;
+    // die1=1;
+    // die2=1;
+    // console.log(die1, die2);
   }
 
-  const rollEvent = async (p1) => {
-    await payJail(p1);
+  const rollEvent = async (player) => {
+    await payJail(player);
 
-    if (p1.jail === false) {
+    if (player.jail === false) {
       diceRoll();
-      movePlayer(p1, die1+die2);
+      if (die1 === die2) {
+        if (player.doubles === 2) {
+          console.log("Triple Doubles, Go to Jail")
+          player.setJail(true);
+          player.resetDoubles();
+        }
+        else {
+          player.setDoubles();
+          console.log(player.doubles);
+          movePlayer(player, die1+die2);
+        }
+      }
+      else {
+        player.resetDoubles();
+      }
     }
-    else if (p1.jail === true) {
+    else if (player.jail === true) {
       diceRoll();
       if (die1 === die2) {
         console.log("freed from jail");
-        p1.setJail(false);
-        p1.resetJailroll();
-        p1.setLocation("Just Visiting", 10);
-        movePlayer(p1, die1+die2);
+        player.setJail(false);
+        player.resetJailroll();
+        player.setLocation("Just Visiting", 10);
+        movePlayer(player, die1+die2);
       }
       else {
-        if (p1.jailroll === 2) {
+        if (player.jailroll === 2) {
           console.log("failed last doubles attempt, $50 was taken from you");
-          p1.setMoney(-50);
-          p1.setJail(false);
-          p1.resetJailroll();
-          p1.setLocation("Just Visiting", 10);
-          movePlayer(p1, die1+die2);
+          player.setMoney(-50);
+          player.setJail(false);
+          player.resetJailroll();
+          player.setLocation("Just Visiting", 10);
+          movePlayer(player, die1+die2);
         }
         else {
-          p1.setJailroll(); 
+          player.setJailroll(); 
           console.log("failed doubles roll");
         }
       }
     }
   }
 
-  const payJail = (p1) => new Promise(function(resolve, reject) {
-    if (p1.jail === false)
+  const payJail = (player) => new Promise(function(resolve, reject) {
+    if (player.jail === false)
       resolve (false);
     else { 
       Swal.fire({
@@ -61,10 +76,10 @@ const useGame = () => {
         cancelButtonText: 'No'
       }).then((result) => {
         if (result.value === true) {
-          p1.setJail(false);
-          p1.setMoney(-50);
-          p1.setLocation("Just Visiting", 10)
-          console.log(p1.money);
+          player.setJail(false);
+          player.setMoney(-50);
+          player.setLocation("Just Visiting", 10)
+          console.log(player.money);
           resolve(true);
         }
         else {
@@ -74,57 +89,62 @@ const useGame = () => {
     }
   })
 
-  const movePlayer = async (p1, roll) => {
+  const movePlayer = async (player, roll) => {
     //save state here maybe?
-    p1.setLocation( board[((p1.index+roll)%40)].name, ((p1.index+roll)%40));
-    console.log(p1.location);
-    if (board[p1.index].type !== "Tile" && board[p1.index].type !== "Event") {
-      await checkOwner(p1);
+    if (player.index + roll > 39) {
+      console.log(player.money,"Pass go collect 200");
+      player.setMoney(200);
+      console.log(player.money);
+    }
+    player.setLocation( board[((player.index+roll)%40)].name, ((player.index+roll)%40));
+    console.log(player.location);
+    if (board[player.index].type !== "Tile" && board[player.index].type !== "Event") {
+      await checkOwner(player);
     }
     else {
-      if (board[p1.index].name === "Community Chest") {
-        console.log("CC");
-        communityEffect(p1);  
+      if (board[player.index].name === "Community Chest") {
+        console.log("Community Chest");
+        communityEffect(player);  
       }
-      else if (board[p1.index].name === "Chance") {
-        console.log("C");
-        chanceEffect(p1);
+      else if (board[player.index].name === "Chance") {
+        console.log("Chance");
+        chanceEffect(player);
       }
-      else if (board[p1.index].name === "Income Tax") {
+      else if (board[player.index].name === "Income Tax") {
         //if doesn't have 200 trigger selling mode
         console.log("Income Tax");
-        p1.setMoney(-200);
-        console.log(p1.money);
+        player.setMoney(-200);
+        console.log(player.money);
       }
-      else if (board[p1.index].name === "Go To Jail") {
+      else if (board[player.index].name === "Go To Jail") {
         console.log("Jail");
-        p1.setJail(true);
+        player.setJail(true);
       }
-      else if (board[p1.index].name === "Luxury Tax") {
+      else if (board[player.index].name === "Luxury Tax") {
         //if doesnt have 100 trigger selling mode 
         console.log("Lux Tax");
-        p1.setMoney(-100);
-        console.log(p1.money);
+        player.setMoney(-100);
+        console.log(player.money);
       }
     }
   }
   
-  const checkOwner = (p1) => new Promise(function(resolve, reject) {
-    if (board[p1.index].owned === false && p1.money > board[p1.index].price) {
+  const checkOwner = (player) => new Promise(function(resolve, reject) {
+    if (board[player.index].owned === false && player.money > board[player.index].price) {
       Swal.fire({
         position: 'center',
         allowOutsideClick: false,
         showCancelButton: true,
         title: "Do you want to buy?",
-        text: board[p1.index].name + " costs " + board[p1.index].price + " dollars",
+        text: board[player.index].name + " costs " + board[player.index].price + " dollars",
         confirmButtonText: 'Yes',
         cancelButtonText: 'No'
       }).then((result) => {
         if (result.value === true) {
-          p1.setMoney(-board[p1.index].price);
-          board[p1.index].owned = true;
-          board[p1.index].owner = p1.name;
-          console.log(p1.money);
+          player.setMoney(-board[player.index].price);
+          board[player.index].owned = true;
+          board[player.index].owner = player.name;
+          console.log(player.money);
         }
         else {
           //work on bidding after get multiple players
@@ -133,12 +153,11 @@ const useGame = () => {
         }
       })
     }
-    else if (board[p1.index].owned === true) {
+    else if (board[player.index].owned === true) {
       console.log("pay the dude");
     }
   })
 
-  //return [Player, rollEvent]//, trade, endturn];
   return [rollEvent];
 }
 

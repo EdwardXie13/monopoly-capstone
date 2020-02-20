@@ -56,6 +56,7 @@ function useWindowSize() {
 
 const Lobby = () => {
   const [player, setPlayer] = useState(new Player("Player 1", "Go", 0));
+  //const [player, setPlayer] = useState(new Player("Player 1", "Go", 0));
   const [isPlaying, setIsPlaying] = useState(false);
   const [imageSource, setImageSource] = useState('');
   const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying);
