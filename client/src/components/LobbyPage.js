@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import '../styles/LobbyPage.css';
 import usePubNub from '../hooks/useLobby';
 import boardImage from '../assets/boards/Classic.jpg';
-import GamePage from './GamePage';
+import useGame from '../hooks/useGame';
+//import GamePage from '../components/GamePage';
+import Player from '../classes/Player';
 
 import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
 import BandORailroad from '../assets/cards/B and O Railroad.png';
@@ -53,11 +55,12 @@ function useWindowSize() {
 
 
 const Lobby = () => {
+  const [player, setPlayer] = useState(new Player("Player 1", "Go", 0));
   const [isPlaying, setIsPlaying] = useState(false);
   const [imageSource, setImageSource] = useState('');
   const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying);
-
-  //const [diceRoll, movePlayer, checkOwner] = GamePage();
+  
+  const[rollEvent] = useGame();
   const [width, height] = useWindowSize();
   const showThumbnail = src => {
     return <img src={src} style={{ position: "relative", height:window.innerHeight/2.5}}/>
@@ -93,7 +96,7 @@ const Lobby = () => {
               <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
                 <img alt="Cannot load board." src={boardImage} style={{zIndex:"10",width: "auto", height: window.innerHeight, marginBottom: "0px"}} />
                 <div style={{position:"absolute", zIndex:"100",backgroundColor:"gray",width:"16%",left:"42%",bottom:"25%"}}>
-                  <a class="waves-effect waves-light btn-large" STYLE={{}}>   Roll Dice   asdasj </a>
+                  <a class="waves-effect waves-light btn-large" STYLE={{}} onClick={() => rollEvent(player)}>   Roll Dice   </a>
                 </div>
                 <div id="AtlanticAvenue" onMouseEnter={() => setImageSource(AtlanticAvenue)} onMouseLeave={() => setImageSource('')}></div> 
                 <div id="BandORailroad" onMouseEnter={() => setImageSource(BandORailroad)} onMouseLeave={() => setImageSource('')}></div> 
