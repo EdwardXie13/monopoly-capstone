@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import '../styles/LobbyPage.css';
 import usePubNub from '../hooks/useLobby';
-import boardImage from '../assets/boards/Classic.jpg';
+import boardImage from '../assets/boards/Classic.jpeg';
 import useGame from '../hooks/useGame';
 //import GamePage from '../components/GamePage';
 import Player from '../classes/Player';
