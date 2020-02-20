@@ -3,11 +3,12 @@ import { Link } from 'react-router-dom';
 
 import '../styles/LobbyPage.css';
 import usePubNub from '../hooks/useLobby';
-import boardImage from '../assets/boards/Classic.jpg';
+import boardImage from '../assets/boards/Classic.jpeg';
 import useGame from '../hooks/useGame';
 //import GamePage from '../components/GamePage';
 import Player from '../classes/Player';
 
+import Default from '../assets/cards/Default.png';
 import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
 import BandORailroad from '../assets/cards/B and O Railroad.png';
 import BalticAvenue from '../assets/cards/Baltic Avenue.png';
@@ -64,6 +65,9 @@ const Lobby = () => {
   const[rollEvent] = useGame();
   const [width, height] = useWindowSize();
   const showThumbnail = src => {
+    if(!src){
+        return <img src={Default} style={{ position: "relative", height:window.innerHeight/2.5}}/>
+    }
     return <img src={src} style={{ position: "relative", height:window.innerHeight/2.5}}/>
     // style={{ position: "absolute", top:"2px",left: "5px", width:"17.5%" }} 
   }
@@ -81,6 +85,7 @@ const Lobby = () => {
           <div className="row" style={{ width: "inherit" }}>
             <div className="col s12" style={{ display: "flex", flexDirection: "row"}}>
               <div style={{ position: "relative", height: "100%", top:"5px", right: "2px" }} >
+                
                 { showThumbnail(imageSource) }
                 <div style={{textAlign: "center",display:"inline-block",backgroundColor:"gray",  width:"100%", height:window.innerHeight/1.74, padding:"15px", marginTop:"10px"}}>
                   <div class="chat-popup" id="myForm">
@@ -93,11 +98,14 @@ const Lobby = () => {
                   </div>
                 </div>
               </div>
-
+                
               <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
                 <img alt="Cannot load board." src={boardImage} style={{zIndex:"10",width: "auto", height: window.innerHeight, marginBottom: "0px"}} />
                 <div style={{position:"absolute", zIndex:"100",backgroundColor:"gray",width:"16%",left:"42%",bottom:"25%"}}>
                   <a class="waves-effect waves-light btn-large" STYLE={{}} onClick={() => rollEvent(player)}>   Roll Dice   </a>
+                </div>
+                <div style={{position:"absolute", zIndex:"100",backgroundColor:"gray",width:"16%",left:"42%",top:"18%"}}>
+                  <a class="waves-effect waves-light btn-large" STYLE={{}}>   End Turn   asdasj </a>
                 </div>
                 <div id="AtlanticAvenue" onMouseEnter={() => setImageSource(AtlanticAvenue)} onMouseLeave={() => setImageSource('')}></div> 
                 <div id="BandORailroad" onMouseEnter={() => setImageSource(BandORailroad)} onMouseLeave={() => setImageSource('')}></div> 
