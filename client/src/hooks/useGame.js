@@ -34,6 +34,7 @@ const useGame = () => {
         }
       }
       else {
+        movePlayer(player, die1+die2);
         player.resetDoubles();
       }
     }
