@@ -7,6 +7,10 @@ import Deeds from '../classes/Deeds';
 const useGame = () => {
   const [communityEffect, chanceEffect] = useEffects();
   var die1, die2;
+
+  const endTurn = () => {
+    
+  }
   
   const diceRoll = () => {
     die1 = Math.floor(Math.random() * 6) + 1;
@@ -30,7 +34,7 @@ const useGame = () => {
         }
         else {
           player.setDoubles();
-          console.log(player.doubles);
+          console.log(player.doubles, "Double");
           movePlayer(player, die1+die2);
         }
       }
@@ -113,20 +117,28 @@ const useGame = () => {
         chanceEffect(player);
       }
       else if (board[player.index].name === "Income Tax") {
-        //if doesn't have 200 trigger selling mode
         console.log("Income Tax");
-        player.setMoney(-200);
-        console.log(player.money);
+        if (player.money < 200) {
+          sellStuff(player, 200);
+        }
+        else {
+          player.setMoney(-200);
+          console.log(player.money);
+        }
       }
       else if (board[player.index].name === "Go To Jail") {
         console.log("Jail");
         player.setJail(true);
       }
       else if (board[player.index].name === "Luxury Tax") {
-        //if doesnt have 100 trigger selling mode 
         console.log("Lux Tax");
-        player.setMoney(-100);
-        console.log(player.money);
+        if (player.money < 100) {
+          sellStuff(player, 100);
+        }
+        else {
+          player.setMoney(-100);
+          console.log(player.money);
+        }
       }
     }
   }
@@ -153,6 +165,7 @@ const useGame = () => {
         else {
           //work on bidding after get multiple players
           //if no bidding begins
+          //window pop up to prompt bid amount
           console.log("bidding begins");
         }
       })
@@ -162,21 +175,33 @@ const useGame = () => {
         console.log("i own this")
       }
       else if (board[player.index].owner !== player.name) {
+        var amount = 0;
         if (board[player.index].type === "Utilities") {
           //condition check if owned 2
-          console.log("pay ", board[player.index].owner, " $", board[player.index].rentNormal * (die1 + die2) );
+          amount = board[player.index].rentNormal * (die1 + die2);
+          console.log("pay ", board[player.index].owner, " $", amount);
+          if (player.money < amount) {
+            sellStuff(player, amount);
+          }
         }
         else {
-          console.log("pay ", board[player.index].owner, " $", board[player.index].rentNormal);
+          amount = board[player.index].rentNormal;
+          console.log("pay ", board[player.index].owner, " $", amount);
+          if (player.money < amount) {
+            sellStuff(player, amount);
+          }
         }
       }
     }
   })
 
-  const sellStuff = (player) => new Promise(function(resolve, reject) {
-    //check if player has anything to sell
-    //if the player does have things to sell prompt
-    //if the player does not have things to sell then GG
+  const sellStuff = (player, amount) => new Promise(function(resolve, reject) {
+    if (player.inventory.length > 0) {
+        //gui pop displaying items
+    }
+    else {
+      console.log("player bankrupt");
+    }
   })
 
   return [rollEvent];

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import '../styles/LobbyPage.css';
@@ -7,6 +7,7 @@ import boardImage from '../assets/boards/Classic.jpeg';
 import useGame from '../hooks/useGame';
 //import GamePage from '../components/GamePage';
 import Player from '../classes/Player';
+import Card from './Card'
 
 import Default from '../assets/cards/Default.png';
 import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
@@ -37,9 +38,6 @@ import VentnorAvenue from '../assets/cards/Ventnor Avenue.png';
 import VermontAvenue from '../assets/cards/Vermont Avenue.png';
 import VirginiaAvenue from '../assets/cards/Virginia Avenue.png';
 import WaterWorks from '../assets/cards/Water Works.png';
-
-import { useLayoutEffect} from 'react';
-import Card from './Card'
 
 function useWindowSize() {
   const [size, setSize] = useState([0, 0]);
@@ -137,7 +135,7 @@ const Lobby = () => {
                 <div id="VirginiaAvenue" onMouseEnter={() => setImageSource(VirginiaAvenue)} onMouseLeave={() => setImageSource('')}></div> 
                 <div id="WaterWorks" onMouseEnter={() => setImageSource(WaterWorks)} onMouseLeave={() => setImageSource('')}></div> 
               </div>
-              <Card style={{ position: "relative",  height:"50%"}}></Card>
+              <Card style={{ position: "absolute",  height:"50%"}}></Card>
             </div>
             <div class="row"> </div>
           </div>
