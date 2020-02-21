@@ -2,6 +2,7 @@ import Swal from 'sweetalert2';
 
 import board from '../library/board/board.js';
 import useEffects from '../hooks/useEffects';
+import Deeds from '../classes/Deeds';
 
 const useGame = () => {
   const [communityEffect, chanceEffect] = useEffects();
@@ -145,6 +146,8 @@ const useGame = () => {
           player.setMoney(-board[player.index].price);
           board[player.index].owned = true;
           board[player.index].owner = player.name;
+          player.addInventory(new Deeds(board[player.index].name, board[player.index].type, player.index, board[player.index].rentNormal));
+          //console.log(player.inventory);
           console.log(player.money);
         }
         else {
@@ -155,8 +158,25 @@ const useGame = () => {
       })
     }
     else if (board[player.index].owned === true) {
-      console.log("pay the dude");
+      if (board[player.index].owner === player.name){
+        console.log("i own this")
+      }
+      else if (board[player.index].owner !== player.name) {
+        if (board[player.index].type === "Utilities") {
+          //condition check if owned 2
+          console.log("pay ", board[player.index].owner, " $", board[player.index].rentNormal * (die1 + die2) );
+        }
+        else {
+          console.log("pay ", board[player.index].owner, " $", board[player.index].rentNormal);
+        }
+      }
     }
+  })
+
+  const sellStuff = (player) => new Promise(function(resolve, reject) {
+    //check if player has anything to sell
+    //if the player does have things to sell prompt
+    //if the player does not have things to sell then GG
   })
 
   return [rollEvent];
