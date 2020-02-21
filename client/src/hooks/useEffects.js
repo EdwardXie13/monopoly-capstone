@@ -59,7 +59,7 @@ const useEffects = () => {
       case 5:
         console.log(card.text);
         //go to jail
-        player.jail = true;
+        player.setJail(true);
         break;
       case 4:
         console.log(card.text);
@@ -128,7 +128,7 @@ const useEffects = () => {
       case 9:
         console.log(card.text);
         //go to jail
-        player.jail = true;
+        player.setJail(true);
         break;
       case 8:
         console.log(card.text);

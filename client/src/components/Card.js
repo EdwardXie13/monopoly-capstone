@@ -1,6 +1,7 @@
 import React from 'react';
 
-const Card = () => {
+const Card = ({ renderHistory }) => {
+
   return (
     <div className="col s12 m6" >
       <div className="card blue-grey darken-1" style ={{ borderRadius: "5px", overflow:"auto", display: "block", height:"99%"}}>
@@ -23,11 +24,12 @@ const Card = () => {
 
         <div className="card-action">
           <div class="collection">
-            <a href="#!" class="collection-item"><span class="new badge"></span>Alan ate your knight</a>
+            { renderHistory() }
+            {/* <a href="#!" class="collection-item"><span class="new badge"></span>Alan ate your knight</a>
             <a href="#!" class="collection-item"><span class="new badge"></span>Alan 5 steps to jail</a>
             <a href="#!" class="collection-item">Alan</a>
             <a href="#!" class="collection-item"><span class="badge"></span>Alan</a>
-            <a href="#!" class="collection-item"><span class="badge"></span>Alan</a>
+            <a href="#!" class="collection-item"><span class="badge"></span>Alan</a> */}
           </div>
         </div>
       </div>

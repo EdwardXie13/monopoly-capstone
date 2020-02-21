@@ -14,7 +14,7 @@ export default [
     rentHouse3: 90,
     rentHouse4: 160,
     rentHotel: 250,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 50,
     mortgaged: false
@@ -34,7 +34,7 @@ export default [
     rentHouse3: 180,
     rentHouse4: 320,
     rentHotel: 450,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 50,
     mortgaged: false
@@ -51,7 +51,7 @@ export default [
     rentRR2: 50,
     rentRR3: 100,
     rentRR4: 200,
-    owned: true,
+    owned: false,
     owner: "Bank",
     mortgaged: false
   },
@@ -66,7 +66,7 @@ export default [
     rentHouse3: 270,
     rentHouse4: 400,
     rentHotel: 550,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 50,
     mortgaged: false
@@ -86,7 +86,7 @@ export default [
     rentHouse3: 270,
     rentHouse4: 400,
     rentHotel: 550,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 50,
     mortgaged: false
@@ -102,7 +102,7 @@ export default [
     rentHouse3: 300,
     rentHouse4: 450,
     rentHotel: 600,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 50,
     mortgaged: false
@@ -122,7 +122,7 @@ export default [
     rentHouse3: 450,
     rentHouse4: 625,
     rentHotel: 750,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 100,
     mortgaged: false
@@ -133,7 +133,7 @@ export default [
     price: 150,
     rentNormal: 4,
     rentBoth: 10,
-    owned: true,
+    owned: false,
     owner: "Bank",
     mortgaged: false
   },
@@ -148,7 +148,7 @@ export default [
     rentHouse3: 450,
     rentHouse4: 625,
     rentHotel: 750,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 100,
     mortgaged: false
@@ -164,7 +164,7 @@ export default [
     rentHouse3: 500,
     rentHouse4: 700,
     rentHotel: 900,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 100,
     mortgaged: false
@@ -177,7 +177,7 @@ export default [
     rentRR2: 50,
     rentRR3: 100,
     rentRR4: 200,
-    owned: true,
+    owned: false,
     owner: "Bank",
     mortgaged: false
   },
@@ -192,7 +192,7 @@ export default [
     rentHouse3: 550,
     rentHouse4: 750,
     rentHotel: 950,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 100,
     mortgaged: false
@@ -212,7 +212,7 @@ export default [
     rentHouse3: 550,
     rentHouse4: 750,
     rentHotel: 950,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 100,
     mortgaged: false
@@ -228,7 +228,7 @@ export default [
     rentHouse3: 600,
     rentHouse4: 800,
     rentHotel: 1000,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 100,
     mortgaged: false
@@ -248,7 +248,7 @@ export default [
     rentHouse3: 700,
     rentHouse4: 875,
     rentHotel: 1050,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 150,
     mortgaged: false
@@ -268,7 +268,7 @@ export default [
     rentHouse3: 700,
     rentHouse4: 875,
     rentHotel: 1050,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 150,
     mortgaged: false
@@ -284,7 +284,7 @@ export default [
     rentHouse3: 750,
     rentHouse4: 925,
     rentHotel: 1100,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 150,
     mortgaged: false
@@ -297,7 +297,7 @@ export default [
     rentRR2: 50,
     rentRR3: 100,
     rentRR4: 200,
-    owned: true,
+    owned: false,
     owner: "Bank",
     mortgaged: false
   },
@@ -312,7 +312,7 @@ export default [
     rentHouse3: 800,
     rentHouse4: 975,
     rentHotel: 1150,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 150,
     mortgaged: false
@@ -328,7 +328,7 @@ export default [
     rentHouse3: 800,
     rentHouse4: 975,
     rentHotel: 1150,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 150,
     mortgaged: false
@@ -339,7 +339,7 @@ export default [
     price: 150,
     rentNormal: 4,
     rentBoth: 10,
-    owned: true,
+    owned: false,
     owner: "Bank",
     mortgaged: false
   },
@@ -354,7 +354,7 @@ export default [
     rentHouse3: 850,
     rentHouse4: 1025,
     rentHotel: 1200,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 150,
     mortgaged: false
@@ -374,7 +374,7 @@ export default [
     rentHouse3: 900,
     rentHouse4: 110,
     rentHotel: 1275,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 200,
     mortgaged: false
@@ -390,7 +390,7 @@ export default [
     rentHouse3: 900,
     rentHouse4: 110,
     rentHotel: 1275,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 200,
     mortgaged: false
@@ -410,7 +410,7 @@ export default [
     rentHouse3: 1000,
     rentHouse4: 1200,
     rentHotel: 1400,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 200,
     mortgaged: false
@@ -423,7 +423,7 @@ export default [
     rentRR2: 50,
     rentRR3: 100,
     rentRR4: 200,
-    owned: true,
+    owned: false,
     owner: "Bank",
     mortgaged: false
   },
@@ -442,7 +442,7 @@ export default [
     rentHouse3: 1100,
     rentHouse4: 1300,
     rentHotel: 1500,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 200,
     mortgaged: false
@@ -462,7 +462,7 @@ export default [
     rentHouse3: 1400,
     rentHouse4: 1700,
     rentHotel: 2000,
-    owned: true,
+    owned: false,
     owner: "Bank",
     buildingCosts: 200,
     mortgaged: false

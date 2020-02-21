@@ -5,7 +5,7 @@ import '../styles/LobbyPage.css';
 import usePubNub from '../hooks/useLobby';
 import boardImage from '../assets/boards/Classic.jpeg';
 import useGame from '../hooks/useGame';
-//import GamePage from '../components/GamePage';
+import useCard from '../hooks/useCard';
 import Player from '../classes/Player';
 import Card from './Card'
 
@@ -52,7 +52,6 @@ function useWindowSize() {
   return size;
 }
 
-
 const Lobby = () => {
   const [player, setPlayer] = useState(new Player("Player 1"));
   const [player2, setPlayer2] = useState(new Player("Player 2"));
@@ -61,7 +60,8 @@ const Lobby = () => {
   const [imageSource, setImageSource] = useState('');
   const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying);
   
-  const[rollEvent] = useGame();
+  const [history, renderHistory, addToHistory] = useCard();
+  const[rollEvent] = useGame(addToHistory);
   const [width, height] = useWindowSize();
   const showThumbnail = src => {
     if(!src){
@@ -97,11 +97,11 @@ const Lobby = () => {
                   </div>
                 </div>
               </div>
-                
+
               <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
                 <img alt="Cannot load board." src={boardImage} style={{zIndex:"10",width: "auto", height: window.innerHeight, marginBottom: "0px"}} />
                 <div style={{position:"absolute", zIndex:"100",backgroundColor:"gray",width:"16%",left:"42%",bottom:"25%"}}>
-                  <a class="waves-effect waves-light btn-large" STYLE={{}} onClick={() => rollEvent(player)}>   Roll Dice   asdasj </a>
+                  <div class="waves-effect waves-light btn-large" onClick={() => { rollEvent(player); }}>Roll Dice</div>
                 </div>
                 <div style={{position:"absolute", zIndex:"100",backgroundColor:"gray",width:"16%",left:"42%",top:"18%"}}>
                   <a class="waves-effect waves-light btn-large" STYLE={{}}>   End Turn   asdasj </a>
@@ -135,7 +135,7 @@ const Lobby = () => {
                 <div id="VirginiaAvenue" onMouseEnter={() => setImageSource(VirginiaAvenue)} onMouseLeave={() => setImageSource('')}></div> 
                 <div id="WaterWorks" onMouseEnter={() => setImageSource(WaterWorks)} onMouseLeave={() => setImageSource('')}></div> 
               </div>
-              <Card style={{ position: "absolute",  height:"50%"}}></Card>
+              <Card renderHistory={renderHistory} style={{ position: "absolute",  height:"50%"}}></Card>
             </div>
             <div class="row"> </div>
           </div>

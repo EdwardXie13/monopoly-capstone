@@ -4,8 +4,9 @@ import board from '../library/board/board.js';
 import useEffects from '../hooks/useEffects';
 import Deeds from '../classes/Deeds';
 
-const useGame = () => {
+const useGame = (addToHistory) => {
   const [communityEffect, chanceEffect] = useEffects();
+  
   var die1, die2;
 
   const endTurn = () => {
@@ -15,7 +16,7 @@ const useGame = () => {
   const diceRoll = () => {
     die1 = Math.floor(Math.random() * 6) + 1;
     die2 = Math.floor(Math.random() * 6) + 1;
-    console.log(die1, die2);
+    addToHistory("mewww")
     // die1=1;
     // die2=1;
     // console.log(die1, die2);
@@ -159,7 +160,7 @@ const useGame = () => {
           board[player.index].owned = true;
           board[player.index].owner = player.name;
           player.addInventory(new Deeds(board[player.index].name, board[player.index].type, player.index, board[player.index].rentNormal));
-          //console.log(player.inventory);
+          console.log(player.inventory);
           console.log(player.money);
         }
         else {
@@ -177,12 +178,23 @@ const useGame = () => {
       else if (board[player.index].owner !== player.name) {
         var amount = 0;
         if (board[player.index].type === "Utilities") {
-          //condition check if owned 2
-          amount = board[player.index].rentNormal * (die1 + die2);
-          console.log("pay ", board[player.index].owner, " $", amount);
-          if (player.money < amount) {
-            sellStuff(player, amount);
+          if (board[28].owner === board[12].owner) {
+            amount = 10 * (die1 + die2);  
+            console.log("pay ", board[player.index].owner, " $", amount);
+            if (player.money < amount) {
+              sellStuff(player, amount);
+            }
           }
+          else {
+            amount = 4 * (die1 + die2);
+            console.log("pay ", board[player.index].owner, " $", amount);
+            if (player.money < amount) {
+              sellStuff(player, amount);
+            }
+          }
+        }
+        else if (board[player.index].type === "Railroad") {
+          
         }
         else {
           amount = board[player.index].rentNormal;
