@@ -56,7 +56,9 @@ function useWindowSize() {
 
 
 const Lobby = () => {
-  const [player, setPlayer] = useState(new Player("Player 1", "Go", 0));
+  const [player, setPlayer] = useState(new Player("Player 1"));
+  const [player2, setPlayer2] = useState(new Player("Player 2"));
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [imageSource, setImageSource] = useState('');
   const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying);
@@ -76,7 +78,7 @@ const Lobby = () => {
       {
         !isPlaying? (
           <div style={{ textAlign: "center" }}>
-            <h3 style={{ color: "#64b5f6", textShadow: "2px 2px 5px rgba(0,0,0,0.2)" }}><Link to="/">Monopoly Beta</Link></h3>
+            <h3 style={{ color: "#64b5f6", textShadow: "2px 2px 5px rgba(0,0,0,0.2)" }}><Link to="/">Monopoly</Link></h3>
             <button className="btn blue lighten-3" onClick={handleCreateRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Create Room</button>
             <button className="btn blue lighten-3" onClick={handleJoinRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Join Room</button>
           </div>
@@ -101,7 +103,7 @@ const Lobby = () => {
               <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
                 <img alt="Cannot load board." src={boardImage} style={{zIndex:"10",width: "auto", height: window.innerHeight, marginBottom: "0px"}} />
                 <div style={{position:"absolute", zIndex:"100",backgroundColor:"gray",width:"16%",left:"42%",bottom:"25%"}}>
-                  <a class="waves-effect waves-light btn-large" STYLE={{}} onClick={() => rollEvent(player)}>   Roll Dice   </a>
+                  <a class="waves-effect waves-light btn-large" STYLE={{}} onClick={() => rollEvent(player)}>   Roll Dice   asdasj </a>
                 </div>
                 <div style={{position:"absolute", zIndex:"100",backgroundColor:"gray",width:"16%",left:"42%",top:"18%"}}>
                   <a class="waves-effect waves-light btn-large" STYLE={{}}>   End Turn   asdasj </a>

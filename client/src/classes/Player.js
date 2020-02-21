@@ -1,8 +1,8 @@
 export default class Player {
-    constructor(name, location, index) {
+    constructor(name) {
       this.name = name;
-      this.location = location;
-      this.index = index;
+      this.location = "Go";
+      this.index = 0;
       //this.money = 1500;
       this.money = 10000;
       this.jail = false;
