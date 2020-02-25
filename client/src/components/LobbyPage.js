@@ -101,7 +101,7 @@ const Lobby = () => {
               <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
                 <img alt="Cannot load board." src={boardImage} style={{zIndex:"10",width: "auto", height: window.innerHeight, marginBottom: "0px"}} />
                 <div style={{position:"absolute", zIndex:"100",backgroundColor:"gray",width:"16%",left:"42%",bottom:"25%"}}>
-                  <div class="waves-effect waves-light btn-large" onClick={() => { rollEvent(player); }}>Roll Dice</div>
+                  <div class="waves-effect waves-light btn-large" onClick={() => { rollEvent(player, player2) }}>Roll Dice</div>
                 </div>
                 <div style={{position:"absolute", zIndex:"100",backgroundColor:"gray",width:"16%",left:"42%",top:"18%"}}>
                   <a class="waves-effect waves-light btn-large" STYLE={{}}>   End Turn   asdasj </a>

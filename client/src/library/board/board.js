@@ -17,7 +17,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 50,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Community Chest",
@@ -37,7 +38,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 50,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Income Tax",
@@ -69,7 +71,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 50,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Chance",
@@ -89,7 +92,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 50,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Connecticut Avenue",
@@ -105,7 +109,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 50,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Just Visiting",
@@ -125,7 +130,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 100,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Electric Company",
@@ -151,7 +157,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 100,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Virginia Avenue",
@@ -167,7 +174,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 100,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Pennsylvania Railroad",
@@ -195,7 +203,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 100,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Community Chest",
@@ -215,7 +224,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 100,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "New York Avenue",
@@ -231,7 +241,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 100,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Free Parking",
@@ -251,7 +262,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 150,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Chance",
@@ -271,7 +283,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 150,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Illinois Avenue",
@@ -287,7 +300,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 150,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "B. & O. Railroad",
@@ -315,7 +329,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 150,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Ventor Avenue",
@@ -331,7 +346,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 150,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Water Works",
@@ -357,7 +373,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 150,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Go To Jail",
@@ -377,7 +394,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 200,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "North Carolina Avenue",
@@ -393,7 +411,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 200,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Community Chest",
@@ -413,7 +432,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 200,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Short Line Railroad",
@@ -445,7 +465,8 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 200,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   },
   {
     name: "Luxury Tax",
@@ -465,6 +486,7 @@ export default [
     owned: false,
     owner: "Bank",
     buildingCosts: 200,
-    mortgaged: false
+    mortgaged: false,
+    house: 0
   }
 ]
