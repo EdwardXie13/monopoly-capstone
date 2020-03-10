@@ -7,10 +7,12 @@ const router = require('express').Router();
 //  Internal Dependencies
 // ----------------------------------------------------------------------------------------------
 const authController = require('./auth');
+const roomController = require('./room');
 
 // ----------------------------------------------------------------------------------------------
 //  Setup controllers
 // ----------------------------------------------------------------------------------------------
 router.use('/auth', authController);
+router.use('/room', roomController);
 
 module.exports = router;

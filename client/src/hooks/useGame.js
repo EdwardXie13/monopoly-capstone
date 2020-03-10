@@ -16,65 +16,67 @@ const useGame = (addToHistory) => {
   const diceRoll = () => {
     die1 = Math.floor(Math.random() * 6) + 1;
     die2 = Math.floor(Math.random() * 6) + 1;
-    //die1=39;
-    //die2=0;
+    die1=0;
+    die2=3;
     // console.log(die1, die2);
   }
 
-  const rollEvent = async (player, player2) => {
-    await payJail(player);
-    
-    //board[37].owned = true;
-    //board[37].owner = player2;
-    //board[39].owned = true;
-    //board[39].owner = player2;
-    //board[14].owned = true;
-    //board[14].owner = player2;
+  const rollEvent = async (player, player2) => { 
+    if (player.bankrupt === false) {
+      await payJail(player);
+      
+      board[1].owned = true;
+      board[1].owner = player2;
+      board[3].owned = true;
+      board[3].owner = player2;
+      //board[14].owned = true;
+      //board[14].owner = player2;
 
-    if (player.jail === false) {
-      diceRoll();
-      if (die1 === die2) {
-        if (player.doubles === 2) {
-          addToHistory("Triple Doubles, Go to Jail")
-          player.setJail(true);
-          player.resetDoubles();
-        }
-        else {
-          player.setDoubles();
-          addToHistory(player.doubles, " Double");
-          movePlayer(player, die1+die2);
-        }
-      }
-      else {
-        movePlayer(player, die1+die2);
-        player.resetDoubles();
-      }
-    }
-    else if (player.jail === true) {
-      diceRoll();
-      if (die1 === die2) {
-        addToHistory("freed from jail");
-        player.setJail(false);
-        player.resetJailroll();
-        player.setLocation("Just Visiting", 10);
-        movePlayer(player, die1+die2);
-      } else {
-        if (player.jailroll === 2) {
-          if (player.money > 49) {
-            addToHistory("failed last doubles attempt, $50 was taken from you");
-            player.setMoney(-50);
-            player.setJail(false);
-            player.resetJailroll();
-            player.setLocation("Just Visiting", 10);
+      if (player.jail === false) {
+        diceRoll();
+        if (die1 === die2) {
+          if (player.doubles === 2) {
+            addToHistory("Triple Doubles, Go to Jail")
+            player.setJail(true);
+            player.resetDoubles();
+          }
+          else {
+            player.setDoubles();
+            addToHistory(player.doubles, " Double");
             movePlayer(player, die1+die2);
-          } else {
-            console.log("trigger selling mode");
-            sellStuff = (player, 50)
           }
         }
         else {
-          player.setJailroll(); 
-          addToHistory("failed doubles roll");
+          movePlayer(player, die1+die2);
+          player.resetDoubles();
+        }
+      }
+      else if (player.jail === true) {
+        diceRoll();
+        if (die1 === die2) {
+          addToHistory("freed from jail");
+          player.setJail(false);
+          player.resetJailroll();
+          player.setLocation("Just Visiting", 10);
+          movePlayer(player, die1+die2);
+        } else {
+          if (player.jailroll === 2) {
+            if (player.money > 49) {
+              addToHistory("failed last doubles attempt, $50 was taken from you");
+              player.setMoney(-50);
+              player.setJail(false);
+              player.resetJailroll();
+              player.setLocation("Just Visiting", 10);
+              movePlayer(player, die1+die2);
+            } else {
+              console.log("trigger selling mode");
+              sellStuff = (player, 50)
+            }
+          }
+          else {
+            player.setJailroll(); 
+            addToHistory("failed doubles roll");
+          }
         }
       }
     }
@@ -220,21 +222,20 @@ const useGame = (addToHistory) => {
           if (board[player.index].owner.name === board[35].owner.name)
             temp++;
           if (temp === 1) {
-            player.setMoney(-25);
-            board[player.index].owner.setMoney(25)
+            player.setMoney(-board[player.index].rentNormal);
+            board[player.index].owner.setMoney(board[player.index].rentNormal)
           }
           else if (temp === 2) {
-            player.setMoney(-50);
-            board[player.index].owner.setMoney(50)
+            player.setMoney(-board[player.index].rentRR2);
+            board[player.index].owner.setMoney(board[player.index].rentRR2)
           }
           else if (temp ===3) {
-            player.setMoney(-100);
-            board[player.index].owner.setMoney(100);
+            player.setMoney(-board[player.index].rentRR3);
+            board[player.index].owner.setMoney(board[player.index].rentRR3);
           }
           else if (temp ===4) {
-            player.setMoney(-200);
-            console.log(player.money);
-            board[player.index].owner.setMoney(200);
+            player.setMoney(-board[player.index].rentRR4);
+            board[player.index].owner.setMoney(board[player.index].rentRR4);
           }
 
         }
@@ -264,6 +265,9 @@ const useGame = (addToHistory) => {
           addToHistory("pay " + board[player.index].owner.name + " $" + amount);
           if (player.money < amount) {
             sellStuff(player, amount);
+          } else {
+            player.setMoney(-amount);
+            board[player.index].owner.setMoney(amount);
           }
         }
       }
@@ -273,59 +277,80 @@ const useGame = (addToHistory) => {
   const monopolyRent = (i) => {
     if (board[i].color === "Brown") {
       //1 3
-      return monopoly2Check(1, 3);
+      return monopolyCheck(1, 3, 0);
     }
     else if (board[i].color === "Light Blue") {
       //6 8 9
-      return monopoly3Check(6, 8, 9);
+      return monopolyCheck(6, 8, 9);
     }
     else if (board[i].color === "Pink") {
       //11 13 14
-      return monopoly3Check(11, 13, 14);
+      return monopolyCheck(11, 13, 14);
     }
     else if (board[i].color === "Orange") {
       //16 18 19
-      return monopoly3Check(16, 18, 19);
+      return monopolyCheck(16, 18, 19);
     }
     else if (board[i].color === "Red") {
       //21 23 24
-      return monopoly3Check(21, 23, 24);
+      return monopolyCheck(21, 23, 24);
     }
     else if (board[i].color === "Yellow") {
       //26 27 29
-      return monopoly3Check(26, 27, 29);
+      return monopolyCheck(26, 27, 29);
     }
     else if (board[i].color === "Green") {
       //31 32 34
-      return monopoly3Check(31, 32, 34);
+      return monopolyCheck(31, 32, 34);
     }
     else if (board[i].color === "Dark Blue") {
       //37 39
-      return monopoly2Check(37, 39);
+      return monopolyCheck(37, 39, 0);
     }
     return false;
   }
 
-  const monopoly3Check = (p1, p2, p3) => {
-    if (board[p1].owner.name === board[p2].owner.name && board[p1].owner.name === board[p3].owner.name) {
-      return true
+  const monopolyCheck = (p1, p2, p3) => {
+    if (p3 == 0) {
+      if (board[p1].owner.name === board[p2].owner.name) {
+        return true
+      }
     }
-  }
-
-  const monopoly2Check = (p1, p2) => {
-    if (board[p1].owner.name === board[p2].owner.name) {
+    else if (board[p1].owner.name === board[p2].owner.name && board[p1].owner.name === board[p3].owner.name) {
       return true
     }
   }
 
   const sellStuff = (player, amount) => new Promise(function(resolve, reject) {
-    if (player.inventory.length > 0) {
-        //gui pop displaying items
-    }
+    if (player.inventory.length > 0 || player.cc_JailCard === true || player.c_JailCard === true) {  
+      //gui pop displaying items and all other players + bank
+    } 
     else {
       addToHistory("player bankrupt");
-      //from here disable buton for bankrupt player
+      player.bankrupt = true;
     }
+  })
+
+  const tradeRequest = () => new Promise(function(resolve, reject) {
+    //GUI lists all players 
+    //player1 selects another player
+    //press ok
+    //other player gets request to trade from player1
+    //if player press ok then trade begins
+  })
+
+  const tradeWindow = () => new Promise(function(resolve, reject) {
+    //both players inventory shows up
+    //player 1 chooses what he wants to trade then presses ok
+    //player 2 sees the offer
+    // if player 2 accepts then trade goes through
+    // if player 2 declines then trade window closes
+    // if player 2 counter-offers then player 2 is allowed to choose and press ok
+    //======Recurse?=====
+    //player 1 sees the offer
+    // if player 1 accepts, trade goes through
+    // if player 1 declines then trade window closes
+    // if player 1 counter-offers then player 1 is allowed to choose
   })
 
   return [rollEvent];

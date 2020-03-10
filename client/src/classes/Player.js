@@ -4,14 +4,15 @@ export default class Player {
     this.location = "Go";
     this.index = 0;
     //this.money = 1500;
-    //this.money = 10000;
-    this.money = 600;
+    this.money = 10000;
+    //this.money = 0;
     this.jail = false;
     this.jailroll = 0;
     this.doubles = 0;
     this.cc_JailCard = false;
     this.c_JailCard = false;
     this.bidding = true;
+    this.bankrupt = false;
     this.inventory = [];
   }
   setLocation(location, index) {
