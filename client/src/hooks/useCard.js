@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const useCard = () => {
-    const [history, setHistory] = useState(["Alan ate your knight", "Alan 5 steps to jail", "Alan", "Alan", "Alan"]);
+    const [history, setHistory] = useState(["history1", "history2", "history3", "history4", "history5"]);
     
     const renderHistory = () => history.map( data => <a href="#!" class="collection-item"><span class="new badge"></span>{data}</a> );
   

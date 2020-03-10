@@ -10,12 +10,33 @@ const GamePage = () => {
 
   //get list of players 
 
+  var tID; //we will use this variable to clear the setInterval()
+  
+  function stopAnimate() {
+    clearInterval(tID);
+  } //end of stopAnimate()
+
+  function animateScript(height) {
+    var    position = 0; 
+    const  interval = 150; 
+    const  diff = 128; 
+    tID = setInterval ( () => {
+      document.getElementById("image").style.backgroundPosition = `-${position}px -${height}px`; 
+      
+      if (position < 128) { 
+        position = position + diff;
+      }
+      else { 
+        position = 0; 
+    }
+  }
+  , interval );
+}
+
   return(
-    <div>
-      {/* <Trading cards={cards} width={"400px"} flexDirection={"row"} /> */}
-      {/* <button onClick={trade}> Trade </button> */}
-      {/* <button onClick={endTurn}> End Turn </button> */}
-    </div>
+    <div id="demo">
+      <p id="image" onMouseEnter={() => animateScript(96) }  onMouseLeave={() => stopAnimate() } > </p>
+  </div>
   )
 }
 export default GamePage;
