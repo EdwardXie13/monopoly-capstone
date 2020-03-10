@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+
+
 const TradingCard = props => {
   const [isSelected, setIsSelected] = useState(false);
   const width = parseInt(props.width.slice(0, 4), 10) / 5;
