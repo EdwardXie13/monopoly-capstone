@@ -5,7 +5,7 @@ import '../styles/LobbyPage.css';
 import '../styles/RoomPage.css';
 import usePubNub from '../hooks/usePubNub';
 import RoomContext from '../contexts/RoomContext';
-import boardImage from '../assets/boards/Classic.jpeg';
+import boardImage from '../assets/boards/Classic copy.jpeg';
 import useGame from '../hooks/useGame';
 import useCard from '../hooks/useCard';
 import Player from '../classes/Player';
@@ -45,7 +45,7 @@ import FlyingChicken from '../assets/sprites/149/149_left.gif';
 
 import ReactDice from 'react-dice-complete'
 import 'react-dice-complete/dist/react-dice-complete.css'
-import Dice from './Dice.js';
+import Dice from '../components/Dice';
 
 function useWindowSize() {
   const [size, setSize] = useState([0, 0]);
@@ -145,11 +145,9 @@ const Lobby = () => {
         <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
           <img src={boardImage} style={{zIndex:"2",width: "auto", height: window.innerHeight, marginBottom: "0px"}} />
           <img src={FlyingChicken} class="image"/>
-          <div style={{position:"absolute", zIndex:"100",width:"60%",height:"30%",left:"20%",top:"40%"}}>
-            <div style={{position:"absolute", zIndex:"100",  height:"60%",width:"60%",top:"10%",left:"20%"}}>
-              <div style={{position:"absolute",top:"10%",left:"10%",zIndex:"1 !important"}}>
-                <Dice ></Dice>
-              </div>
+          <div style={{position:"absolute", zIndex:"3",width:"60%",height:"30%",left:"20%",top:"40%"}}>
+            <div style={{position:"absolute",top:"25%",left:"23%",zIndex:"3"}}>
+              <Dice ></Dice>
             </div>
                   
             <div style={{position:"absolute",top:"48%",left:"0%"}}>
@@ -203,16 +201,15 @@ const Lobby = () => {
   );
 
   const conditionalRender = () => {
-    // if (!isPlaying && !isWaiting) return renderHome();
-    // else if (!isPlaying) return renderRoom();
-    // else return renderGame();
-    renderGame()
+    if (!isPlaying && !isWaiting) return renderHome();
+    else if (!isPlaying) return renderRoom();
+    else return renderGame();
   }
 
   return (
     <div style={{  minHeight: "100vh", width: "100%", display: "flex", flexDirection: "column", justifyContent: "space-around", margin: "0" }}>
       {
-        // conditionalRender() 
+        //conditionalRender() 
         renderGame()
       }
     </div>

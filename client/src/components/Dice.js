@@ -17,10 +17,7 @@ function useWindowSize() {
   }
 
 class Dice extends React.Component {
-
-    
   render() {
-    
     return (
       <div>
         <ReactDice
