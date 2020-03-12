@@ -4,6 +4,7 @@ import { Router, Switch, Route } from 'react-router-dom';
 import history from '../utilities/history';
 import { AuthProvider } from '../contexts/AuthContext';
 import { RoomProvider } from '../contexts/RoomContext';
+import { ReactDiceProvider } from '../contexts/ReactDiceContext';
 // import { LobbyProvider } from '../contexts/LobbyContext';
 // import { PubNubProvider } from '../hooks/usePubNub';
 import LandingPage from './LandingPage';
@@ -31,9 +32,11 @@ const App = () => {
 };
 
 export default () => (
-  <AuthProvider>
-    <RoomProvider>
-      <App />
-    </RoomProvider>
-  </AuthProvider>
+  <ReactDiceProvider>
+    <AuthProvider>
+      <RoomProvider>
+        <App />
+      </RoomProvider>
+    </AuthProvider>
+  </ReactDiceProvider>
 );

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import '../styles/LobbyPage.css';
 import '../styles/RoomPage.css';
 import usePubNub from '../hooks/usePubNub';
+import ReactDiceContext from '../contexts/ReactDiceContext';
 import RoomContext from '../contexts/RoomContext';
 import boardImage from '../assets/boards/Classic copy.jpeg';
 import useGame from '../hooks/useGame';
@@ -45,7 +46,10 @@ import FlyingChicken from '../assets/sprites/149/149_left.gif';
 
 import ReactDice from 'react-dice-complete'
 import 'react-dice-complete/dist/react-dice-complete.css'
+// import { rollAll } from '../components/Dice';
 import Dice from '../components/Dice';
+
+// console.log('OwO: ', rollAll());
 
 function useWindowSize() {
   const [size, setSize] = useState([0, 0]);
@@ -60,19 +64,6 @@ function useWindowSize() {
   return size;
 }
 
-function RenderDice() {
-  return (
-    <div>
-      <ReactDice
-        numDice={2}
-        // rollDone={this.rollDoneCallback}
-        // ref={dice => this.reactDice = dice}
-      />
-    </div>
-  )
-
-}
-
 const Lobby = () => {
   const [player, setPlayer] = useState(new Player("Player 1"));
   const [player2, setPlayer2] = useState(new Player("Player 2"));
@@ -84,6 +75,7 @@ const Lobby = () => {
   const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying, setIsWaiting);
 
   const { players, code } = useContext(RoomContext);
+  const { reactDice } = useContext(ReactDiceContext);
   
   const [history, renderHistory, addToHistory] = useCard();
   const[rollEvent] = useGame(addToHistory);
@@ -119,7 +111,6 @@ const Lobby = () => {
     <div className="room-container">
         <div className="white-layer">
             <div className="room-title">Room: {code}</div>
-
             { renderPlayers() }
         </div>
     </div>
@@ -147,7 +138,7 @@ const Lobby = () => {
           <img src={FlyingChicken} class="image"/>
           <div style={{position:"absolute", zIndex:"3",width:"60%",height:"30%",left:"20%",top:"40%"}}>
             <div style={{position:"absolute",top:"25%",left:"23%",zIndex:"3"}}>
-              <Dice ></Dice>
+              <Dice></Dice>
             </div>
                   
             <div style={{position:"absolute",top:"48%",left:"0%"}}>
@@ -158,7 +149,8 @@ const Lobby = () => {
               </div>
 
               <div style={{position:"absolute",backgroundColor:"gray",left:"25%",bottom:"5%"}}>
-                <div class="waves-effect waves-light btn-large" onClick={() => { rollEvent(player, player2) }}>Roll Dice</div>
+                {/* <div class="waves-effect waves-light btn-large" onClick={() => { rollEvent(player, player2) }}>Roll Dice</div> */}
+                <div class="waves-effect waves-light btn-large" onClick={() => { reactDice.rollAll(); }}>Roll Dice</div>
               </div>
             <div style={{position:"absolute",backgroundColor:"gray",right:"25%",bottom:"5%"}}>
               <a class="waves-effect waves-light btn-large" STYLE={{}}>   End Turn </a>
