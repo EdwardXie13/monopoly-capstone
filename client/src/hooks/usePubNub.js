@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import shortid  from 'shortid';
 
 import RoomContext from '../contexts/RoomContext';
+import backend from '../apis/backend';
 
 const usePubNub = (setIsPlaying, setIsWaiting) => {
   const lobbyChannel = useRef(null);
@@ -48,6 +49,7 @@ const usePubNub = (setIsPlaying, setIsWaiting) => {
           Swal.close();
         } else if (msg.message.text === "Player Joined") {
           // Update players state with msg.message.players.
+          setPlayers(msg.message.players);
         }
       }
     });
@@ -86,45 +88,54 @@ const usePubNub = (setIsPlaying, setIsWaiting) => {
           }
         })
 
-        setCode(roomId.current);
-        setPlayers([...players, players.length + 1]);
-        setIsWaiting(true);
+        backend.put('/room/join', { roomId: roomId.current })
+          .then(res => {
+            setCode(roomId.current);
+            setPlayers(res.data.players);
+            setIsWaiting(true);
 
-        const publishConfig = {
-          channel: lobbyChannel.current,
-          message: {
-            text: "Game Started"
-          }
-        };
-        
-        // pubnub.publish(publishConfig, function(status, response) {});
+            pubnub.publish({ channel: lobbyChannel.current, message: { text: "Player Joined", players: res.data.players } });
 
+            if (response.totalOccupancy === 3) {
+              pubnub.publish({ channel: lobbyChannel.current, message: { text: "Game Started" } });
+              gameChannel.current = 'game--' + roomId.current;
+              pubnub.subscribe({ channels: [gameChannel.current], withPresence: true });
+              setIsPlaying(true);
+            }
+            // const publishConfig = {
+            //   channel: lobbyChannel.current,
+            //   message: {
+            //     text: "Game Started"
+            //   }
+            // };
 
-        // Start the game.
-        // gameChannel.current = 'game--' + roomId.current;
-
-        // pubnub.subscribe({
-        //   channels: [gameChannel.current],
-        //   error: error => {
-        //     Swal.fire({
-        //       position: 'center',
-        //       allowOutsideClick: false,
-        //       title: 'Error',
-        //       text: JSON.stringify(error),
-        //       width: 275,
-        //       padding: '0.7em',
-        //       customClass: {
-        //         heightAuto: false,
-        //         title: 'title-class',
-        //         popup: 'popup-class',
-        //         confirmButton: 'button-class'
-        //       }
-        //     });
-        //   }
-        // });
-
-        // me.current = 'player2';
-        // setIsPlaying(true);
+            // pubnub.publish(publishConfig, function(status, response) {});
+            // Start the game.
+            // gameChannel.current = 'game--' + roomId.current;
+    
+            // pubnub.subscribe({
+            //   channels: [gameChannel.current],
+            //   error: error => {
+            //     Swal.fire({
+            //       position: 'center',
+            //       allowOutsideClick: false,
+            //       title: 'Error',
+            //       text: JSON.stringify(error),
+            //       width: 275,
+            //       padding: '0.7em',
+            //       customClass: {
+            //         heightAuto: false,
+            //         title: 'title-class',
+            //         popup: 'popup-class',
+            //         confirmButton: 'button-class'
+            //       }
+            //     });
+            //   }
+            // });
+    
+            // me.current = 'player2';
+            // setIsPlaying(true);
+          });
       } else {
         Swal.fire({
           position: 'center',
@@ -169,6 +180,15 @@ const usePubNub = (setIsPlaying, setIsWaiting) => {
       }
     });
 
+    backend.post('/room/create', { roomId: roomId.current })
+      .then(res => {
+        setPlayers(res.data.players);
+        setCode(roomId.current);
+        setIsWaiting(true);
+
+        me.current = res.data.players[0].email;
+      });
+
     // Swal.fire({
     //   position: 'center',
     //   allowOutsideClick: false,
@@ -184,12 +204,6 @@ const usePubNub = (setIsPlaying, setIsWaiting) => {
     //     confirmButton: 'button-class'
     //   }
     // });
-
-    setPlayers([...players, players.length + 1]);
-    setCode(roomId.current);
-    setIsWaiting(true);
-
-    me.current = 'player1';
   }
 
   const handleJoinRoom = () => {

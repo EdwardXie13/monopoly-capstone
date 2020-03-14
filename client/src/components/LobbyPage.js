@@ -11,6 +11,8 @@ import useGame from '../hooks/useGame';
 import useCard from '../hooks/useCard';
 import Player from '../classes/Player';
 import Card from './Card'
+import BuildButton from './BuildButton';
+import TradeButton from './TradeButton';
 
 import Default from '../assets/cards/Default.png';
 import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
@@ -44,12 +46,9 @@ import WaterWorks from '../assets/cards/Water Works.png';
 
 import FlyingChicken from '../assets/sprites/149/149_left.gif';
 
-import ReactDice from 'react-dice-complete'
 import 'react-dice-complete/dist/react-dice-complete.css'
-// import { rollAll } from '../components/Dice';
 import Dice from '../components/Dice';
-
-// console.log('OwO: ', rollAll());
+import Trade from './GamePage';
 
 function useWindowSize() {
   const [size, setSize] = useState([0, 0]);
@@ -71,14 +70,14 @@ const Lobby = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
   const [imageSource, setImageSource] = useState('');
-
-  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying, setIsWaiting);
-
+  
   const { players, code } = useContext(RoomContext);
   const { reactDice } = useContext(ReactDiceContext);
+
+  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying, setIsWaiting);
   
   const [history, renderHistory, addToHistory] = useCard();
-  const[rollEvent] = useGame(addToHistory);
+  const [rollEvent, tradeWindow, buildWindow] = useGame(addToHistory);
   const [width, height] = useWindowSize();
   const showThumbnail = src => {
     if(!src){
@@ -101,7 +100,7 @@ const Lobby = () => {
         return (
             <span>
                 <img className="player-avatar" src="https://icons.iconarchive.com/icons/papirus-team/papirus-status/512/avatar-default-icon.png" />
-                <div className="player-name">Player {player}</div>
+                <div className="player-name">{player.email}</div>
             </span>
         );  
     });
@@ -136,21 +135,24 @@ const Lobby = () => {
         <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
           <img src={boardImage} style={{zIndex:"2",width: "auto", height: window.innerHeight, marginBottom: "0px"}} />
           <img src={FlyingChicken} class="image"/>
-          <div style={{position:"absolute", zIndex:"3",width:"60%",height:"30%",left:"20%",top:"40%"}}>
+          <div style={{position:"absolute", zIndex:"0",width:"60%",height:"30%",left:"20%",top:"40%"}}>
             <div style={{position:"absolute",top:"25%",left:"23%",zIndex:"3"}}>
-              <Dice></Dice>
+              <Dice rollEvent={rollEvent}></Dice>
             </div>
                   
             <div style={{position:"absolute",top:"48%",left:"0%"}}>
-              <div class="waves-effect waves-light btn-large" onClick={() => {  }}>Trade</div>
+              {/* <div class="waves-effect waves-light btn-large" onClick={() => { tradeWindow() }}>Trade</div> */}
+              <TradeButton />
             </div>
               <div style={{position:"absolute",top:"48%",right:"0%"}}>
-                <div class="waves-effect waves-light btn-large" onClick={() => {  }}>Build</div>
+                <BuildButton />
+                {/* <div class="waves-effect waves-light btn-large" onClick={() => { buildWindow() }}>Build</div> */}
               </div>
 
               <div style={{position:"absolute",backgroundColor:"gray",left:"25%",bottom:"5%"}}>
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { rollEvent(player, player2) }}>Roll Dice</div> */}
                 <div class="waves-effect waves-light btn-large" onClick={() => { reactDice.rollAll(); }}>Roll Dice</div>
+                {/* <div class="waves-effect waves-light btn-large" onClick={() => { console.log(reactDice.diceContainer.dice[0].state) }}>Roll Dice</div> */}
               </div>
             <div style={{position:"absolute",backgroundColor:"gray",right:"25%",bottom:"5%"}}>
               <a class="waves-effect waves-light btn-large" STYLE={{}}>   End Turn </a>
@@ -201,7 +203,7 @@ const Lobby = () => {
   return (
     <div style={{  minHeight: "100vh", width: "100%", display: "flex", flexDirection: "column", justifyContent: "space-around", margin: "0" }}>
       {
-        //conditionalRender() 
+        // conditionalRender() 
         renderGame()
       }
     </div>

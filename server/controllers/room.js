@@ -22,7 +22,10 @@ router.post('/create', passport.isLoggedIn(), (req, res, next) => {
 
     newRoom.save(err => {
         if (err) return next(err);
-        res.send({ success: "true" });
+        res.send({
+            roomId: req.body.roomId,
+            players: [req.user]
+        });
     });
 });
 
@@ -35,7 +38,7 @@ router.put('/join', passport.isLoggedIn(), (req, res, next) => {
 
         Room.updateOne({ roomId: foundRoom.roomId, players: [...foundRoom.players, req.user] }, (err2, numberAffected, rawResponse) => {
             if (err2) next(err2);
-            res.send({ msg: rawResponse });
+            res.send({ roomId: foundRoom.roomId, players: [...foundRoom.players, req.user] });
         });
     });
 });

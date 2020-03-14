@@ -16,8 +16,6 @@ const useGame = (addToHistory) => {
   const diceRoll = () => {
     die1 = Math.floor(Math.random() * 6) + 1;
     die2 = Math.floor(Math.random() * 6) + 1;
-    die1=0;
-    die2=3;
     // console.log(die1, die2);
   }
 
@@ -331,15 +329,25 @@ const useGame = (addToHistory) => {
     }
   })
 
-  const tradeRequest = () => new Promise(function(resolve, reject) {
-    //GUI lists all players 
-    //player1 selects another player
-    //press ok
-    //other player gets request to trade from player1
-    //if player press ok then trade begins
-  })
-
   const tradeWindow = () => new Promise(function(resolve, reject) {
+    Swal.fire({
+      title: 'Trade',
+      customClass: {
+        container: 'container-class',
+        popup: 'popup-class',
+        header: 'header-class',
+        title: 'title-class',
+        text: 'text-class',
+        closeButton: 'close-button-class',
+        icon: 'icon-class',
+        image: 'image-class',
+        content: 'content-class',
+        actions: 'actions-class',
+        confirmButton: 'confirm-button-class',
+        cancelButton: 'cancel-button-class',
+        footer: 'footer-class'
+      }
+    })
     //both players inventory shows up
     //player 1 chooses what he wants to trade then presses ok
     //player 2 sees the offer
@@ -353,7 +361,28 @@ const useGame = (addToHistory) => {
     // if player 1 counter-offers then player 1 is allowed to choose
   })
 
-  return [rollEvent];
+  const buildWindow = () => new Promise(function(resolve, reject) {
+    Swal.fire({
+      title: 'Build',
+      customClass: {
+        container: 'container-class',
+        popup: 'popup-class',
+        header: 'header-class',
+        title: 'title-class',
+        text: 'text-class',
+        closeButton: 'close-button-class',
+        icon: 'icon-class',
+        image: 'image-class',
+        content: 'content-class',
+        actions: 'actions-class',
+        confirmButton: 'confirm-button-class',
+        cancelButton: 'cancel-button-class',
+        footer: 'footer-class'
+      }
+    })
+  })
+
+  return [rollEvent, tradeWindow, buildWindow];
 }
 
 export default useGame;

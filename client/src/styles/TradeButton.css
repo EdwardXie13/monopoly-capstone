@@ -1,0 +1,30 @@
+.build-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 100%;
+  }
+  
+  #inventory {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  
+  .card-style {
+    padding: 10px;
+    width: 9rem;
+    height: auto;
+  }
+  
+  .right-side {
+    display: flex;
+    justify-content: flex-end;
+    border: 1px solid red;
+    align-items: flex-end;
+    height: inherit;
+  }
+  
+  .confirm-button {
+    top: 50px;
+  }

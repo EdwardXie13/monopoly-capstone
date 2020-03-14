@@ -2,31 +2,14 @@ import React, { useState, useLayoutEffect, useContext } from 'react';
 import ReactDice from 'react-dice-complete'
 import 'react-dice-complete/dist/react-dice-complete.css'
 import ReactDiceContext from '../contexts/ReactDiceContext';
-// import {useWindowSize} from './LobbyPage.js'
 
-function useWindowSize() {
-  const [size, setSize] = useState([0, 0]);
-  useLayoutEffect(() => {
-    function updateSize() {
-      setSize([window.innerWidth, window.innerHeight]);
-    }
-      window.addEventListener('resize', updateSize);
-    updateSize();
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
-  return size;
-}
-
-const Dice = () => {
+const Dice = ({ rollEvent }) => {
   const { setReactDice } = useContext(ReactDiceContext);
 
   const rollDoneCallback = (num) => {
+    console.log(rollEvent);
     console.log(`You rolled a ${num}`)
   }
-
-  // const rollAll = () => {
-  //   reactDice.rollAll();
-  // }
 
   return (
     <div>

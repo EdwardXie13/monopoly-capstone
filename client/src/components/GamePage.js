@@ -1,42 +1,36 @@
 import React from 'react';
+import Swal from 'sweetalert2'
+// import '../styles/GamePage.css';
+// import Brown from '../assets/tradingCards/Brown.png';
+import BuildButton from './BuildButton';
 
-import useGame from '../hooks/useGame';
-import Trading from '../components/Trading';
-import cards from '../library/cards/Title_Deeds_Cards';
-
-const GamePage = () => {
-  //const [Player, rollEvent, trade, endturn] = useGame();
-  const[rollEvent] = useGame();
-
-  //get list of players 
-
-  var tID; //we will use this variable to clear the setInterval()
+const Trade = () => {
   
-  function stopAnimate() {
-    clearInterval(tID);
-  } //end of stopAnimate()
+  //var arr = [Brown, Brown, Brown]
+  // Swal.fire({
+  //   title: 'Build',
+  //   customClass: {
+  //     container: 'container-class',
+  //     popup: 'popup-class',
+  //     header: 'header-class',
+  //     title: 'title-class',
+  //     text: 'text-class',
+  //     closeButton: 'close-button-class',
+  //     icon: 'icon-class',
+  //     image: 'image-class',
+  //     content: 'content-class',
+  //     actions: 'actions-class',
+  //     confirmButton: 'confirm-button-class',
+  //     cancelButton: 'cancel-button-class',
+  //     footer: 'footer-class'
+  //   }
+  // })
 
-  function animateScript(height) {
-    var    position = 0; 
-    const  interval = 150; 
-    const  diff = 128; 
-    tID = setInterval ( () => {
-      document.getElementById("image").style.backgroundPosition = `-${position}px -${height}px`; 
-      
-      if (position < 128) { 
-        position = position + diff;
-      }
-      else { 
-        position = 0; 
-    }
-  }
-  , interval );
+  return (
+    <div>
+      <BuildButton />
+    </div>
+  );
 }
 
-  return(
-    <div id="demo">
-      <p id="image" onMouseEnter={() => animateScript(96) }  onMouseLeave={() => stopAnimate() } > </p>
-  </div>
-  )
-}
-export default GamePage;
+export default Trade;
