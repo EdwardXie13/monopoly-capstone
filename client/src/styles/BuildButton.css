@@ -19,12 +19,30 @@
 
 .right-side {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
   border: 1px solid red;
-  align-items: flex-end;
   height: inherit;
 }
 
-.confirm-button {
-  top: 50px;
+#confirm-button {
+  display: block;
+}
+
+#cost {
+  color: black;
+}
+
+#addHouse {
+  display: block;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+}
+
+.cost-container {
+  display: flex;
 }

@@ -1,12 +1,13 @@
 import { useRef, useEffect, useContext } from 'react';
 import PubNub from 'pubnub';
 import Swal from "sweetalert2";
+import Player from '../classes/Player';
 import shortid  from 'shortid';
 
 import RoomContext from '../contexts/RoomContext';
 import backend from '../apis/backend';
 
-const usePubNub = (setIsPlaying, setIsWaiting) => {
+const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers) => {
   const lobbyChannel = useRef(null);
   const gameChannel = useRef(null);
   const roomId = useRef(null);
@@ -50,6 +51,11 @@ const usePubNub = (setIsPlaying, setIsWaiting) => {
         } else if (msg.message.text === "Player Joined") {
           // Update players state with msg.message.players.
           setPlayers(msg.message.players);
+          
+          const currentPlayer = new Player(msg.message.players[msg.message.players.length-1].email);
+
+          setGamers(prevGamers => { return { ...prevGamers, [msg.message.players[msg.message.players.length-1].email]: currentPlayer } });
+          
         }
       }
     });
@@ -93,48 +99,27 @@ const usePubNub = (setIsPlaying, setIsWaiting) => {
             setCode(roomId.current);
             setPlayers(res.data.players);
             setIsWaiting(true);
-
+            console.log("meow", res.data.players)
             pubnub.publish({ channel: lobbyChannel.current, message: { text: "Player Joined", players: res.data.players } });
+            me.current = res.data.players[res.data.players.length-1].email;
+            
+            let existingPlayers = {};
 
-            if (response.totalOccupancy === 3) {
+            for (let p of res.data.players) {
+              existingPlayers[p.email] = new Player(p.email);
+            }
+
+            const currentPlayer = new Player(me.current);
+
+            setGamers({ ...existingPlayers, [me.current]: currentPlayer });
+
+            console.log(response.totalOccupancy);
+            if (response.totalOccupancy === 1) {
               pubnub.publish({ channel: lobbyChannel.current, message: { text: "Game Started" } });
               gameChannel.current = 'game--' + roomId.current;
               pubnub.subscribe({ channels: [gameChannel.current], withPresence: true });
               setIsPlaying(true);
             }
-            // const publishConfig = {
-            //   channel: lobbyChannel.current,
-            //   message: {
-            //     text: "Game Started"
-            //   }
-            // };
-
-            // pubnub.publish(publishConfig, function(status, response) {});
-            // Start the game.
-            // gameChannel.current = 'game--' + roomId.current;
-    
-            // pubnub.subscribe({
-            //   channels: [gameChannel.current],
-            //   error: error => {
-            //     Swal.fire({
-            //       position: 'center',
-            //       allowOutsideClick: false,
-            //       title: 'Error',
-            //       text: JSON.stringify(error),
-            //       width: 275,
-            //       padding: '0.7em',
-            //       customClass: {
-            //         heightAuto: false,
-            //         title: 'title-class',
-            //         popup: 'popup-class',
-            //         confirmButton: 'button-class'
-            //       }
-            //     });
-            //   }
-            // });
-    
-            // me.current = 'player2';
-            // setIsPlaying(true);
           });
       } else {
         Swal.fire({
@@ -187,23 +172,11 @@ const usePubNub = (setIsPlaying, setIsWaiting) => {
         setIsWaiting(true);
 
         me.current = res.data.players[0].email;
-      });
+        
+        const currentPlayer = new Player(me.current);
 
-    // Swal.fire({
-    //   position: 'center',
-    //   allowOutsideClick: false,
-    //   title: 'Share this room ID with your friend',
-    //   text: roomId.current,
-    //   width: 275,
-    //   padding: '0.7em',
-    //   // Custom CSS
-    //   customClass: {
-    //     heightAuto: false,
-    //     title: 'title-class',
-    //     popup: 'popup-class',
-    //     confirmButton: 'button-class'
-    //   }
-    // });
+        setGamers({ ...gamers, [me.current]: currentPlayer });
+      });
   }
 
   const handleJoinRoom = () => {

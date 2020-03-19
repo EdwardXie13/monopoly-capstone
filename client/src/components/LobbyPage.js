@@ -13,6 +13,7 @@ import Player from '../classes/Player';
 import Card from './Card'
 import BuildButton from './BuildButton';
 import TradeButton from './TradeButton';
+import Deeds from '../classes/Deeds';
 
 import Default from '../assets/cards/Default.png';
 import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
@@ -64,8 +65,12 @@ function useWindowSize() {
 }
 
 const Lobby = () => {
-  const [player, setPlayer] = useState(new Player("Player 1"));
+  const [gamers, setGamers] = useState({});
+
+  const [player1, setPlayer1] = useState(new Player("Player 1"));
   const [player2, setPlayer2] = useState(new Player("Player 2"));
+  // const [player3, setPlayer3] = useState(new Player("Player 3"));
+  // const [player4, setPlayer4] = useState(new Player("Player 4"));
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
@@ -74,8 +79,8 @@ const Lobby = () => {
   const { players, code } = useContext(RoomContext);
   const { reactDice } = useContext(ReactDiceContext);
 
-  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying, setIsWaiting);
-  
+  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers);
+
   const [history, renderHistory, addToHistory] = useCard();
   const [rollEvent, tradeWindow, buildWindow] = useGame(addToHistory);
   const [width, height] = useWindowSize();
@@ -134,7 +139,8 @@ const Lobby = () => {
 
         <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
           <img src={boardImage} style={{zIndex:"2",width: "auto", height: window.innerHeight, marginBottom: "0px"}} />
-          <img src={FlyingChicken} class="image"/>
+          <img src={FlyingChicken} id="image" style={{ position: "absolute", width: "32px", height: "32px", top: "810px", left: "830px" }}/>
+          
           <div style={{position:"absolute", zIndex:"0",width:"60%",height:"30%",left:"20%",top:"40%"}}>
             <div style={{position:"absolute",top:"25%",left:"23%",zIndex:"3"}}>
               <Dice rollEvent={rollEvent}></Dice>
@@ -142,15 +148,15 @@ const Lobby = () => {
                   
             <div style={{position:"absolute",top:"48%",left:"0%"}}>
               {/* <div class="waves-effect waves-light btn-large" onClick={() => { tradeWindow() }}>Trade</div> */}
-              <TradeButton />
+              <TradeButton me={me} gamers={gamers}/>
             </div>
               <div style={{position:"absolute",top:"48%",right:"0%"}}>
-                <BuildButton />
+                <BuildButton player={gamers[me.current]} />
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { buildWindow() }}>Build</div> */}
               </div>
 
               <div style={{position:"absolute",backgroundColor:"gray",left:"25%",bottom:"5%"}}>
-                {/* <div class="waves-effect waves-light btn-large" onClick={() => { rollEvent(player, player2) }}>Roll Dice</div> */}
+                {/* <div class="waves-effect waves-light btn-large" onClick={() => { rollEvent(player1) }}>Roll Dice</div> */}
                 <div class="waves-effect waves-light btn-large" onClick={() => { reactDice.rollAll(); }}>Roll Dice</div>
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { console.log(reactDice.diceContainer.dice[0].state) }}>Roll Dice</div> */}
               </div>
@@ -203,8 +209,8 @@ const Lobby = () => {
   return (
     <div style={{  minHeight: "100vh", width: "100%", display: "flex", flexDirection: "column", justifyContent: "space-around", margin: "0" }}>
       {
-        // conditionalRender() 
-        renderGame()
+        conditionalRender() 
+        // renderGame()
       }
     </div>
   );

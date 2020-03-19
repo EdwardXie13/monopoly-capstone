@@ -1,65 +1,123 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
-import test from '../assets/sprites/006/006_down.gif';
 import '../styles/BuildButton.css';
-
-import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
-import BalticAvenue from '../assets/cards/Baltic Avenue.png';
-import Boardwalk from '../assets/cards/Boardwalk.png';
-import Blank from '../assets/cards/Blank.png';
-import ConnecticutAvenue from '../assets/cards/Connecticut Avenue.png';
-import IllinoisAvenue from '../assets/cards/Illinois Avenue.png';
-import IndianaAvenue from '../assets/cards/Indiana Avenue.png';
-import KentuckyAvenue from '../assets/cards/Kentucky Avenue.png';
-import MarvinGardens from '../assets/cards/Marvin Gardens.png';
-import MediterraneanAvenue from '../assets/cards/Mediterranean Avenue.png';
-import NewYorkAvenue from '../assets/cards/New York Avenue.png';
-import NorthCarolinaAvenue from '../assets/cards/North Carolina Avenue.png';
-import OrientalAvenue from '../assets/cards/Oriental Avenue.png';
-import PacificAvenue from '../assets/cards/Pacific Avenue.png';
-import ParkPlace from '../assets/cards/Park Place.png';
-import PennsylvaniaAvenue from '../assets/cards/Pennsylvania Avenue.png';
-import StCharlesPlace from '../assets/cards/St Charles Place.png';
-import StJamesPlace from '../assets/cards/St James Place.png';
-import StatesAvenue from '../assets/cards/States Avenue.png';
-import TennesseeAvenue from '../assets/cards/Tennessee Avenue.png';
-import VentnorAvenue from '../assets/cards/Ventnor Avenue.png';
-import VermontAvenue from '../assets/cards/Vermont Avenue.png';
-import VirginiaAvenue from '../assets/cards/Virginia Avenue.png';
- 
-const customStyles = {
-  content : {
-    top                   : '50%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
-  }
-};
  
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
 // Modal.setAppElement('#yourAppElement')
  
-const BuildButton = props => {
+const BuildButton = ({ player }) => {
   var subtitle;
   const [modalIsOpen,setIsOpen] = React.useState(false);
+  const [leftSideCards, setLeftSideCards] = React.useState([]);
+  const [rightSideCard, setRightSideCard] = React.useState({});
+  const [tempCost, setTempCost] = React.useState(0);
+  const [houseState, setHouseState] = React.useState();
+  const [tempHouse, setTempHouse] = React.useState(0);
+  const [selectedIndex, setSelectedIndex] = React.useState(-1);
+  
+  React.useEffect(() => { 
+    if (!modalIsOpen) setRightSideCard({});
+    renderCard();
+  }, [modalIsOpen])
+  
   function openModal() {
     setIsOpen(true);
-  }
- 
-  function afterOpenModal() {
-    // references are now sync'd and can be accessed.
-    subtitle.style.color = '#f00';
   }
  
   function closeModal(){
     setIsOpen(false);
   }
 
-  const confirmBuild = () => {
-    console.log("Built")
+  const confirmBuild = (tempCost) => {
+    const selectedCard = player.inventory[selectedIndex];
+    selectedCard.house = tempHouse;
+    if (player.money >= tempCost) {
+      console.log(player.money);
+      player.setMoney(-tempCost);
+      console.log(player.money);
+      setHouseState(tempHouse);
+      setTempCost(0);
+    }
+  }
+
+  const addHouse = () => {
+    console.log("add");
+    if (tempHouse < 5) {
+      setTempHouse(tempHouse + 1);
+      costCalc(tempHouse + 1);
+    }
+  }
+
+  const subHouse = () => {
+    console.log("minus")
+    if (tempHouse > houseState) {
+      setTempHouse(tempHouse - 1);
+
+      costCalc(tempHouse - 1);
+    }
+  }
+
+  const costCalc = tempHouse => {
+    const selectedCard = player.inventory[selectedIndex];
+
+    setTempCost(selectedCard.buildingCost * (tempHouse-houseState) )
+
+    console.log("o.o: ", selectedCard.buildingCost, tempHouse, houseState)
+  }
+
+  const buildCheck = inventory => {
+    let canBuild = { Red: false, Yellow: false, Green: false, DarkBlue: false, Brown: false, LightBlue: false, Pink: false, Orange: false };
+    let counts = {};
+
+    for (var i=0; i<inventory.length; ++i) {
+      const maxCount = inventory[i].color === 'Brown' || inventory[i].color === 'DarkBlue'? 2 : 3;
+      counts[inventory[i].color] = (counts[inventory[i].color] || 0) + 1;
+      if (counts[inventory[i].color] === maxCount ) canBuild[inventory[i].color] = true;
+    }
+
+    return canBuild;
+  }
+
+  const renderCard = () => {
+    let gudCards = [];
+    const canBuild = buildCheck(player.inventory);
+
+    for (let i = 0; i < player.inventory.length; ++i) {
+      const card = player.inventory[i];
+      if (canBuild[card.color] === true) {
+        gudCards.push(<img className="card-style" src={card.src} onClick={e => {
+          document.querySelectorAll('.card-style').forEach(c => c.classList.remove('active-card-style'));
+          e.target.classList.add('active-card-style');
+          setSelectedIndex(i);
+          setRightSideCard(card);
+          setHouseState(card.house);
+          setTempHouse(card.house);
+        }} />)
+      }
+    }
+    
+    setLeftSideCards(gudCards);
+
+    return gudCards;
+  }
+
+  const renderRightSide = () => {
+    return Object.entries(rightSideCard).length > 0 && (
+      <>
+        { <img src={rightSideCard.src} /> }
+        <div className="cost-container">
+          <p> Cost: </p>
+          <p> { tempCost } </p>
+        </div>
+        <div style ={{ padding: "1rem" }}> Current: { houseState } </div>
+        <div className="button-container">
+          <button className="btn blue lighten-3" id = "subHouse" onClick={ () => subHouse() }> - </button>
+          <div style ={{ padding: "1rem" }}> New: { tempHouse } </div>
+          <button className="btn blue lighten-3" id = "addHouse" onClick={ () => addHouse() }> + </button>
+        </div>
+        <button className="btn blue lighten-3" id = "confirm-button" onClick={ () => confirmBuild(tempCost) }> Confirm </button>
+      </>
+    );
   }
  
   return (
@@ -67,40 +125,16 @@ const BuildButton = props => {
       <button className='waves-effect waves-light btn-large' onClick={openModal}>Build</button>
       <Modal
         isOpen={modalIsOpen}
-      //   onAfterOpen={afterOpenModal}
-        
         onRequestClose={closeModal}
-      //   style={customStyles}
         contentLabel="Example Modal"
       >
       <div className="row build-container">
         <div className= "inventory col s6">
-          <img class={"card-style"} src={BalticAvenue}></img>
-          <img class={"card-style"} src={MediterraneanAvenue}></img>
-          <img class={"card-style"} src={Blank}></img>
-          <img class={"card-style"} src={OrientalAvenue}></img>
-          <img class={"card-style"} src={VermontAvenue}></img>
-          <img class={"card-style"} src={ConnecticutAvenue}></img>
-          <img class={"card-style"} src={StCharlesPlace}></img>
-          <img class={"card-style"} src={StatesAvenue}></img>
-          <img class={"card-style"} src={VirginiaAvenue}></img>
-          <img class={"card-style"} src={StJamesPlace}></img>
-          <img class={"card-style"} src={TennesseeAvenue}></img>
-          <img class={"card-style"} src={NewYorkAvenue}></img>
-          <img class={"card-style"} src={KentuckyAvenue}></img>
-          <img class={"card-style"} src={IndianaAvenue}></img>
-          <img class={"card-style"} src={IllinoisAvenue}></img>
-          <img class={"card-style"} src={AtlanticAvenue}></img>
-          <img class={"card-style"} src={VentnorAvenue}></img>
-          <img class={"card-style"} src={MarvinGardens}></img>
-          <img class={"card-style"} src={PacificAvenue}></img>
-          <img class={"card-style"} src={NorthCarolinaAvenue}></img>
-          <img class={"card-style"} src={PennsylvaniaAvenue}></img>
-          <img class={"card-style"} src={ParkPlace}></img>
-          <img class={"card-style"} src={Boardwalk}></img>
+          { leftSideCards }
         </div>
+
         <div className= "right-side col s6">
-          <button className="btn blue lighten-3" id = "confirm-button" onClick={ () => confirmBuild() }> Confirm </button>
+          { renderRightSide() }
         </div>
       </div>
         

@@ -8,7 +8,7 @@ const Dice = ({ rollEvent }) => {
 
   const rollDoneCallback = (num) => {
     console.log(rollEvent);
-    console.log(`You rolled a ${num}`)
+    // console.log(`You rolled a ${num}`)
   }
 
   return (
@@ -20,7 +20,7 @@ const Dice = ({ rollEvent }) => {
         faceColor="White"
         dieSize= {window.innerHeight/10}
         dotColor="black"
-        rollTime="1.35"
+        rollTime=".5"
         margin="30"
         outline="true"
         outlineColor="black"

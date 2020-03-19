@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
 import '../styles/TradeButton.css';
+import Deeds from '../classes/Deeds';
 
 import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
 import BandORailroad from '../assets/cards/B and O Railroad.png';
@@ -31,39 +32,95 @@ import VentnorAvenue from '../assets/cards/Ventnor Avenue.png';
 import VermontAvenue from '../assets/cards/Vermont Avenue.png';
 import VirginiaAvenue from '../assets/cards/Virginia Avenue.png';
 import WaterWorks from '../assets/cards/Water Works.png';
-
-const customStyles = {
-  content : {
-    top                   : '50%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
-  }
-};
  
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
 // Modal.setAppElement('#yourAppElement')
  
-const TradeButton = props => {
+const TradeButton = ({ me , gamers}) => {
   var subtitle;
   const [modalIsOpen,setIsOpen] = React.useState(false);
+  const [myInventory, setMyInventory] = React.useState([]);
+  const [otherInventory, setOtherInventory] = React.useState({});
+  const [selected, setSelected] = React.useState(null);
+
+  const [myStuff, setMyStuff] = React.useState({ money: 0, properties: new Set([]) });
+  const [theirStuff, setTheirStuff] = React.useState({ money: 0, properties: new Set([]) });
+  console.log(theirStuff);
+  React.useEffect(() => { 
+    if (!modalIsOpen) setOtherInventory({});
+    spawnItems();
+    setMyInventory(renderMyTrade(gamers[me.current].inventory));
+  }, [modalIsOpen])
+
   function openModal() {
     setIsOpen(true);
-  }
- 
-  function afterOpenModal() {
-    // references are now sync'd and can be accessed.
-    subtitle.style.color = '#f00';
   }
  
   function closeModal(){
     setIsOpen(false);
   }
 
-  const confirmBuild = () => {
-    console.log("Built")
+  const confirmTrade = () => {
+    console.log("Trade confirmed")
+  }
+
+  const spawnItems = () => {
+    gamers[me.current].inventory.push(new Deeds("MA", "property", 1, "Brown" , 2, MediterraneanAvenue, 50))
+    gamers[me.current].inventory.push(new Deeds("BA", "property", 3, "Brown", 4, BalticAvenue, 50))
+    gamers[me.current].inventory.push(new Deeds("OA", "property", 6, "LightBlue", 6, OrientalAvenue, 50))
+    gamers[me.current].inventory.push(new Deeds("VA", "property", 8, "LightBlue", 6, VermontAvenue, 50))
+    gamers[me.current].inventory.push(new Deeds("CA", "property", 9, "LightBlue", 8, ConnecticutAvenue, 50))
+    gamers[me.current].inventory.push(new Deeds("SCP", "property", 11, "Pink", 10, StCharlesPlace, 100))
+
+    // gamers["1@2.com"].inventory.push(new Deeds("MEWO1", "property", 11, "Pink", 10, StCharlesPlace, 100))
+    // gamers["1@2.com"].inventory.push(new Deeds("MEWO2", "property", 11, "Pink", 10, StCharlesPlace, 100))
+    // gamers["1@2.com"].inventory.push(new Deeds("MEWO3", "property", 11, "Pink", 10, StCharlesPlace, 100))
+    // gamers["1@2.com"].inventory.push(new Deeds("MEWO4", "property", 11, "Pink", 10, StCharlesPlace, 100))
+  }
+
+  const renderMyTrade = inventory => {
+    const isMyInven = JSON.stringify(inventory) === JSON.stringify(gamers[me.current].inventory);
+
+    let myInv=[];
+    for (let i = 0; i < inventory.length; ++i) {
+      myInv.push(
+          <label>
+            <input type="checkbox" name={inventory[i].name} onChange={e => {
+              const checked = e.target.checked;
+              const name = e.target.name;
+              if (isMyInven) {
+                setMyStuff(prevStuff => { 
+                  let myProps = new Set([...prevStuff.properties]);
+                  checked? myProps.add(name) : myProps.delete(name);
+                  return { ...prevStuff, properties: myProps };
+                });
+              } else {
+                setTheirStuff(prevStuff => { 
+                  let theirProps = new Set([...prevStuff.properties]);
+                  checked? theirProps.add(name) : theirProps.delete(name);
+                  return { ...theirStuff, properties: theirProps }
+                });
+              }
+            }} />
+            <span style = {{display:"block"}} className="prop-span">
+              <img className="card-styling" style={{backgroundColor: inventory[i].color}}/>
+              <h className="inv-text-styling"> {inventory[i].name} </h>
+            </span>
+          </label>
+      )
+    }
+    // if (isMyInven) setMyInventory(myInv);
+    return myInv;
+  }
+
+  const renderOptions = () => {
+    const options = [<option value="">Select a player</option>];
+
+    for (let key in gamers) {
+      if (me.current !== key) options.push(<option value={key}>{key}</option>)
+    }
+
+    return options;
   }
  
   return (
@@ -71,18 +128,29 @@ const TradeButton = props => {
       <button className='waves-effect waves-light btn-large' onClick={openModal}>Trade</button>
       <Modal
         isOpen={modalIsOpen}
-      //   onAfterOpen={afterOpenModal}
-        
         onRequestClose={closeModal}
-      //   style={customStyles}
         contentLabel="Example Modal"
       >
-      <div className="row build-container">
-        <div className= "inventory col s6">
-        
+      <div className="trade-container">
+      <h1 style = {{display:"flex", justifyContent:"center", fontSize:"2rem"}}> Trade </h1>
+        <div className="row">
+          <div className="col s6">
+            <div style={{ height: "45px" }}>{me.current}</div>
+            <div>My money: {gamers[me.current].money}</div>
+            <input type="number" placeholder="$" value={myStuff.money} onChange={ e => setMyStuff({ ...myStuff, money: e.target.value }) } />
+              { myInventory }
+          </div>
+          <div className="col s6">
+            <select className="browser-default" onChange={ e => setSelected(e.target.value) }>
+              { renderOptions() }
+            </select>
+            { selected !== null && <div>{gamers[selected].name}'s money: {gamers[selected].money}</div> }
+            <input type="number" placeholder="$" value={theirStuff.money} onChange={ e => setTheirStuff({ ...theirStuff, money: e.target.value }) } />
+            { selected !== null && renderMyTrade(gamers[selected].inventory) }
+          </div>
         </div>
-        <div className= "right-side col s6">
-          <button className="btn blue lighten-3" id = "confirm-button" onClick={ () => confirmBuild() }> Confirm Trade </button>
+        <div className="row">
+          
         </div>
       </div>
         
