@@ -36,7 +36,7 @@ import WaterWorks from '../assets/cards/Water Works.png';
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
 // Modal.setAppElement('#yourAppElement')
  
-const TradeButton = ({ me , gamers}) => {
+const TradeButton = ({ me , gamers, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm }) => {
   var subtitle;
   const [modalIsOpen,setIsOpen] = React.useState(false);
   const [myInventory, setMyInventory] = React.useState([]);
@@ -45,37 +45,31 @@ const TradeButton = ({ me , gamers}) => {
 
   const [myStuff, setMyStuff] = React.useState({ money: 0, properties: new Set([]) });
   const [theirStuff, setTheirStuff] = React.useState({ money: 0, properties: new Set([]) });
-  console.log(theirStuff);
+
   React.useEffect(() => { 
     if (!modalIsOpen) setOtherInventory({});
-    spawnItems();
     setMyInventory(renderMyTrade(gamers[me.current].inventory));
-  }, [modalIsOpen])
+
+  }, [modalIsOpen, gamers])
 
   function openModal() {
     setIsOpen(true);
+    handleOpenTrade([...myStuff.properties]);
   }
  
   function closeModal(){
     setIsOpen(false);
+    setMyStuff({ money: 0, properties: new Set([]) });
+    setTheirStuff({ money: 0, properties: new Set([]) });
   }
 
-  const confirmTrade = () => {
-    console.log("Trade confirmed")
+  const acceptTrade = () => {
+    handleConfirm(selected);
+    console.log("Trade accepted")
   }
 
-  const spawnItems = () => {
-    gamers[me.current].inventory.push(new Deeds("MA", "property", 1, "Brown" , 2, MediterraneanAvenue, 50))
-    gamers[me.current].inventory.push(new Deeds("BA", "property", 3, "Brown", 4, BalticAvenue, 50))
-    gamers[me.current].inventory.push(new Deeds("OA", "property", 6, "LightBlue", 6, OrientalAvenue, 50))
-    gamers[me.current].inventory.push(new Deeds("VA", "property", 8, "LightBlue", 6, VermontAvenue, 50))
-    gamers[me.current].inventory.push(new Deeds("CA", "property", 9, "LightBlue", 8, ConnecticutAvenue, 50))
-    gamers[me.current].inventory.push(new Deeds("SCP", "property", 11, "Pink", 10, StCharlesPlace, 100))
-
-    // gamers["1@2.com"].inventory.push(new Deeds("MEWO1", "property", 11, "Pink", 10, StCharlesPlace, 100))
-    // gamers["1@2.com"].inventory.push(new Deeds("MEWO2", "property", 11, "Pink", 10, StCharlesPlace, 100))
-    // gamers["1@2.com"].inventory.push(new Deeds("MEWO3", "property", 11, "Pink", 10, StCharlesPlace, 100))
-    // gamers["1@2.com"].inventory.push(new Deeds("MEWO4", "property", 11, "Pink", 10, StCharlesPlace, 100))
+  const declineTrade = () => {
+    console.log("Trade declined")
   }
 
   const renderMyTrade = inventory => {
@@ -89,15 +83,18 @@ const TradeButton = ({ me , gamers}) => {
               const checked = e.target.checked;
               const name = e.target.name;
               if (isMyInven) {
+                
                 setMyStuff(prevStuff => { 
                   let myProps = new Set([...prevStuff.properties]);
                   checked? myProps.add(name) : myProps.delete(name);
+                  handleLeftTradesChange(new Set([ ...myProps ]));
                   return { ...prevStuff, properties: myProps };
                 });
               } else {
                 setTheirStuff(prevStuff => { 
                   let theirProps = new Set([...prevStuff.properties]);
                   checked? theirProps.add(name) : theirProps.delete(name);
+                  handleRightTradesChange(new Set([ ...theirProps ]));
                   return { ...theirStuff, properties: theirProps }
                 });
               }
@@ -109,7 +106,7 @@ const TradeButton = ({ me , gamers}) => {
           </label>
       )
     }
-    // if (isMyInven) setMyInventory(myInv);
+    
     return myInv;
   }
 
@@ -137,20 +134,23 @@ const TradeButton = ({ me , gamers}) => {
           <div className="col s6">
             <div style={{ height: "45px" }}>{me.current}</div>
             <div>My money: {gamers[me.current].money}</div>
-            <input type="number" placeholder="$" value={myStuff.money} onChange={ e => setMyStuff({ ...myStuff, money: e.target.value }) } />
+            <input type="number" placeholder="$" value={myStuff.money} onChange={ e => { setMyStuff({ ...myStuff, money: e.target.value }); handleMyStuffMoneyChange(e.target.value) } } />
+            <div className="my-trades">
               { myInventory }
+            </div>
           </div>
           <div className="col s6">
-            <select className="browser-default" onChange={ e => setSelected(e.target.value) }>
+            <select className="browser-default" onChange={ e => { setSelected(e.target.value); handleSelectorChange(e.target.value); } }>
               { renderOptions() }
             </select>
-            { selected !== null && <div>{gamers[selected].name}'s money: {gamers[selected].money}</div> }
-            <input type="number" placeholder="$" value={theirStuff.money} onChange={ e => setTheirStuff({ ...theirStuff, money: e.target.value }) } />
-            { selected !== null && renderMyTrade(gamers[selected].inventory) }
+            { selected !== null && gamers[selected] && <div>{gamers[selected].name}'s money: {gamers[selected].money}</div> }
+            <input type="number" placeholder="$" value={theirStuff.money} onChange={ e => { setTheirStuff({ ...theirStuff, money: e.target.value }); handleRightValueChange(e.target.value) } } />
+            { selected !== null && gamers[selected] && renderMyTrade(gamers[selected].inventory) }
           </div>
         </div>
-        <div className="row">
-          
+        <div className="row" style = {{display: "flex", justifyContent:"center"}}>
+          <button className="btn blue lighten-3" id = "bottom-trade-button" onClick={ () => acceptTrade() } > Accept </button>
+          <button className="btn blue lighten-3" id = "bottom-trade-button" onClick={ () => declineTrade() } > Decline </button>
         </div>
       </div>
         

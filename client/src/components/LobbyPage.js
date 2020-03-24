@@ -6,6 +6,7 @@ import '../styles/RoomPage.css';
 import usePubNub from '../hooks/usePubNub';
 import ReactDiceContext from '../contexts/ReactDiceContext';
 import RoomContext from '../contexts/RoomContext';
+import BiddingContext from '../contexts/BiddingContext';
 import boardImage from '../assets/boards/Classic copy.jpeg';
 import useGame from '../hooks/useGame';
 import useCard from '../hooks/useCard';
@@ -13,7 +14,8 @@ import Player from '../classes/Player';
 import Card from './Card'
 import BuildButton from './BuildButton';
 import TradeButton from './TradeButton';
-import Deeds from '../classes/Deeds';
+import TradeSync from './TradeSync';
+import Bid from '../components/Bid';
 
 import Default from '../assets/cards/Default.png';
 import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
@@ -50,6 +52,7 @@ import FlyingChicken from '../assets/sprites/149/149_left.gif';
 import 'react-dice-complete/dist/react-dice-complete.css'
 import Dice from '../components/Dice';
 import Trade from './GamePage';
+import TradeSyncContext from '../contexts/TradeSyncContext';
 
 function useWindowSize() {
   const [size, setSize] = useState([0, 0]);
@@ -66,24 +69,31 @@ function useWindowSize() {
 
 const Lobby = () => {
   const [gamers, setGamers] = useState({});
-
+  
   const [player1, setPlayer1] = useState(new Player("Player 1"));
   const [player2, setPlayer2] = useState(new Player("Player 2"));
   // const [player3, setPlayer3] = useState(new Player("Player 3"));
   // const [player4, setPlayer4] = useState(new Player("Player 4"));
-
+  const [openTrade, setOpenTrade] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
   const [imageSource, setImageSource] = useState('');
+  const [turnIdx, setTurnIdx] = useState(0);
+  const [biddingTurnIdx, setBiddingTurnIdx] = useState(turnIdx);
+  const [highestBid, setHighestBid] = useState({ amount: -Infinity, player: { name: '' } });
+  const [isRolled, setIsRolled] = useState(false);
   
   const { players, code } = useContext(RoomContext);
   const { reactDice } = useContext(ReactDiceContext);
-
-  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers);
+  const { trader, setTrader, myStuffMoney, setMyStuffMoney, leftTrades, setLeftTrades, rightSelect, setRightSelect, rightValue, setRightValue, rightTrades, setRightTrades, isConfirm, setIsConfirm } = useContext(TradeSyncContext);
+  const { openBid, setOpenBid, name, setName } = useContext(BiddingContext);
+  
+  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid);
 
   const [history, renderHistory, addToHistory] = useCard();
-  const [rollEvent, tradeWindow, buildWindow] = useGame(addToHistory);
+  const [rollEvent] = useGame(addToHistory, setOpenBid, setName);
   const [width, height] = useWindowSize();
+  console.log("gamers", gamers);
   const showThumbnail = src => {
     if(!src){
         return <img src={Default} style={{ position: "relative", height:window.innerHeight/2.5}}/>
@@ -99,6 +109,8 @@ const Lobby = () => {
       <button className="btn blue lighten-3" onClick={handleJoinRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Join Room</button>
     </div>
   );
+
+  const getCurrentPlayer = () => gamers[Object.keys(gamers)[turnIdx]];
 
   const renderPlayers = () => {
     return players.map(player => {
@@ -143,12 +155,14 @@ const Lobby = () => {
           
           <div style={{position:"absolute", zIndex:"0",width:"60%",height:"30%",left:"20%",top:"40%"}}>
             <div style={{position:"absolute",top:"25%",left:"23%",zIndex:"3"}}>
-              <Dice rollEvent={rollEvent}></Dice>
+              <Dice rollEvent={rollEvent} turnIdx={turnIdx} gamers={gamers} ></Dice>
             </div>
                   
             <div style={{position:"absolute",top:"48%",left:"0%"}}>
               {/* <div class="waves-effect waves-light btn-large" onClick={() => { tradeWindow() }}>Trade</div> */}
-              <TradeButton me={me} gamers={gamers}/>
+              <TradeButton me={me} gamers={gamers} handleOpenTrade={handleOpenTrade} handleMyStuffMoneyChange={handleMyStuffMoneyChange} handleLeftTradesChange={handleLeftTradesChange} handleSelectorChange={handleSelectorChange} handleRightValueChange={handleRightValueChange} handleRightTradesChange={handleRightTradesChange} handleConfirm={handleConfirm} />
+              <TradeSync handleLeftTradesChange={handleLeftTradesChange} handleRightTradesChange={handleRightTradesChange} setIsConfirm={setIsConfirm} openTrade={openTrade} trader={trader} gamers={gamers} myStuffMoney={myStuffMoney} leftTrades={leftTrades} rightSelect={rightSelect} rightValue={rightValue} rightTrades={rightTrades} isConfirm={isConfirm} handleYes={handleYes} />
+              <Bid me={me} player={getCurrentPlayer()} openBid={openBid} setOpenBid={setOpenBid} handleDeclineBidding={handleDeclineBidding} handleAcceptBidding={handleAcceptBidding} highestBid={highestBid} />
             </div>
               <div style={{position:"absolute",top:"48%",right:"0%"}}>
                 <BuildButton player={gamers[me.current]} />
@@ -157,11 +171,11 @@ const Lobby = () => {
 
               <div style={{position:"absolute",backgroundColor:"gray",left:"25%",bottom:"5%"}}>
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { rollEvent(player1) }}>Roll Dice</div> */}
-                <div class="waves-effect waves-light btn-large" onClick={() => { reactDice.rollAll(); }}>Roll Dice</div>
+                <div class="waves-effect waves-light btn-large" onClick={() => { reactDice.rollAll(); setIsRolled(true); }} disabled={ (Object.keys(gamers)[turnIdx] !== me.current) || (isRolled && gamers[me.current].doubles === 0) } >Roll Dice</div>
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { console.log(reactDice.diceContainer.dice[0].state) }}>Roll Dice</div> */}
               </div>
             <div style={{position:"absolute",backgroundColor:"gray",right:"25%",bottom:"5%"}}>
-              <a class="waves-effect waves-light btn-large" STYLE={{}}>   End Turn </a>
+              <a class="waves-effect waves-light btn-large"  onClick={() => { handleNextTurn(); setIsRolled(false); }} disabled={!isRolled} >   End Turn </a>
             </div>
           </div>
           

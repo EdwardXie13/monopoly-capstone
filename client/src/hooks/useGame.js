@@ -1,59 +1,16 @@
 import Swal from 'sweetalert2';
-
 import board from '../library/board/board.js';
 import useEffects from '../hooks/useEffects';
 import Deeds from '../classes/Deeds';
 
-import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
-import BandORailroad from '../assets/cards/B and O Railroad.png';
-import BalticAvenue from '../assets/cards/Baltic Avenue.png';
-import Boardwalk from '../assets/cards/Boardwalk.png';
-import ConnecticutAvenue from '../assets/cards/Connecticut Avenue.png';
-import ElectricCompany from '../assets/cards/Electric Company.png';
-import IllinoisAvenue from '../assets/cards/Illinois Avenue.png';
-import IndianaAvenue from '../assets/cards/Indiana Avenue.png';
-import KentuckyAvenue from '../assets/cards/Kentucky Avenue.png';
-import MarvinGardens from '../assets/cards/Marvin Gardens.png';
-import MediterraneanAvenue from '../assets/cards/Mediterranean Avenue.png';
-import NewYorkAvenue from '../assets/cards/New York Avenue.png';
-import NorthCarolinaAvenue from '../assets/cards/North Carolina Avenue.png';
-import OrientalAvenue from '../assets/cards/Oriental Avenue.png';
-import PacificAvenue from '../assets/cards/Pacific Avenue.png';
-import ParkPlace from '../assets/cards/Park Place.png';
-import PennsylvaniaAvenue from '../assets/cards/Pennsylvania Avenue.png';
-import PennsylvaniaRailroad from '../assets/cards/Pennsylvania Railroad.png';
-import ReadingRailroad from '../assets/cards/Reading Railroad.png';
-import ShortLineRailroad from '../assets/cards/Short Line Railroad.png';
-import StCharlesPlace from '../assets/cards/St Charles Place.png';
-import StJamesPlace from '../assets/cards/St James Place.png';
-import StatesAvenue from '../assets/cards/States Avenue.png';
-import TennesseeAvenue from '../assets/cards/Tennessee Avenue.png';
-import VentnorAvenue from '../assets/cards/Ventnor Avenue.png';
-import VermontAvenue from '../assets/cards/Vermont Avenue.png';
-import VirginiaAvenue from '../assets/cards/Virginia Avenue.png';
-import WaterWorks from '../assets/cards/Water Works.png';
-
-const useGame = (addToHistory) => {
+const useGame = (addToHistory, setOpenBid, setName) => {
   const [communityEffect, chanceEffect] = useEffects();
-  
-  var die1, die2;
 
-  const endTurn = () => {
-    
-  }
-  
-  const diceRoll = () => {
-    die1 = Math.floor(Math.random() * 6) + 1;
-    die2 = Math.floor(Math.random() * 6) + 1;
-    // console.log(die1, die2);
-  }
-
-  const rollEvent = async (player) => { 
+  const rollEvent = async (die1, die2, player) => { 
     if (player.bankrupt === false) {
       await payJail(player);
 
       if (player.jail === false) {
-        diceRoll();
         if (die1 === die2) {
           if (player.doubles === 2) {
             addToHistory("Triple Doubles, Go to Jail")
@@ -63,22 +20,21 @@ const useGame = (addToHistory) => {
           else {
             player.setDoubles();
             addToHistory(player.doubles, " Double");
-            movePlayer(player, die1+die2);
+            movePlayer(die1, die2, player );
           }
         }
         else {
-          movePlayer(player, die1+die2);
+          movePlayer(die1, die2, player );
           player.resetDoubles();
         }
       }
       else if (player.jail === true) {
-        diceRoll();
         if (die1 === die2) {
           addToHistory("freed from jail");
           player.setJail(false);
           player.resetJailroll();
           player.setLocation("Just Visiting", 10);
-          movePlayer(player, die1+die2);
+          movePlayer(die1, die2, player );
         } else {
           if (player.jailroll === 2) {
             if (player.money > 49) {
@@ -87,7 +43,7 @@ const useGame = (addToHistory) => {
               player.setJail(false);
               player.resetJailroll();
               player.setLocation("Just Visiting", 10);
-              movePlayer(player, die1+die2);
+              movePlayer(die1, die2, player );
             } else {
               console.log("trigger selling mode");
               sellStuff = (player, 50)
@@ -129,21 +85,17 @@ const useGame = (addToHistory) => {
     else resolve (false);
   })
 
-  const movePlayer = async (player, roll) => {
+  const movePlayer = async (die1, die2, player) => {
     //save state here maybe?
-    if (player.index + roll > 39) {
+    if (player.index + die1 + die2 > 39) {
       addToHistory(player.money,"Pass go collect 200");
       player.setMoney(200);
       addToHistory(player.money);
     }
-    // for (let i = 0; i < roll * 100; i++) {
-      let test = document.querySelector('#image');
-      test.style.left = `${parseInt(test.style.left) - 78}px`;
-    // }
-    player.setLocation( board[((player.index+roll)%40)].name, ((player.index+roll)%40));
+    player.setLocation( board[((player.index+die1 + die2)%40)].name, ((player.index+die1 + die2)%40));
     addToHistory(player.location);
     if (board[player.index].type !== "Tile" && board[player.index].type !== "Event") {
-      await checkOwner(player);
+      await checkOwner(die1, die2, player);
     } else {
       if (board[player.index].name === "Community Chest") {
         addToHistory("Community Chest");
@@ -180,7 +132,7 @@ const useGame = (addToHistory) => {
     }
   }
   
-  const checkOwner = (player) => new Promise(function(resolve, reject) {
+  const checkOwner = (die1, die2, player) => new Promise(function(resolve, reject) {
     if (board[player.index].owned === false && player.money > board[player.index].price) {
       Swal.fire({
         position: 'center',
@@ -200,10 +152,11 @@ const useGame = (addToHistory) => {
           addToHistory(player.money);
         }
         else {
-          //work on bidding after get multiple players
+          addToHistory("bidding begins");
+          setName(board[player.index].name);
+          setOpenBid(true);
           //if no bidding begins
           //window pop up to prompt bid amount
-          addToHistory("bidding begins");
         }
       })
     }
@@ -355,60 +308,7 @@ const useGame = (addToHistory) => {
     }
   })
 
-  const tradeWindow = () => new Promise(function(resolve, reject) {
-    Swal.fire({
-      title: 'Trade',
-      customClass: {
-        container: 'container-class',
-        popup: 'popup-class',
-        header: 'header-class',
-        title: 'title-class',
-        text: 'text-class',
-        closeButton: 'close-button-class',
-        icon: 'icon-class',
-        image: 'image-class',
-        content: 'content-class',
-        actions: 'actions-class',
-        confirmButton: 'confirm-button-class',
-        cancelButton: 'cancel-button-class',
-        footer: 'footer-class'
-      }
-    })
-    //both players inventory shows up
-    //player 1 chooses what he wants to trade then presses ok
-    //player 2 sees the offer
-    // if player 2 accepts then trade goes through
-    // if player 2 declines then trade window closes
-    // if player 2 counter-offers then player 2 is allowed to choose and press ok
-    //======Recurse?=====
-    //player 1 sees the offer
-    // if player 1 accepts, trade goes through
-    // if player 1 declines then trade window closes
-    // if player 1 counter-offers then player 1 is allowed to choose
-  })
-
-  const buildWindow = () => new Promise(function(resolve, reject) {
-    Swal.fire({
-      title: 'Build',
-      customClass: {
-        container: 'container-class',
-        popup: 'popup-class',
-        header: 'header-class',
-        title: 'title-class',
-        text: 'text-class',
-        closeButton: 'close-button-class',
-        icon: 'icon-class',
-        image: 'image-class',
-        content: 'content-class',
-        actions: 'actions-class',
-        confirmButton: 'confirm-button-class',
-        cancelButton: 'cancel-button-class',
-        footer: 'footer-class'
-      }
-    })
-  })
-
-  return [rollEvent, tradeWindow, buildWindow];
+  return [rollEvent];
 }
 
 export default useGame;

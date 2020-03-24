@@ -1,0 +1,8 @@
+.bid-container {
+  display: block;
+}
+.display {
+  display: flex;
+  justify-content: center;
+}
+

@@ -1,35 +1,27 @@
-import React from 'react';
-import Swal from 'sweetalert2'
-// import '../styles/GamePage.css';
-// import Brown from '../assets/tradingCards/Brown.png';
+import React, { useEffect } from 'react';
 import BuildButton from './BuildButton';
 
 const Trade = () => {
-  
-  //var arr = [Brown, Brown, Brown]
-  // Swal.fire({
-  //   title: 'Build',
-  //   customClass: {
-  //     container: 'container-class',
-  //     popup: 'popup-class',
-  //     header: 'header-class',
-  //     title: 'title-class',
-  //     text: 'text-class',
-  //     closeButton: 'close-button-class',
-  //     icon: 'icon-class',
-  //     image: 'image-class',
-  //     content: 'content-class',
-  //     actions: 'actions-class',
-  //     confirmButton: 'confirm-button-class',
-  //     cancelButton: 'cancel-button-class',
-  //     footer: 'footer-class'
-  //   }
-  // })
+  useEffect(() => { 
+    const text = document.querySelector('.my-trades').cloneNode(true);
+    document.querySelector('.clone').appendChild( document.createElement("div") );
+  }, []);
+
+  // const renderTest = () => document.querySelector('.test');
 
   return (
-    <div>
-      <BuildButton />
-    </div>
+    <>
+      <div class="my-trades">
+        <label>
+          <input type="checkbox" name="MA" checked />
+          <span class="prop-span" style={{ display: "block" }}>
+            <img class="card-styling" style={{ backgroundColor: "brown" }} />
+            <h class="inv-text-styling"> MA </h>
+          </span>
+        </label>
+      </div>
+      <div className="clone"></div>
+    </>
   );
 }
 

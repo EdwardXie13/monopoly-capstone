@@ -3,11 +3,15 @@ import ReactDice from 'react-dice-complete'
 import 'react-dice-complete/dist/react-dice-complete.css'
 import ReactDiceContext from '../contexts/ReactDiceContext';
 
-const Dice = ({ rollEvent }) => {
-  const { setReactDice } = useContext(ReactDiceContext);
+const Dice = ({ rollEvent, turnIdx, gamers }) => {
+  const { reactDice, setReactDice } = useContext(ReactDiceContext);
 
   const rollDoneCallback = (num) => {
-    console.log(rollEvent);
+    // console.log(rollEvent);
+    const die0 = reactDice.diceContainer.dice[0].state.currentValue
+    const die1 = reactDice.diceContainer.dice[1].state.currentValue
+    
+    rollEvent(die0, die1, Object.values(gamers)[turnIdx]);
     // console.log(`You rolled a ${num}`)
   }
 

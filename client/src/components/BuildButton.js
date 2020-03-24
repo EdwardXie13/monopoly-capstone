@@ -14,10 +14,18 @@ const BuildButton = ({ player }) => {
   const [houseState, setHouseState] = React.useState();
   const [tempHouse, setTempHouse] = React.useState(0);
   const [selectedIndex, setSelectedIndex] = React.useState(-1);
+  const [mortgage, setMortgage] = React.useState(null);
+
+  const [showBuild, setShowBuild] = React.useState(false);
+  const [showManage, setShowManage] = React.useState(false);
+
   
   React.useEffect(() => { 
     if (!modalIsOpen) setRightSideCard({});
     renderCard();
+    setShowBuild(false);
+    setShowManage(false);
+    setTempCost(0);
   }, [modalIsOpen])
   
   function openModal() {
@@ -40,20 +48,58 @@ const BuildButton = ({ player }) => {
     }
   }
 
-  const addHouse = () => {
-    console.log("add");
+  const confirmManage = (tempCost) => {
+    const selectedCard = player.inventory[selectedIndex];
+    selectedCard.house = tempHouse;
+    player.setMoney(tempCost);
+    setHouseState(tempHouse);
+    setTempCost(0);
+    console.log(player.money);
+  }
+
+  const addBuildHouse = () => {
     if (tempHouse < 5) {
       setTempHouse(tempHouse + 1);
       costCalc(tempHouse + 1);
     }
   }
 
-  const subHouse = () => {
-    console.log("minus")
+  const subBuildHouse = () => {
     if (tempHouse > houseState) {
       setTempHouse(tempHouse - 1);
 
       costCalc(tempHouse - 1);
+    }
+  }
+
+  const addManageHouse = () => {
+    console.log("add")
+    if (tempHouse < houseState) {
+      setTempHouse(tempHouse + 1);
+      profitCalc(tempHouse + 1);
+    }
+  }
+
+  const subManageHouse = () => {
+    if (tempHouse > 0 ) {
+      setTempHouse(tempHouse - 1);
+      profitCalc(tempHouse - 1);
+    }
+  }
+
+  const mortgageHouse = () => {
+    if (mortgage === false) {
+      setMortgage(prevMortgage => { 
+        console.log("morgage set to true");
+        profitCalc(tempHouse, prevMortgage);
+        return true;
+      })
+    } else if (mortgage === true) {
+      setMortgage(prevMortgage => { 
+        console.log("morgage set to false");
+        profitCalc(tempHouse, prevMortgage);
+        return false;
+      })  
     }
   }
 
@@ -63,6 +109,20 @@ const BuildButton = ({ player }) => {
     setTempCost(selectedCard.buildingCost * (tempHouse-houseState) )
 
     console.log("o.o: ", selectedCard.buildingCost, tempHouse, houseState)
+  }
+
+  const profitCalc = (tempHouse, prevMortgage) => {
+    console.log("profit calculated", mortgage)
+    const selectedCard = player.inventory[selectedIndex];
+    if (prevMortgage === false) {
+      setTempCost( (selectedCard.buildingCost/2 *(houseState-tempHouse)) + (player.inventory[selectedIndex].price/2) )
+      console.log(tempCost);
+    } else if (prevMortgage === true) {
+      setTempCost( (selectedCard.buildingCost/2 *(houseState-tempHouse)) - (player.inventory[selectedIndex].price/2) )
+      console.log(tempCost);
+    } else {
+     setTempCost(selectedCard.buildingCost/2 *(houseState-tempHouse)  )
+    }
   }
 
   const buildCheck = inventory => {
@@ -92,6 +152,7 @@ const BuildButton = ({ player }) => {
           setRightSideCard(card);
           setHouseState(card.house);
           setTempHouse(card.house);
+          setMortgage(card.mortgage);
         }} />)
       }
     }
@@ -101,7 +162,7 @@ const BuildButton = ({ player }) => {
     return gudCards;
   }
 
-  const renderRightSide = () => {
+  const renderBuildSide = () => {
     return Object.entries(rightSideCard).length > 0 && (
       <>
         { <img src={rightSideCard.src} /> }
@@ -111,13 +172,48 @@ const BuildButton = ({ player }) => {
         </div>
         <div style ={{ padding: "1rem" }}> Current: { houseState } </div>
         <div className="button-container">
-          <button className="btn blue lighten-3" id = "subHouse" onClick={ () => subHouse() }> - </button>
+          <button className="btn blue lighten-3" id = "subHouse" onClick={ () => subBuildHouse() }> - </button>
           <div style ={{ padding: "1rem" }}> New: { tempHouse } </div>
-          <button className="btn blue lighten-3" id = "addHouse" onClick={ () => addHouse() }> + </button>
+          <button className="btn blue lighten-3" id = "addHouse" onClick={ () => addBuildHouse() }> + </button>
         </div>
         <button className="btn blue lighten-3" id = "confirm-button" onClick={ () => confirmBuild(tempCost) }> Confirm </button>
       </>
     );
+  }
+
+  const renderManageSide = () => {
+    return Object.entries(rightSideCard).length > 0 && (
+      <>
+        { <img src={rightSideCard.src} /> }
+        <div className="cost-container">
+          <p> Profit: </p>
+          <p> { tempCost } </p>
+        </div>
+        <div style ={{ padding: "1rem" }}> Current: { houseState } </div>
+        <div className="button-container">
+          <button className="btn blue lighten-3" id = "subHouse" onClick={ () => subManageHouse() }> - </button>
+          <div style ={{ padding: "1rem" }}> New: { tempHouse } </div>
+          <button className="btn blue lighten-3" id = "addHouse" onClick={ () => addManageHouse() }> + </button>
+          <button className="btn blue lighten-3" id = "addHouse" onClick={ () => mortgageHouse() }> {mortgage? "Unmortgage" :  "Mortgage"} </button>
+        </div>
+        <button className="btn blue lighten-3" id = "confirm-button" onClick={ () => confirmManage(tempCost) }> Confirm </button>
+      </>
+    );
+  }
+
+  const renderChoice = () => {
+    if (!showBuild && !showManage )  {
+      return (
+        <div className="button-container">
+          <button className="btn blue lighten-3" id = "confirm-button" onClick={ () => setShowBuild(true) }> Build </button>
+          <button className="btn blue lighten-3" id = "confirm-button" onClick={ () => setShowManage(true) }> Manage </button>
+        </div>
+      );
+    } else if (showBuild) {
+      return renderBuildSide();
+    } else if (showManage) {
+      return renderManageSide();
+    }
   }
  
   return (
@@ -134,7 +230,7 @@ const BuildButton = ({ player }) => {
         </div>
 
         <div className= "right-side col s6">
-          { renderRightSide() }
+          { renderChoice() }
         </div>
       </div>
         

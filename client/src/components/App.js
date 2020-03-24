@@ -5,6 +5,8 @@ import history from '../utilities/history';
 import { AuthProvider } from '../contexts/AuthContext';
 import { RoomProvider } from '../contexts/RoomContext';
 import { ReactDiceProvider } from '../contexts/ReactDiceContext';
+import { TradeSyncProvider } from '../contexts/TradeSyncContext';
+import { BiddingProvider } from '../contexts/BiddingContext';
 // import { LobbyProvider } from '../contexts/LobbyContext';
 // import { PubNubProvider } from '../hooks/usePubNub';
 import LandingPage from './LandingPage';
@@ -32,11 +34,15 @@ const App = () => {
 };
 
 export default () => (
-  <ReactDiceProvider>
-    <AuthProvider>
-      <RoomProvider>
-        <App />
-      </RoomProvider>
-    </AuthProvider>
-  </ReactDiceProvider>
+  <BiddingProvider>
+    <TradeSyncProvider>
+      <ReactDiceProvider>
+        <AuthProvider>
+          <RoomProvider>
+            <App />
+          </RoomProvider>
+        </AuthProvider>
+      </ReactDiceProvider>
+    </TradeSyncProvider>
+  </BiddingProvider>
 );
