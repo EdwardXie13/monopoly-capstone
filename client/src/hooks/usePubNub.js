@@ -9,7 +9,7 @@ import board from '../library/board/board';
 import RoomContext from '../contexts/RoomContext';
 import backend from '../apis/backend';
 
-const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice) => {
+const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff) => {
   const lobbyChannel = useRef(null);
   const gameChannel = useRef(null);
   const roomId = useRef(null);
@@ -59,15 +59,17 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           setGamers(prevGamers => { return { ...prevGamers, [msg.message.players[msg.message.players.length-1].email]: currentPlayer } });
           
         } else if (msg.message.text === "Opened Trade") {
+          setLeftTrades(new Set([]))
+          setRightTrades(new Set([]));
           setTrader(msg.message.player);
           if (msg.message.player !== me.current) { setOpenTrade(msg.message.open); setLeftTrades(msg.message.checkedStuff); }
-          if (!msg.message.open) setOpenTrade(msg.message.open);
+          if (!msg.message.open) { setOpenTrade(msg.message.open); setIsOpen(false); }
         } else if (msg.message.text === "My Stuff Money") {
           if (msg.message.player !== me.current) setMyStuffMoney(msg.message.money);
         } else if (msg.message.text === "Left Trades Change") {
           if (msg.message.player !== me.current) setLeftTrades(msg.message.checkedStuff);
         } else if (msg.message.text === "Selector Change") {
-          if (msg.message.player !== me.current) setRightSelect(msg.message.selected);
+          /*if (msg.message.player !== me.current)*/ setRightSelect(msg.message.selected);
         } else if (msg.message.text === "Right Value Change") {
           if (msg.message.player !== me.current) setRightValue(msg.message.money);
         } else if (msg.message.text === "Right Trades Change") {
@@ -75,13 +77,12 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
         } else if (msg.message.text === "Confirm clicked") {
           if (msg.message.player !== me.current && me.current === msg.message.candidate) setIsConfirm(true);
         } else if (msg.message.text === "Swap Inven") {
-          console.log(msg.message.trader, msg.message.myStuffMoney, msg.message.rightSelect, msg.message.rightValue);
+          console.log(msg.message.t1, msg.message.t2);
 
           setGamers(prevGamers => {
             let p1Inven = prevGamers[msg.message.p1].inventory.filter(item => !new Set([...msg.message.t1]).has(item.name));
             msg.message.t2.forEach(item => { 
               const tile = board.filter(t => t.name === item )[0];
-              console.log("tile", tile);
               p1Inven.push(new Deeds(tile.name, tile.type, tile.index, tile.color, getRent(tile), tile.src, tile.buildingCost, tile.house ));
             });
             let p2Inven = prevGamers[msg.message.p2].inventory.filter(item => !new Set([...msg.message.t2]).has(item.name));
@@ -89,12 +90,14 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
               const tile = board.filter(t => t.name === item )[0];
               p2Inven.push(new Deeds(tile.name, tile.type, tile.index, tile.color, getRent(tile), tile.src, tile.buildingCost, tile.house ))
             });
-
-            setLeftTrades(new Set());
-            setRightTrades(new Set());
               
             return { ...prevGamers, [msg.message.p1]: { ...prevGamers[msg.message.p1], inventory: p1Inven, money: prevGamers[msg.message.p1].money + parseInt(msg.message.rightValue) - parseInt(msg.message.myStuffMoney) }, [msg.message.p2]: { ...prevGamers[msg.message.p2], inventory: p2Inven, money: prevGamers[msg.message.p2].money + parseInt(msg.message.myStuffMoney) - parseInt(msg.message.rightValue) } };
           });
+
+          setLeftTrades(new Set([]));
+          setRightTrades(new Set([]));
+          setMyStuff({ money: 0, properties: new Set([]) });
+          setTheirStuff({ money: 0, properties: new Set([]) });
         } else if (msg.message.text === "Next Turn") {
           let pg = null;
           let pIdx = null;

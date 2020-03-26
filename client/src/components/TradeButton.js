@@ -36,24 +36,27 @@ import WaterWorks from '../assets/cards/Water Works.png';
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
 // Modal.setAppElement('#yourAppElement')
  
-const TradeButton = ({ me , gamers, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm }) => {
+const TradeButton = ({ setLeftTrades, setRightTrades, theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, modalIsOpen, setIsOpen, me , gamers, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm }) => {
   var subtitle;
-  const [modalIsOpen,setIsOpen] = React.useState(false);
+  // const [modalIsOpen,setIsOpen] = React.useState(false);
   const [myInventory, setMyInventory] = React.useState([]);
   const [otherInventory, setOtherInventory] = React.useState({});
-  const [selected, setSelected] = React.useState(null);
-
-  const [myStuff, setMyStuff] = React.useState({ money: 0, properties: new Set([]) });
-  const [theirStuff, setTheirStuff] = React.useState({ money: 0, properties: new Set([]) });
-
+  console.log("stuffs", myStuff, theirStuff);
+  // const [selected, setSelected] = React.useState(null);
+  // const [myStuff, setMyStuff] = React.useState({ money: 0, properties: new Set([]) });
+  // const [theirStuff, setTheirStuff] = React.useState({ money: 0, properties: new Set([]) });
   React.useEffect(() => { 
     if (!modalIsOpen) setOtherInventory({});
     setMyInventory(renderMyTrade(gamers[me.current].inventory));
-
-  }, [modalIsOpen, gamers])
+  }, [modalIsOpen, gamers, theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected])
 
   function openModal() {
+    setLeftTrades(new Set([]))
+    setRightTrades(new Set([]))
     setIsOpen(true);
+    setSelected(null);
+    setMyStuff({ money: 0, properties: new Set([]) });
+    setTheirStuff({ money: 0, properties: new Set([]) });
     handleOpenTrade([...myStuff.properties], true);
   }
  
@@ -69,12 +72,15 @@ const TradeButton = ({ me , gamers, handleOpenTrade, handleMyStuffMoneyChange, h
   }
 
   const acceptTrade = () => {
-    handleConfirm(selected);
-    console.log("Trade accepted")
+    if (myStuff.money <= gamers[me.current].money && theirStuff.money <=gamers[selected].money) {
+      handleConfirm(selected);
+      console.log("Trade accepted")
+    }
   }
 
   const declineTrade = () => {
     console.log("Trade declined")
+    closeModal()
   }
 
   const renderMyTrade = inventory => {
@@ -89,7 +95,7 @@ const TradeButton = ({ me , gamers, handleOpenTrade, handleMyStuffMoneyChange, h
               const name = e.target.name;
               if (isMyInven) {
                 
-                setMyStuff(prevStuff => { 
+                setMyStuff(prevStuff => {
                   let myProps = new Set([...prevStuff.properties]);
                   checked? myProps.add(name) : myProps.delete(name);
                   handleLeftTradesChange(new Set([ ...myProps ]));
@@ -130,6 +136,7 @@ const TradeButton = ({ me , gamers, handleOpenTrade, handleMyStuffMoneyChange, h
       <button className='waves-effect waves-light btn-large' onClick={openModal}>Trade</button>
       <Modal
         isOpen={modalIsOpen}
+        shouldCloseOnOverlayClick={false}
         onRequestClose={closeModal}
         contentLabel="Example Modal"
       >
@@ -155,7 +162,7 @@ const TradeButton = ({ me , gamers, handleOpenTrade, handleMyStuffMoneyChange, h
         </div>
         <div className="row" style = {{display: "flex", justifyContent:"center"}}>
           <button className="btn blue lighten-3" id = "bottom-trade-button" onClick={ () => acceptTrade() } > Accept </button>
-          <button className="btn blue lighten-3" id = "bottom-trade-button" onClick={ () => declineTrade() } > Decline </button>
+          <button className="btn blue lighten-3" id = "bottom-trade-button" onClick={ () => declineTrade() } > Cancel </button>
         </div>
       </div>
         

@@ -9,7 +9,8 @@ const TradeSync = props => {
   }, [props.openTrade, props.leftTrades, props.rightSelect, props.rightValue, props.isConfirm, props.rightTrades, props.myStuffMoney, props.gamers]);
 
   const closeModal = () => { 
-    setIsOpen(false); 
+    setIsOpen(false);
+    
   };
 
   const renderContent = () => {
@@ -66,8 +67,18 @@ const TradeSync = props => {
   const handleYes = () => {
     // console.log("from handleYes", props.leftTrades, props.rightTrades);
     props.setIsConfirm(false);
+    // props.setIsOpen(false);
+    console.log("leftTrades", props.leftTrades, "rightTrades", props.rightTrades);
     props.handleYes(props.trader, props.rightSelect, new Set([ ...props.leftTrades ]), new Set([ ...props.rightTrades ]), props.trader, props.myStuffMoney, props.rightSelect, props.rightValue );
     props.handleOpenTrade([], false);
+    props.setMyStuff({ money: 0, properties: new Set([]) });
+    props.setTheirStuff({ money: 0, properties: new Set([]) });
+    props.setLeftTrades(new Set([]));
+    props.setRightTrades(new Set([]));
+    props.handleMyStuffMoneyChange(0);
+    props.handleRightValueChange(0);
+    props.handleSelectorChange("Select a player");
+    props.setSelected(null);
   }
 
   const renderConfirmDialog = () => {
@@ -83,6 +94,7 @@ const TradeSync = props => {
   return (
     <Modal
       isOpen={modalIsOpen}
+      shouldCloseOnOverlayClick={false}
       onRequestClose={closeModal}
       contentLabel="OwO"
     >
