@@ -1,17 +1,25 @@
-import React, { useState, useLayoutEffect, useContext } from 'react';
+import React, { useState, useLayoutEffect, useContext, useEffect } from 'react';
 import ReactDice from 'react-dice-complete'
 import 'react-dice-complete/dist/react-dice-complete.css'
 import ReactDiceContext from '../contexts/ReactDiceContext';
+import board from '../library/board/board';
 
-const Dice = ({ rollEvent, turnIdx, gamers }) => {
-  const { reactDice, setReactDice } = useContext(ReactDiceContext);
+const Dice = ({ rollEvent, turnIdx, gamers, handleDiceRoll, handleSyncRoll, me }) => {
+  const { reactDice, setReactDice, setIsRolled, setDouble } = useContext(ReactDiceContext);
 
   const rollDoneCallback = (num) => {
     // console.log(rollEvent);
     const die0 = reactDice.diceContainer.dice[0].state.currentValue
     const die1 = reactDice.diceContainer.dice[1].state.currentValue
+
+    if (me.current === Object.keys(gamers)[turnIdx]) { 
+      handleSyncRoll(die0, die1, me.current);
+      rollEvent(die0, die1, Object.values(gamers)[turnIdx], setIsRolled, setDouble)
+    };
+    // console.log('board', board);
+    // handleDiceRoll(board, gamers)
+
     
-    rollEvent(die0, die1, Object.values(gamers)[turnIdx]);
     // console.log(`You rolled a ${num}`)
   }
 
@@ -28,6 +36,7 @@ const Dice = ({ rollEvent, turnIdx, gamers }) => {
         margin="30"
         outline="true"
         outlineColor="black"
+        disableIndividual
       />
     </div>
   )

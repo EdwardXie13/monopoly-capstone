@@ -11,12 +11,14 @@ const useEffects = () => {
       case 15:
         console.log(card.text);
         //You inherit $100
-        player.setMoney(100);
+        // player.setMoney(100);
+        player.money += 100;
         break;
       case 14:
         console.log(card.text);
         //You have won second prize in a beauty contest. Collect $10
-        player.setMoney(10);
+        // player.setMoney(10);
+        player.money += 10;
         break;
       case 13:
         console.log(card.text);
@@ -25,22 +27,26 @@ const useEffects = () => {
       case 12:
         console.log(card.text);
         //Receive $25 consultancy fee
-        player.setMoney(25);
+        // player.setMoney(25);
+        player.money += 25;
         break;
       case 11:
         console.log(card.text);
         //Pay school fees of $50
-        player.setMoney(-50);
+        // player.setMoney(-50);
+        player.money -= 50;
         break;
       case 10:
         console.log(card.text);
         //Pay hospital fees of $100
-        player.setMoney(-100);
+        // player.setMoney(-100);
+        player.money -= 100;
         break;
       case 9:
         console.log(card.text);
         //Life insurance matures. Collect $100
-        player.setMoney(100);
+        // player.setMoney(100);
+        player.money += 100;
         break;
       case 8:
         console.log(card.text);
@@ -49,17 +55,20 @@ const useEffects = () => {
       case 7:
         console.log(card.text);
         //Income tax refund. Collect $20
-        player.setMoney(20);
+        // player.setMoney(20);
+        player.money += 20;
         break;
       case 6:
         console.log(card.text);
         //Holiday fund matures. Collect $100
-        player.setMoney(100);
+        // player.setMoney(100);
+        player.money += 100;
         break;
       case 5:
         console.log(card.text);
         //go to jail
-        player.setJail(true);
+        // player.setJail(true);
+        player.jail = true;
         break;
       case 4:
         console.log(card.text);
@@ -69,22 +78,26 @@ const useEffects = () => {
       case 3:
         console.log(card.text);
         //From sale of stock you get $50
-        player.setMoney(50);
+        // player.setMoney(50);
+        player.money += 50;
         break;
       case 2:
         console.log(card.text);
         //Doctor's fee. Pay $50
-        player.setMoney(-50);
+        // player.setMoney(-50);
+        player.money -= 50;
         break;
       case 1:
         console.log(card.text);
         //Bank error in your favor. Collect $200
-        player.setMoney(200);
+        // player.setMoney(200);
+        player.money += 200;
         break;
       case 0:
         console.log(card.text);
         //Advance to 'GO' (Collect $200)
-        player.setMoney(200);
+        // player.setMoney(200);
+        player.money += 200;
         break;
       
     }
@@ -96,9 +109,8 @@ const useEffects = () => {
       case 15:
         console.log(card.text);
         //Your building and loan matures. Collect $150
-        console.log(player.money, "before");
-        player.setMoney(150);
-        console.log(player.money, "after");
+        // player.setMoney(150);
+        player.money += 150;
         break;
       case 14:
         console.log(card.text);
@@ -107,19 +119,25 @@ const useEffects = () => {
       case 13:
         console.log(card.text);
         //Advance to Boardwalk
-        player.setLocation("Boardwalk", 39)
+        // player.setLocation("Boardwalk", 39)
+        player.location = "Boardwalk";
+        player.index = 39;
         break;
       case 12:
         console.log(card.text);
         //Take a trip to Reading Railroad. If you pass 'GO' collect $200
         if (player.index > 7)
-          player.setMoney(200);
-        player.setLocation("Reading Railroad", 5);
+          // player.setMoney(200);
+          player.money += 200;
+        // player.setLocation("Reading Railroad", 5);
+        player.location = "Reading Railroad";
+        player.index = 5;
         break;
       case 11:
         console.log(card.text);
         //Speeding fine $15
-        player.setMoney(-15);
+        // player.setMoney(-15);
+        player.money -= 15;
         break;
       case 10:
         console.log(card.text);
@@ -128,12 +146,15 @@ const useEffects = () => {
       case 9:
         console.log(card.text);
         //go to jail
-        player.setJail(true);
+        // player.setJail(true);
+        player.jail = true;
         break;
       case 8:
         console.log(card.text);
         //Go Back 3 Spaces
-        player.setLocation(board[player.index-3].name , player.index-3);
+        // player.setLocation(board[player.index-3].name , player.index-3);
+        player.location = board[player.index-3].name;
+        player.index = player.index-3;
         //console.log(board[player.index].name);
         break;
       case 7:
@@ -144,15 +165,19 @@ const useEffects = () => {
       case 6:
         console.log(card.text);
         //Bank pays you dividend of $50
-        player.setMoney(50);
+        // player.setMoney(50);
+        player.money += 50;
         break;
       case 5:
         console.log(card.text);
         //Advance token to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay the owner twice the rental to which they are otherwise entitled
         if (player.index === 36) {
           console.log("RRR");
-          player.setLocation("Reading Railroad", 5); //does collect 200?
-          player.setMoney(200);
+          // player.setLocation("Reading Railroad", 5); //does collect 200?
+          player.location = "Reading Railroad";
+          player.index = 5;
+          // player.setMoney(200);
+          player.money += 200;
           if(board[5].owned === false) {
             await promptUnowned(5);
           }
@@ -162,7 +187,9 @@ const useEffects = () => {
         }
         else if (player.index === 7) {
           console.log("PRR");
-          player.setLocation("Pennsylvania Railroad", 15);
+          // player.setLocation("Pennsylvania Railroad", 15);
+          player.location = "Pennsylvania Railroad";
+          player.index = 15;
           if(board[15].owned === false) {
             await promptUnowned(15);
           }
@@ -172,7 +199,9 @@ const useEffects = () => {
         }
         else if (player.index === 22){
           console.log("BORR")
-          player.setLocation("B. & O. Railroad", 25);
+          // player.setLocation("B. & O. Railroad", 25);
+          player.location = "B. & O. Railroad";
+          player.index = 25;
           if(board[25].owned === false) {
             await promptUnowned(25);
           }
@@ -189,7 +218,9 @@ const useEffects = () => {
         console.log(card.text);
         //Advance to the nearest Utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total ten times the amount thrown
         if (player.index === 36|| player. index === 7) {
-          player.setLocation("Electric Company", 12)
+          // player.setLocation("Electric Company", 12)
+          player.location = "Electric Company";
+          player.index = 12;
           if(board[12].owned === true) {
             await promptUnowned(12);
           }
@@ -199,7 +230,9 @@ const useEffects = () => {
           }
         }
         else if (player.index === 22) {
-          player.setLocation("Water Works", 28)
+          // player.setLocation("Water Works", 28)
+          player.location = "Water works";
+          player.index = 28;
           if(board[22].owned === true) {
             await promptUnowned(22);
           }
@@ -213,21 +246,30 @@ const useEffects = () => {
         console.log(card.text);
         //Advance to St. Charles Place. If you pass 'GO' collect $200
         if (player.index > 21)
-          player.setMoney(200);
-        player.setLocation("St. Charles Place", 11)
+          // player.setMoney(200);
+          player.money += 200;
+        // player.setLocation("St. Charles Place", 11)
+        player.location = "St. Charles Place";
+        player.index = 11;
         break;
       case 1:
         console.log(card.text);
         //Advance to Illinois Avenue. If you pass 'GO' collect $200
         if (player.index > 35)
-          player.setMoney(200);
-        player.setLocation("Illinois Avenue", 24)
+          // player.setMoney(200);
+          player.money += 200;
+        // player.setLocation("Illinois Avenue", 24)
+        player.location = "Illinois Avenue";
+        player.index = 24;
         break;
       case 0:
         console.log(card.text);
         //Advance to Go (Collect $200)
-        player.setMoney(200);
-        player.setLocation("Go", 0);
+        // player.setMoney(200);
+        player.money += 200;
+        // player.setLocation("Go", 0);
+        player.location = "Go";
+        player.index = 0;
         break;
     }
   }
@@ -237,7 +279,8 @@ const useEffects = () => {
     var die2 = Math.floor(Math.random() * 6) + 1;
     var temp = (die1+die2)*10;
     console.log(temp);
-    player.setMoney(-temp);
+    // player.setMoney(-temp);
+    player.money -= temp;
   }
  
 

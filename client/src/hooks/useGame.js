@@ -3,54 +3,74 @@ import board from '../library/board/board.js';
 import useEffects from '../hooks/useEffects';
 import Deeds from '../classes/Deeds';
 
-const useGame = (addToHistory, setOpenBid, setName) => {
+const useGame = (addToHistory, setOpenBid, setName, handleBuyProp) => {
   const [communityEffect, chanceEffect] = useEffects();
 
-  const rollEvent = async (die1, die2, player) => { 
+  const rollEvent = async (die1, die2, player, setIsRolled, setDouble) => { 
     if (player.bankrupt === false) {
-      await payJail(player);
+      // await payJail(player);
 
       if (player.jail === false) {
         if (die1 === die2) {
           if (player.doubles === 2) {
             addToHistory("Triple Doubles, Go to Jail")
-            player.setJail(true);
-            player.resetDoubles();
+            player.doubles = 0;
+            setDouble(0);
+            setIsRolled(true);
+            // player.setJail(true);
+            player.jail = true;
+            // player.resetDoubles();
           }
           else {
-            player.setDoubles();
+            // player.setDoubles();
+            player.doubles++;
+            setDouble(prevDouble => prevDouble + 1);
+            setIsRolled(false);
             addToHistory(player.doubles, " Double");
-            movePlayer(die1, die2, player );
+            movePlayer(die1, die2, player);
           }
         }
         else {
-          movePlayer(die1, die2, player );
-          player.resetDoubles();
+          movePlayer(die1, die2, player);
+          // player.resetDoubles();
+          player.doubles = 0;
+          setDouble(0);
+          setIsRolled(true);
         }
       }
       else if (player.jail === true) {
         if (die1 === die2) {
           addToHistory("freed from jail");
-          player.setJail(false);
-          player.resetJailroll();
-          player.setLocation("Just Visiting", 10);
-          movePlayer(die1, die2, player );
+          // player.setJail(false);
+          player.jail = false;
+          // player.resetJailroll();
+          player.jailroll = 0;
+          // player.setLocation("Just Visiting", 10);
+          player.location = "Just Visiting";
+          player.index = 10;
+          movePlayer(die1, die2, player);
         } else {
           if (player.jailroll === 2) {
             if (player.money > 49) {
               addToHistory("failed last doubles attempt, $50 was taken from you");
-              player.setMoney(-50);
-              player.setJail(false);
-              player.resetJailroll();
-              player.setLocation("Just Visiting", 10);
-              movePlayer(die1, die2, player );
+              // player.setMoney(-50);
+              player.money -= 50;
+              // player.setJail(false);
+              player.jail = false;
+              // player.resetJailroll();
+              player.jailroll = 0;
+              // player.setLocation("Just Visiting", 10);
+              player.location = "Just Visiting";
+              player.index = 10;
+              movePlayer(die1, die2, player);
             } else {
               console.log("trigger selling mode");
               sellStuff = (player, 50)
             }
           }
           else {
-            player.setJailroll();
+            // player.setJailroll();
+            player.jailroll = 0;
             addToHistory("failed doubles roll");
           }
         }
@@ -71,28 +91,37 @@ const useGame = (addToHistory, setOpenBid, setName) => {
         cancelButtonText: 'No'
       }).then((result) => {
         if (result.value === true) {
-          player.setJail(false);
-          player.setMoney(-50);
-          player.setLocation("Just Visiting", 10)
+          // player.setJail(false);
+          player.jail = false;
+          // player.setMoney(-50);
+          player.money -= 50;
+          // player.setLocation("Just Visiting", 10)
+          player.location = "Just Visiting";
+          player.index = 10;
           addToHistory(player.money);
-          resolve(true);
+          resolve("done");
         }
         else {
-          resolve (false);
+          resolve("done");
         }
       })
     }
-    else resolve (false);
+    else resolve("done");
   })
 
   const movePlayer = async (die1, die2, player) => {
     //save state here maybe?
     if (player.index + die1 + die2 > 39) {
       addToHistory(player.money,"Pass go collect 200");
-      player.setMoney(200);
+      // player.setMoney(200);
+      player.money += 200;
       addToHistory(player.money);
     }
-    player.setLocation( board[((player.index+die1 + die2)%40)].name, ((player.index+die1 + die2)%40));
+    console.log("player", player);
+    // player.setLocation( board[((player.index+die1 + die2)%40)].name, ((player.index+die1 + die2)%40));
+    player.location = board[((player.index + die1 + die2)%40)].name;
+    player.index = (player.index+die1 + die2)%40;
+
     addToHistory(player.location);
     if (board[player.index].type !== "Tile" && board[player.index].type !== "Event") {
       await checkOwner(die1, die2, player);
@@ -111,13 +140,15 @@ const useGame = (addToHistory, setOpenBid, setName) => {
           sellStuff(player, 200);
         }
         else {
-          player.setMoney(-200);
+          // player.setMoney(-200);
+          player.money += 200;
           addToHistory(player.money);
         }
       }
       else if (board[player.index].name === "Go To Jail") {
         addToHistory("Jail");
-        player.setJail(true);
+        // player.setJail(true);
+        player.jail = true;
       }
       else if (board[player.index].name === "Luxury Tax") {
         addToHistory("Lux Tax");
@@ -125,7 +156,8 @@ const useGame = (addToHistory, setOpenBid, setName) => {
           sellStuff(player, 100);
         }
         else {
-          player.setMoney(-100);
+          // player.setMoney(-100);
+          player.money -= 100;
           addToHistory(player.money);
         }
       }
@@ -144,19 +176,20 @@ const useGame = (addToHistory, setOpenBid, setName) => {
         cancelButtonText: 'No'
       }).then((result) => {
         if (result.value === true) {
-          player.setMoney(-board[player.index].price);
-          board[player.index].owned = true;
-          board[player.index].owner = player;
-          player.addInventory(new Deeds(board[player.index].name, board[player.index].type, player.index, board[player.index].rentNormal));
-          console.log(player.inventory);
+          // player.setMoney(-board[player.index].price);
+          // player.money -= board[player.index].price;
+          // board[player.index].owned = true;
+          // board[player.index].owner = player;
+          handleBuyProp(player.index, player);
+          // player.addInventory(new Deeds(board[player.index].name, board[player.index].type, player.index, board[player.index].rentNormal));
           addToHistory(player.money);
+          resolve("done");
         }
         else {
           addToHistory("bidding begins");
           setName(board[player.index].name);
           setOpenBid(true);
-          //if no bidding begins
-          //window pop up to prompt bid amount
+          resolve("done");
         }
       })
     }
@@ -169,10 +202,14 @@ const useGame = (addToHistory, setOpenBid, setName) => {
             addToHistory("pay " + board[player.index].owner.name + " $" + amount);
             if (player.money < amount) {
               sellStuff(player, amount);
+              resolve("done");
             }
             else {
-              player.setMoney(-amount);
-              board[player.index].owner.setMoney(amount);
+              // player.setMoney(-amount);
+              player.money -= amount;
+              // board[player.index].owner.setMoney(amount);
+              board[player.index].owner.money += amount;
+              resolve("done");
             }
           }
           else {
@@ -180,10 +217,14 @@ const useGame = (addToHistory, setOpenBid, setName) => {
             addToHistory("pay " + board[player.index].owner.name + " $" + amount);
             if (player.money < amount) {
               sellStuff(player, amount);
+              resolve("done");
             }
             else {
-              player.setMoney(-amount);
-              board[player.index].owner.setMoney(amount);
+              // player.setMoney(-amount);
+              player.money -= amount;
+              // board[player.index].owner.setMoney(amount);
+              board[player.index].owner.money += amount;
+              resolve("done");
             }
           }
         }
@@ -199,20 +240,32 @@ const useGame = (addToHistory, setOpenBid, setName) => {
           if (board[player.index].owner.name === board[35].owner.name)
             temp++;
           if (temp === 1) {
-            player.setMoney(-board[player.index].rentNormal);
-            board[player.index].owner.setMoney(board[player.index].rentNormal)
+            // player.setMoney(-board[player.index].rentNormal);
+            player.money -= board[player.index].rentNormal
+            // board[player.index].owner.setMoney(board[player.index].rentNormal)
+            board[player.index].owner.money += board[player.index].rentNormal;
+            resolve("done");
           }
           else if (temp === 2) {
-            player.setMoney(-board[player.index].rentRR2);
-            board[player.index].owner.setMoney(board[player.index].rentRR2)
+            // player.setMoney(-board[player.index].rentRR2);
+            player.money -= board[player.index].rentRR2;
+            // board[player.index].owner.setMoney(board[player.index].rentRR2)
+            board[player.index].owner.money += board[player.index].rentRR2;
+            resolve("done");
           }
           else if (temp ===3) {
-            player.setMoney(-board[player.index].rentRR3);
-            board[player.index].owner.setMoney(board[player.index].rentRR3);
+            // player.setMoney(-board[player.index].rentRR3);
+            player.money -= board[player.index].rentRR3;
+            // board[player.index].owner.setMoney(board[player.index].rentRR3);
+            board[player.index].owner.money += board[player.index].rentRR3;
+            resolve("done");
           }
           else if (temp ===4) {
-            player.setMoney(-board[player.index].rentRR4);
-            board[player.index].owner.setMoney(board[player.index].rentRR4);
+            // player.setMoney(-board[player.index].rentRR4);
+            player.money -= board[player.index].rentRR4;
+            // board[player.index].owner.setMoney(board[player.index].rentRR4);
+            board[player.index].owner.money += board[player.index].rentRR4;
+            resolve("done");
           }
 
         }
@@ -242,9 +295,13 @@ const useGame = (addToHistory, setOpenBid, setName) => {
           addToHistory("pay " + board[player.index].owner.name + " $" + amount);
           if (player.money < amount) {
             sellStuff(player, amount);
+            resolve("done");
           } else {
-            player.setMoney(-amount);
-            board[player.index].owner.setMoney(amount);
+            // player.setMoney(-amount);
+            player.money -= amount;
+            // board[player.index].owner.setMoney(amount);
+            board[player.index].owner.money += amount;
+            resolve("done");
           }
         }
       }
@@ -308,7 +365,7 @@ const useGame = (addToHistory, setOpenBid, setName) => {
     }
   })
 
-  return [rollEvent];
+  return [rollEvent, payJail];
 }
 
 export default useGame;

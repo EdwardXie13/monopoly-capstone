@@ -1,4 +1,4 @@
-import { useRef, useEffect, useContext } from 'react';
+import { useRef, useEffect, useContext, useState } from 'react';
 import PubNub from 'pubnub';
 import Swal from "sweetalert2";
 import Player from '../classes/Player';
@@ -9,7 +9,7 @@ import board from '../library/board/board';
 import RoomContext from '../contexts/RoomContext';
 import backend from '../apis/backend';
 
-const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid) => {
+const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice) => {
   const lobbyChannel = useRef(null);
   const gameChannel = useRef(null);
   const roomId = useRef(null);
@@ -60,7 +60,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           
         } else if (msg.message.text === "Opened Trade") {
           setTrader(msg.message.player);
-          if (msg.message.player !== me.current) { setOpenTrade(true); setLeftTrades(msg.message.checkedStuff); }
+          if (msg.message.player !== me.current) { setOpenTrade(msg.message.open); setLeftTrades(msg.message.checkedStuff); }
+          if (!msg.message.open) setOpenTrade(msg.message.open);
         } else if (msg.message.text === "My Stuff Money") {
           if (msg.message.player !== me.current) setMyStuffMoney(msg.message.money);
         } else if (msg.message.text === "Left Trades Change") {
@@ -74,6 +75,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
         } else if (msg.message.text === "Confirm clicked") {
           if (msg.message.player !== me.current && me.current === msg.message.candidate) setIsConfirm(true);
         } else if (msg.message.text === "Swap Inven") {
+          console.log(msg.message.trader, msg.message.myStuffMoney, msg.message.rightSelect, msg.message.rightValue);
+
           setGamers(prevGamers => {
             let p1Inven = prevGamers[msg.message.p1].inventory.filter(item => !new Set([...msg.message.t1]).has(item.name));
             msg.message.t2.forEach(item => { 
@@ -90,17 +93,23 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             setLeftTrades(new Set());
             setRightTrades(new Set());
               
-            return { ...prevGamers, [msg.message.p1]: { ...prevGamers[msg.message.p1], inventory: p1Inven }, [msg.message.p2]: { ...prevGamers[msg.message.p2], inventory: p2Inven } };
+            return { ...prevGamers, [msg.message.p1]: { ...prevGamers[msg.message.p1], inventory: p1Inven, money: prevGamers[msg.message.p1].money + parseInt(msg.message.rightValue) - parseInt(msg.message.myStuffMoney) }, [msg.message.p2]: { ...prevGamers[msg.message.p2], inventory: p2Inven, money: prevGamers[msg.message.p2].money + parseInt(msg.message.myStuffMoney) - parseInt(msg.message.rightValue) } };
           });
         } else if (msg.message.text === "Next Turn") {
-          setGamers(prevGamers => {
-            setTurnIdx(prevIdx => {
-              setBiddingTurnIdx((prevIdx + 1) % Object.keys(prevGamers).length);
+          let pg = null;
+          let pIdx = null;
 
-              return (prevIdx + 1) % Object.keys(prevGamers).length
-            });
+          setGamers(prevGamers => {
+            pg = prevGamers;
             return prevGamers;
-          })
+          });
+
+          setTurnIdx(prevIdx => {
+            pIdx = prevIdx;
+            return (prevIdx + 1) % Object.keys(pg).length;
+          });
+
+          setBiddingTurnIdx((pIdx + 1) % Object.keys(pg).length);
         } else if (msg.message.text === "Decline Bidding") {
           let pg = null;
           let phb = null;
@@ -156,6 +165,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             });
   
             await setHighestBid(prevHighestBid => {
+              console.log("phb", phb, prevHighestBid)
               phb = prevHighestBid;
               return prevHighestBid;
             });
@@ -173,12 +183,38 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
 
               return newBidIdx;
             })
-
+            console.log("new bidder", msg.message.newBid, pg[msg.message.playerName])
             setHighestBid(prevHighestBid => { return { amount: msg.message.newBid, player: pg[msg.message.playerName] } });
           }
           meow();
         } else if (msg.message.text === "Bidding Ended") {
           setGamers(prevGamers => { return { ...prevGamers, [msg.message.newMe.name]: msg.message.newMe } });
+        } else if (msg.message.text === "Rolled Dice") {
+          // console.log("new gamers", msg.message.newGamers)
+          console.log("new board", msg.message.newBoard);
+          for (let i = 0; i < board.length; ++i) {
+            board[i] = msg.message.newBoard[i];
+          }
+          // board = msg.message.newBoard;
+          // console.log(board)
+          // board[0].type = "meow";
+          // console.log("oldboard", board, "newboard", msg.message.newBoard);
+          // setGamers(msg.message.newGamers);
+        } else if (msg.message.text === "Set Owner") {
+          board[msg.message.boardIdx].owned = true;
+          board[msg.message.boardIdx].owner = msg.message.owner;
+
+          const tile = board[msg.message.boardIdx];
+          const price = tile.type === "Property"? tile.price : 0;
+          setGamers(prevGamers => { return { ...prevGamers, [msg.message.owner.name]: { ...prevGamers[msg.message.owner.name], money: prevGamers[msg.message.owner.name].money - price, location: board[msg.message.boardIdx].name, inventory: [...prevGamers[msg.message.owner.name].inventory, new Deeds(tile.name, tile.type, tile.index, tile.color, tile.rentNormal, tile.src, tile.buildingCost, tile.price, tile.mortgaged)] } } })
+        } else if (msg.message.text === "Sync Roll") {
+          let rDice = null;
+
+          setReactDice(prevReactDice => {
+            rDice = prevReactDice;
+            return prevReactDice;
+          })
+          if (msg.message.player !== me.current) rDice.rollAll([ msg.message.d1, msg.message.d2 ]);
         }
       }
     });
@@ -270,8 +306,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     })
   }
 
-  const handleOpenTrade = checkedStuff => {
-    pubnub.publish({ channel: gameChannel.current, message: { text: "Opened Trade", player: me.current, checkedStuff: checkedStuff } });
+  const handleOpenTrade = (checkedStuff, open) => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Opened Trade", player: me.current, checkedStuff: checkedStuff, open } });
   }
 
   const handleCreateRoom = () => {
@@ -362,8 +398,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     pubnub.publish({ channel: gameChannel.current, message: { text: "Confirm clicked", player: me.current, candidate: candidate } });
   }
 
-  const handleYes = (p1, p2, t1, t2) => {
-    pubnub.publish({ channel: gameChannel.current, message: { text: "Swap Inven", p1, p2, t1: [...t1], t2: [...t2] } });
+  const handleYes = (p1, p2, t1, t2, trader, myStuffMoney, rightSelect, rightValue) => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Swap Inven", p1, p2, t1: [...t1], t2: [...t2], trader, myStuffMoney, rightSelect, rightValue } });
   }
 
   const handleNextTurn = () => {
@@ -378,7 +414,20 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     pubnub.publish({ channel: gameChannel.current, message: { text: "Accept Bidding", newBid, playerName } });
   }
 
-  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding];
+  const handleDiceRoll = (newBoard, newGamers) => {
+    // console.log("new board", newBoard);
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Rolled Dice", newBoard, newGamers } });
+  }
+
+  const handleBuyProp = (boardIdx, owner) => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Set Owner", boardIdx, owner } });
+  }
+
+  const handleSyncRoll = (d1, d2, player) => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Sync Roll", d1, d2, player } });
+  }
+
+  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll];
 }
 
 export default usePubNub;

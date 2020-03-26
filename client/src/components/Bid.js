@@ -9,7 +9,6 @@ import BiddingContext from '../contexts/BiddingContext';
  
 const Bid = ({ me, player, openBid, setOpenBid, handleDeclineBidding, handleAcceptBidding, highestBid }) => {
   var subtitle;
-  const [currentBid, setCurrentBid] = React.useState(0);
   const [newBid, setnewBid] = React.useState(0);
   const { name } = useContext(BiddingContext);
 
@@ -24,12 +23,14 @@ const Bid = ({ me, player, openBid, setOpenBid, handleDeclineBidding, handleAcce
     setOpenBid(false);
   }
 
-  const accept = () => {
-    if (newBid <= player.money) {
-      setCurrentBid(newBid);
+  const accept = e => {
+    console.log("bidding", newBid, highestBid.amount)
+    if (newBid <= player.money && newBid > highestBid.amount) {
       console.log("player accepted", me.current);
       handleAcceptBidding(newBid, me.current); // newBid > highestBid
       setOpenBid(false);
+    } else {
+      e.preventDefault();
     }
   }
 
@@ -55,7 +56,7 @@ const Bid = ({ me, player, openBid, setOpenBid, handleDeclineBidding, handleAcce
           <p> { highestBid.amount } </p>
         </div>
         <input type="number" onChange={e => setnewBid(e.target.value)} />
-        <button className="btn blue lighten-3" id = "accept-button" onClick={ () => accept() }> Accept </button>
+        <button className="btn blue lighten-3" id = "accept-button" onClick={ e => accept(e) }> Accept </button>
         <button className="btn blue lighten-3" id = "confirm-button" onClick={ () => decline()}> Decline </button>
       </div>
         

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import '../styles/LobbyPage.css';
 import '../styles/RoomPage.css';
+import board from '../library/board/board';
 import usePubNub from '../hooks/usePubNub';
 import ReactDiceContext from '../contexts/ReactDiceContext';
 import RoomContext from '../contexts/RoomContext';
@@ -81,18 +82,21 @@ const Lobby = () => {
   const [turnIdx, setTurnIdx] = useState(0);
   const [biddingTurnIdx, setBiddingTurnIdx] = useState(turnIdx);
   const [highestBid, setHighestBid] = useState({ amount: -Infinity, player: { name: '' } });
-  const [isRolled, setIsRolled] = useState(false);
+  // const [isRolled, setIsRolled] = useState(false);
   
   const { players, code } = useContext(RoomContext);
-  const { reactDice } = useContext(ReactDiceContext);
+  const { reactDice, isRolled, setIsRolled, double, setDouble, setReactDice } = useContext(ReactDiceContext);
   const { trader, setTrader, myStuffMoney, setMyStuffMoney, leftTrades, setLeftTrades, rightSelect, setRightSelect, rightValue, setRightValue, rightTrades, setRightTrades, isConfirm, setIsConfirm } = useContext(TradeSyncContext);
   const { openBid, setOpenBid, name, setName } = useContext(BiddingContext);
   
-  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid);
+  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice);
 
   const [history, renderHistory, addToHistory] = useCard();
-  const [rollEvent] = useGame(addToHistory, setOpenBid, setName);
+  const [rollEvent, payJail] = useGame(addToHistory, setOpenBid, setName, handleBuyProp);
   const [width, height] = useWindowSize();
+  // console.log("turn", Object.keys(gamers)[turnIdx]);
+  // console.log("isRolled", isRolled);
+  // console.log("double", me.current? gamers[me.current].doubles : null);
   console.log("gamers", gamers);
   const showThumbnail = src => {
     if(!src){
@@ -155,13 +159,13 @@ const Lobby = () => {
           
           <div style={{position:"absolute", zIndex:"0",width:"60%",height:"30%",left:"20%",top:"40%"}}>
             <div style={{position:"absolute",top:"25%",left:"23%",zIndex:"3"}}>
-              <Dice rollEvent={rollEvent} turnIdx={turnIdx} gamers={gamers} ></Dice>
+              <Dice rollEvent={rollEvent} turnIdx={turnIdx} gamers={gamers} handleDiceRoll={handleDiceRoll} handleSyncRoll={handleSyncRoll} me={me} ></Dice>
             </div>
                   
             <div style={{position:"absolute",top:"48%",left:"0%"}}>
               {/* <div class="waves-effect waves-light btn-large" onClick={() => { tradeWindow() }}>Trade</div> */}
               <TradeButton me={me} gamers={gamers} handleOpenTrade={handleOpenTrade} handleMyStuffMoneyChange={handleMyStuffMoneyChange} handleLeftTradesChange={handleLeftTradesChange} handleSelectorChange={handleSelectorChange} handleRightValueChange={handleRightValueChange} handleRightTradesChange={handleRightTradesChange} handleConfirm={handleConfirm} />
-              <TradeSync handleLeftTradesChange={handleLeftTradesChange} handleRightTradesChange={handleRightTradesChange} setIsConfirm={setIsConfirm} openTrade={openTrade} trader={trader} gamers={gamers} myStuffMoney={myStuffMoney} leftTrades={leftTrades} rightSelect={rightSelect} rightValue={rightValue} rightTrades={rightTrades} isConfirm={isConfirm} handleYes={handleYes} />
+              <TradeSync handleOpenTrade={handleOpenTrade} handleLeftTradesChange={handleLeftTradesChange} handleRightTradesChange={handleRightTradesChange} setIsConfirm={setIsConfirm} openTrade={openTrade} trader={trader} gamers={gamers} myStuffMoney={myStuffMoney} leftTrades={leftTrades} rightSelect={rightSelect} rightValue={rightValue} rightTrades={rightTrades} isConfirm={isConfirm} handleYes={handleYes} />
               <Bid me={me} player={getCurrentPlayer()} openBid={openBid} setOpenBid={setOpenBid} handleDeclineBidding={handleDeclineBidding} handleAcceptBidding={handleAcceptBidding} highestBid={highestBid} />
             </div>
               <div style={{position:"absolute",top:"48%",right:"0%"}}>
@@ -171,7 +175,11 @@ const Lobby = () => {
 
               <div style={{position:"absolute",backgroundColor:"gray",left:"25%",bottom:"5%"}}>
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { rollEvent(player1) }}>Roll Dice</div> */}
-                <div class="waves-effect waves-light btn-large" onClick={() => { reactDice.rollAll(); setIsRolled(true); }} disabled={ (Object.keys(gamers)[turnIdx] !== me.current) || (isRolled && gamers[me.current].doubles === 0) } >Roll Dice</div>
+                <div class="waves-effect waves-light btn-large" onClick={async () => {
+                  await payJail(gamers[me.current]);
+                  await setIsRolled(true); 
+                  reactDice.rollAll([5,1]);
+                  }} disabled={ (Object.keys(gamers)[turnIdx] !== me.current) || (isRolled && /*gamers[me.current].doubles*/ double === 0) } >Roll Dice</div>
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { console.log(reactDice.diceContainer.dice[0].state) }}>Roll Dice</div> */}
               </div>
             <div style={{position:"absolute",backgroundColor:"gray",right:"25%",bottom:"5%"}}>

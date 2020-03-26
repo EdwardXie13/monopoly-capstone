@@ -6,9 +6,11 @@ const TradeSync = props => {
 
   useEffect(() => {
     setIsOpen(props.openTrade);
-  }, [props.openTrade, props.leftTrades, props.rightSelect, props.rightValue, props.isConfirm, props.rightTrades]);
+  }, [props.openTrade, props.leftTrades, props.rightSelect, props.rightValue, props.isConfirm, props.rightTrades, props.myStuffMoney, props.gamers]);
 
-  const closeModal = () => { setIsOpen(false); };
+  const closeModal = () => { 
+    setIsOpen(false); 
+  };
 
   const renderContent = () => {
       return props.trader.length > 0 && (
@@ -24,7 +26,7 @@ const TradeSync = props => {
               { renderOptions() }
             </select>
             { props.rightSelect !== null && props.gamers[props.rightSelect] && <div>{props.gamers[props.rightSelect].name}'s money: {props.gamers[props.rightSelect].money}</div> }
-            <input type="number" placeholder="$" value={props.rightValue} />
+            { props.rightSelect !== null && props.gamers[props.rightSelect] && <input type="number" placeholder="$" value={props.rightValue} />}
             { props.rightSelect !== null && props.gamers[props.rightSelect] && renderCheckBoxes(props.gamers[props.rightSelect].inventory) }
           </div>
         </>
@@ -62,9 +64,10 @@ const TradeSync = props => {
   }
 
   const handleYes = () => {
-    console.log("from handleYes", props.leftTrades, props.rightTrades);
+    // console.log("from handleYes", props.leftTrades, props.rightTrades);
     props.setIsConfirm(false);
-    props.handleYes(props.trader, props.rightSelect, new Set([ ...props.leftTrades ]), new Set([ ...props.rightTrades ]));
+    props.handleYes(props.trader, props.rightSelect, new Set([ ...props.leftTrades ]), new Set([ ...props.rightTrades ]), props.trader, props.myStuffMoney, props.rightSelect, props.rightValue );
+    props.handleOpenTrade([], false);
   }
 
   const renderConfirmDialog = () => {

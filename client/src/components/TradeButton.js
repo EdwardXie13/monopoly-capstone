@@ -54,13 +54,18 @@ const TradeButton = ({ me , gamers, handleOpenTrade, handleMyStuffMoneyChange, h
 
   function openModal() {
     setIsOpen(true);
-    handleOpenTrade([...myStuff.properties]);
+    handleOpenTrade([...myStuff.properties], true);
   }
  
   function closeModal(){
     setIsOpen(false);
     setMyStuff({ money: 0, properties: new Set([]) });
     setTheirStuff({ money: 0, properties: new Set([]) });
+    handleOpenTrade([...myStuff.properties], false);
+    handleMyStuffMoneyChange(0);
+    handleRightValueChange(0);
+    handleSelectorChange("Select a player");
+    setSelected(null);
   }
 
   const acceptTrade = () => {
@@ -144,7 +149,7 @@ const TradeButton = ({ me , gamers, handleOpenTrade, handleMyStuffMoneyChange, h
               { renderOptions() }
             </select>
             { selected !== null && gamers[selected] && <div>{gamers[selected].name}'s money: {gamers[selected].money}</div> }
-            <input type="number" placeholder="$" value={theirStuff.money} onChange={ e => { setTheirStuff({ ...theirStuff, money: e.target.value }); handleRightValueChange(e.target.value) } } />
+            { selected !== null && gamers[selected] && <input type="number" placeholder="$" value={theirStuff.money} onChange={ e => { setTheirStuff({ ...theirStuff, money: e.target.value }); handleRightValueChange(e.target.value) } } /> }
             { selected !== null && gamers[selected] && renderMyTrade(gamers[selected].inventory) }
           </div>
         </div>
