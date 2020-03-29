@@ -3,71 +3,89 @@ import Swal from 'sweetalert2';
 import board from '../library/board/board.js';
 import communityChest from '../library/cards/Community_Chest_Cards';
 import chance from '../library/cards/Chance_Cards';
-
-const useEffects = () => {
-  const communityEffect = (player) => {
+import Deeds from '../classes/Deeds.js';
+//player, money, location, inventory, index
+const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer) => {
+  const communityEffect = async(player) => {
     const card = communityChest.pop();
     switch(card.number) {
       case 15:
         console.log(card.text);
         //You inherit $100
-        // player.setMoney(100);
         player.money += 100;
         break;
       case 14:
         console.log(card.text);
         //You have won second prize in a beauty contest. Collect $10
-        // player.setMoney(10);
         player.money += 10;
         break;
       case 13:
         console.log(card.text);
         //You are assessed for street repairs. $40 per house. $115 per hotel (You own)
+        let repairFee = 0;
+        for (let i=0; i<player.inventory.length; ++i) {
+          if (player.inventory[i].house === 5) repairFee += 115
+          repairFee += player.inventory[i].house * 40  
+        }
+        // player.money -= repairFee;
+        payRent(player, repairFee);
         break;
       case 12:
         console.log(card.text);
         //Receive $25 consultancy fee
-        // player.setMoney(25);
         player.money += 25;
         break;
       case 11:
         console.log(card.text);
         //Pay school fees of $50
-        // player.setMoney(-50);
-        player.money -= 50;
+        payRent(player, 50);
         break;
       case 10:
         console.log(card.text);
         //Pay hospital fees of $100
-        // player.setMoney(-100);
-        player.money -= 100;
+        payRent(player, 100);
         break;
       case 9:
         console.log(card.text);
         //Life insurance matures. Collect $100
-        // player.setMoney(100);
         player.money += 100;
         break;
       case 8:
         console.log(card.text);
         //It is your birthday. Collect $10 from every player
+        let temp = 0;
+        setActivator(gamers[me.current]);
+        for (let key of Object.keys(gamers)) {
+          if (key !== me.current) {
+            if (gamers[key].bankrupt === false) {
+              temp++;
+              if (gamers[key].money < 10) {
+                console.log("player's turn", gamers[key]);
+                await payRent(gamers[key], 10, null, gamers[me.current]);
+                handleSetFinishedPlayer({ name: '' });
+              } else {
+                handlePlayerChange(gamers[key].name, gamers[key].money - 10, gamers[key].location, gamers[key].inventory, gamers[key].index);
+              }
+              // console.log("after paying rent", gamers[key].money - 10);
+            }
+          }
+        }
+        setActivator(null);
+        // handlePlayerChange(gamers[player.name].name, gamers[player.name].money + (10 * temp), gamers[player.name].location, gamers[player.name].inventory, gamers[player.name].index);
         break;
       case 7:
         console.log(card.text);
         //Income tax refund. Collect $20
-        // player.setMoney(20);
         player.money += 20;
         break;
       case 6:
         console.log(card.text);
         //Holiday fund matures. Collect $100
-        // player.setMoney(100);
         player.money += 100;
         break;
       case 5:
         console.log(card.text);
         //go to jail
-        // player.setJail(true);
         player.jail = true;
         break;
       case 4:
@@ -78,25 +96,21 @@ const useEffects = () => {
       case 3:
         console.log(card.text);
         //From sale of stock you get $50
-        // player.setMoney(50);
         player.money += 50;
         break;
       case 2:
         console.log(card.text);
         //Doctor's fee. Pay $50
-        // player.setMoney(-50);
-        player.money -= 50;
+        payRent(player, 50);
         break;
       case 1:
         console.log(card.text);
         //Bank error in your favor. Collect $200
-        // player.setMoney(200);
         player.money += 200;
         break;
       case 0:
         console.log(card.text);
         //Advance to 'GO' (Collect $200)
-        // player.setMoney(200);
         player.money += 200;
         break;
       
@@ -122,6 +136,8 @@ const useEffects = () => {
         // player.setLocation("Boardwalk", 39)
         player.location = "Boardwalk";
         player.index = 39;
+
+        getRent(player);
         break;
       case 12:
         console.log(card.text);
@@ -132,16 +148,26 @@ const useEffects = () => {
         // player.setLocation("Reading Railroad", 5);
         player.location = "Reading Railroad";
         player.index = 5;
+
+        let rent = 2 * railroadRent(player);
+        await payRent(player, rent);
         break;
       case 11:
         console.log(card.text);
         //Speeding fine $15
-        // player.setMoney(-15);
-        player.money -= 15;
+        // player.money -= 15;
+        await payRent(player, 15)
         break;
       case 10:
         console.log(card.text);
         //Make general repairs on all your property. For each house pay $25. For each hotel $100
+        let repairFee = 0;
+        for (let i=0; i<player.inventory.length; ++i) {
+          if (player.inventory[i].house === 5) repairFee += 115
+          repairFee += player.inventory[i].house * 40  
+        }
+        // player.money -= repairFee;
+        payRent(player, repairFee);
         break;
       case 9:
         console.log(card.text);
@@ -173,16 +199,16 @@ const useEffects = () => {
         //Advance token to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay the owner twice the rental to which they are otherwise entitled
         if (player.index === 36) {
           console.log("RRR");
-          // player.setLocation("Reading Railroad", 5); //does collect 200?
           player.location = "Reading Railroad";
           player.index = 5;
-          // player.setMoney(200);
           player.money += 200;
-          if(board[5].owned === false) {
-            await promptUnowned(5);
-          }
-          else {
-            //pay board[5].owner
+          if (board[player.index].owned === false) {
+            promptUnowned(player);
+            console.log("paid", player.money);
+          } else {
+            let rent = 2 * railroadRent(player);
+            console.log("rent", rent)
+            await payRent(player, rent);
           }
         }
         else if (player.index === 7) {
@@ -190,11 +216,12 @@ const useEffects = () => {
           // player.setLocation("Pennsylvania Railroad", 15);
           player.location = "Pennsylvania Railroad";
           player.index = 15;
-          if(board[15].owned === false) {
-            await promptUnowned(15);
-          }
-          else {
-            //pay board[15].owner
+          
+          if (board[player.index].owned === false) {
+            promptUnowned(player);
+          } else {
+            let rent = 2 * railroadRent(player);
+            await payRent(player, rent);
           }
         }
         else if (player.index === 22){
@@ -202,11 +229,12 @@ const useEffects = () => {
           // player.setLocation("B. & O. Railroad", 25);
           player.location = "B. & O. Railroad";
           player.index = 25;
-          if(board[25].owned === false) {
-            await promptUnowned(25);
-          }
-          else {
-            //pay board[25].owner
+
+          if (board[player.index].owned === false) {
+            promptUnowned(player);
+          } else {
+            let rent = 2 * railroadRent(player);
+            await payRent(player, rent);
           }
         }
         //cant get advance to short line
@@ -222,11 +250,11 @@ const useEffects = () => {
           player.location = "Electric Company";
           player.index = 12;
           if(board[12].owned === true) {
-            await promptUnowned(12);
+            await promptUnowned(player, 12);
           }
           else {
-            payUtilities(player);
-            //pay the owner pay 10x dice
+            //re throw pay the owner pay 10x dice
+            rollUtilityDice(player);
           }
         }
         else if (player.index === 22) {
@@ -234,11 +262,11 @@ const useEffects = () => {
           player.location = "Water works";
           player.index = 28;
           if(board[22].owned === true) {
-            await promptUnowned(22);
+            await promptUnowned(player, 22);
           }
           else {
-            payUtilities(player);
-            //pay the owner pay 10x dice
+            //re throw pay the owner pay 10x dice
+            rollUtilityDice(player);
           }
         }
         break;
@@ -251,52 +279,78 @@ const useEffects = () => {
         // player.setLocation("St. Charles Place", 11)
         player.location = "St. Charles Place";
         player.index = 11;
+        getRent(player);
         break;
       case 1:
         console.log(card.text);
         //Advance to Illinois Avenue. If you pass 'GO' collect $200
         if (player.index > 35)
-          // player.setMoney(200);
           player.money += 200;
-        // player.setLocation("Illinois Avenue", 24)
         player.location = "Illinois Avenue";
         player.index = 24;
+
+        getRent(player);
         break;
       case 0:
         console.log(card.text);
         //Advance to Go (Collect $200)
         // player.setMoney(200);
         player.money += 200;
-        // player.setLocation("Go", 0);
         player.location = "Go";
         player.index = 0;
         break;
     }
   }
+  const getRent = async (player) => {
+    if (board[player.index].owned === true) {
+      let rent = 0;
+      if (board[player.index].house === 0) {
+        if (monopolyRent(player.index) ) {
+          rent = 2 * board[player.index].rentNormal
+        } else rent = board[player.index].rentNormal;
+      } else if (board[player.index].house === 1) {
+        rent = board[player.index].rentHouse1;
+      } else if (board[player.index].house === 2) {
+        rent = board[player.index].rentHouse2;
+      } else if (board[player.index].house === 3) {
+        rent = board[player.index].rentHouse3;
+      } else if (board[player.index].house === 4) {
+        rent = board[player.index].rentHouse3;
+      } else rent = board[player.index].rentHotel;
 
-  const payUtilities = (player) => {
-    var die1 = Math.floor(Math.random() * 6) + 1;
-    var die2 = Math.floor(Math.random() * 6) + 1;
-    var temp = (die1+die2)*10;
-    console.log(temp);
-    // player.setMoney(-temp);
-    player.money -= temp;
+      await payRent(player, rent);
+    } else {
+      await promptUnowned(player);
+    }
+  }
+
+  const rollUtilityDice = async (player) => {
+    await setUtilityDice(true);
+    reactDice.rollAll();
+    const rent = 10 * reactDice.diceContainer.dice[0].state.currentValue + reactDice.diceContainer.dice[1].state.currentValue;
+    await payRent(player, rent);
   }
  
-
-  //fix async later
-  const promptUnowned = (index) => new Promise(function(resolve, reject) {
+  const promptUnowned = (player) => new Promise(function(resolve, reject) {
     Swal.fire({
       position: 'center',
       allowOutsideClick: false,
       showCancelButton: true,
       title: "Do you want to buy?",
-      text: board[index].name + " costs " + board[index].price + " dollars",
+      text: board[player.index].name + " costs " + board[player.index].price + " dollars",
       confirmButtonText: 'Yes',
       cancelButtonText: 'No'
     }).then((result) => {
       if (result.value === true) {
-        return true;
+        handleBuyProp(player.index, player);
+        addToHistory(`player has acquired ${board[player.index].name}`);
+        resolve("done");
+      }
+      else {
+        addToHistory("bidding begins");
+        setName(board[player.index].name);
+        handleSetPropName(board[player.index].name);
+        setOpenBid(true);
       }
     })
   })

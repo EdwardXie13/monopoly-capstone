@@ -41,7 +41,6 @@ const TradeButton = ({ setLeftTrades, setRightTrades, theirStuff, setTheirStuff,
   // const [modalIsOpen,setIsOpen] = React.useState(false);
   const [myInventory, setMyInventory] = React.useState([]);
   const [otherInventory, setOtherInventory] = React.useState({});
-  console.log("stuffs", myStuff, theirStuff);
   // const [selected, setSelected] = React.useState(null);
   // const [myStuff, setMyStuff] = React.useState({ money: 0, properties: new Set([]) });
   // const [theirStuff, setTheirStuff] = React.useState({ money: 0, properties: new Set([]) });
@@ -72,9 +71,14 @@ const TradeButton = ({ setLeftTrades, setRightTrades, theirStuff, setTheirStuff,
   }
 
   const acceptTrade = () => {
-    if (myStuff.money <= gamers[me.current].money && theirStuff.money <=gamers[selected].money) {
-      handleConfirm(selected);
-      console.log("Trade accepted")
+    try {
+      if (myStuff.money <= gamers[me.current].money && theirStuff.money <= gamers[selected].money) {
+        handleConfirm(selected);
+        console.log("Trade accepted")
+      }
+    }
+    catch(error) {
+      console.log('error')
     }
   }
 
@@ -133,7 +137,7 @@ const TradeButton = ({ setLeftTrades, setRightTrades, theirStuff, setTheirStuff,
  
   return (
     <div>
-      <button className='waves-effect waves-light btn-large' onClick={openModal}>Trade</button>
+      <button className='waves-effect waves-light btn-large' disabled ={gamers[me.current].bankrupt} onClick={openModal}>Trade</button>
       <Modal
         isOpen={modalIsOpen}
         shouldCloseOnOverlayClick={false}

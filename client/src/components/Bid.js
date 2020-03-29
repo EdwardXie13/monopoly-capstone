@@ -24,9 +24,7 @@ const Bid = ({ me, player, openBid, setOpenBid, handleDeclineBidding, handleAcce
   }
 
   const accept = e => {
-    console.log("bidding", newBid, highestBid.amount)
     if (newBid <= player.money && newBid > highestBid.amount) {
-      console.log("player accepted", me.current);
       handleAcceptBidding(newBid, me.current); // newBid > highestBid
       setOpenBid(false);
     } else {
@@ -35,7 +33,8 @@ const Bid = ({ me, player, openBid, setOpenBid, handleDeclineBidding, handleAcce
   }
 
   const decline = () => {
-    handleDeclineBidding(player, name);
+    console.log("name", name);
+    handleDeclineBidding(player, name, highestBid.amount);
     setOpenBid(false);
   }
   

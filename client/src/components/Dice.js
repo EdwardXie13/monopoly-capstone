@@ -4,7 +4,7 @@ import 'react-dice-complete/dist/react-dice-complete.css'
 import ReactDiceContext from '../contexts/ReactDiceContext';
 import board from '../library/board/board';
 
-const Dice = ({ rollEvent, turnIdx, gamers, handleDiceRoll, handleSyncRoll, me }) => {
+const Dice = ({ rollEvent, turnIdx, gamers, handleDiceRoll, handleSyncRoll, me, utilityDice, setUtilityDice }) => {
   const { reactDice, setReactDice, setIsRolled, setDouble } = useContext(ReactDiceContext);
 
   const rollDoneCallback = (num) => {
@@ -14,7 +14,8 @@ const Dice = ({ rollEvent, turnIdx, gamers, handleDiceRoll, handleSyncRoll, me }
 
     if (me.current === Object.keys(gamers)[turnIdx]) { 
       handleSyncRoll(die0, die1, me.current);
-      rollEvent(die0, die1, Object.values(gamers)[turnIdx], setIsRolled, setDouble)
+      if (!utilityDice) rollEvent(die0, die1, Object.values(gamers)[turnIdx], setIsRolled, setDouble);
+      setUtilityDice(false);
     };
     // console.log('board', board);
     // handleDiceRoll(board, gamers)

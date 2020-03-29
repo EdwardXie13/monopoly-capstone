@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useContext } from 'react';
+import React, { useState, useLayoutEffect, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import '../styles/LobbyPage.css';
@@ -8,6 +8,7 @@ import usePubNub from '../hooks/usePubNub';
 import ReactDiceContext from '../contexts/ReactDiceContext';
 import RoomContext from '../contexts/RoomContext';
 import BiddingContext from '../contexts/BiddingContext';
+import SellingContext from '../contexts/SellingContext';
 import boardImage from '../assets/boards/Classic copy.jpeg';
 import useGame from '../hooks/useGame';
 import useCard from '../hooks/useCard';
@@ -70,7 +71,6 @@ function useWindowSize() {
 
 const Lobby = () => {
   const [gamers, setGamers] = useState({});
-  
   const [player1, setPlayer1] = useState(new Player("Player 1"));
   const [player2, setPlayer2] = useState(new Player("Player 2"));
   // const [player3, setPlayer3] = useState(new Player("Player 3"));
@@ -83,22 +83,36 @@ const Lobby = () => {
   const [turnIdx, setTurnIdx] = useState(0);
   const [biddingTurnIdx, setBiddingTurnIdx] = useState(turnIdx);
   const [highestBid, setHighestBid] = useState({ amount: -Infinity, player: { name: '' } });
+  const [utilityDice, setUtilityDice] = useState(false);
+  const [activator, setActivator] = useState(null);
+  const [loanShark, setLoanShark] = useState({ name: '' });
+  const [initialRent, setInitialRent] = useState(0);
+  // const [finishedPlayer, setFinishedPlayer] = useState({ name: "" });
+  const finishedPlayer = useRef({ name: '' });
   // const [isRolled, setIsRolled] = useState(false);
   
   const { players, code } = useContext(RoomContext);
+  const { showManage, setShowManage, openBuild, setOpenBuild, rent, setRent, resolvePayment, setResolvePayment } = useContext(SellingContext);
   const { reactDice, isRolled, setIsRolled, double, setDouble, setReactDice } = useContext(ReactDiceContext);
   const { theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, /*modalIsOpen, setIsOpen, */trader, setTrader, myStuffMoney, setMyStuffMoney, leftTrades, setLeftTrades, rightSelect, setRightSelect, rightValue, setRightValue, rightTrades, setRightTrades, isConfirm, setIsConfirm } = useContext(TradeSyncContext);
   const { openBid, setOpenBid, name, setName } = useContext(BiddingContext);
-  
-  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff);
+  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark);
+  console.log("turn", Object.keys(gamers)[turnIdx], me.current? gamers[me.current].bankrupt : null, isRolled);
 
   const [history, renderHistory, addToHistory] = useCard();
-  const [rollEvent, payJail] = useGame(addToHistory, setOpenBid, setName, handleBuyProp);
+  const [rollEvent, payJail] = useGame(addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, handleSetActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent);
   const [width, height] = useWindowSize();
   // console.log("turn", Object.keys(gamers)[turnIdx]);
   // console.log("isRolled", isRolled);
   // console.log("double", me.current? gamers[me.current].doubles : null);
-  console.log("gamers", gamers);
+
+  // console.log("turn", Object.keys(gamers)[turnIdx]);
+  // console.log(Object.keys(gamers)[turnIdx] === me.current, me.current !== null, me.current? gamers[me.current].bankrupt === true : null)
+  if (Object.keys(gamers)[turnIdx] === me.current && me.current && gamers[me.current].bankrupt === true && isRolled) {
+    handleNextTurn(); 
+    setIsRolled(false);
+  };
+
   const showThumbnail = src => {
     if(!src){
         return <img src={Default} style={{ position: "relative", height:window.innerHeight/2.5}}/>
@@ -160,7 +174,7 @@ const Lobby = () => {
           
           <div style={{position:"absolute", zIndex:"0",width:"60%",height:"30%",left:"20%",top:"40%"}}>
             <div style={{position:"absolute",top:"25%",left:"23%",zIndex:"3"}}>
-              <Dice rollEvent={rollEvent} turnIdx={turnIdx} gamers={gamers} handleDiceRoll={handleDiceRoll} handleSyncRoll={handleSyncRoll} me={me} ></Dice>
+              <Dice utilityDice={utilityDice} setUtilityDice={setUtilityDice} rollEvent={rollEvent} turnIdx={turnIdx} gamers={gamers} handleDiceRoll={handleDiceRoll} handleSyncRoll={handleSyncRoll} me={me} ></Dice>
             </div>
                   
             <div style={{position:"absolute",top:"48%",left:"0%"}}>
@@ -170,7 +184,7 @@ const Lobby = () => {
               <Bid me={me} player={getCurrentPlayer()} openBid={openBid} setOpenBid={setOpenBid} handleDeclineBidding={handleDeclineBidding} handleAcceptBidding={handleAcceptBidding} highestBid={highestBid} />
             </div>
               <div style={{position:"absolute",top:"48%",right:"0%"}}>
-                <BuildButton player={gamers[me.current]} />
+                <BuildButton setIsRolled={setIsRolled} handleDisownInventory={handleDisownInventory} setInitialRent={setInitialRent} initialRent={initialRent} loanShark={loanShark} gamers={gamers} handleSetFinishedPlayer={handleSetFinishedPlayer} activator={activator} setActivator={setActivator} handlePlayerChange={handlePlayerChange} resolvePayment={resolvePayment} setRent={setRent} rent={rent} openBuild={openBuild} setOpenBuild={setOpenBuild} showManage={showManage} setShowManage={setShowManage} player={gamers[me.current]} />
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { buildWindow() }}>Build</div> */}
               </div>
 
@@ -179,12 +193,12 @@ const Lobby = () => {
                 <div class="waves-effect waves-light btn-large" onClick={async () => {
                   await payJail(gamers[me.current]);
                   await setIsRolled(true); 
-                  reactDice.rollAll([5,1]);
-                  }} disabled={ (Object.keys(gamers)[turnIdx] !== me.current) || (isRolled && /*gamers[me.current].doubles*/ double === 0) } >Roll Dice</div>
+                  reactDice.rollAll([2 ,1]);
+                  }} disabled={ gamers[me.current].bankrupt || (Object.keys(gamers)[turnIdx] !== me.current) || (isRolled && /*gamers[me.current].doubles*/ double === 0) } >Roll Dice</div>
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { console.log(reactDice.diceContainer.dice[0].state) }}>Roll Dice</div> */}
               </div>
             <div style={{position:"absolute",backgroundColor:"gray",right:"25%",bottom:"5%"}}>
-              <a class="waves-effect waves-light btn-large"  onClick={() => { handleNextTurn(); setIsRolled(false); }} disabled={!isRolled} >   End Turn </a>
+              <a class="waves-effect waves-light btn-large end-button"  onClick={() => { handleNextTurn(); setIsRolled(false); }} disabled={!isRolled} >   End Turn </a>
             </div>
           </div>
           

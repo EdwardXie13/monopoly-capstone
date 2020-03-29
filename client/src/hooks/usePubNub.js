@@ -9,7 +9,7 @@ import board from '../library/board/board';
 import RoomContext from '../contexts/RoomContext';
 import backend from '../apis/backend';
 
-const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff) => {
+const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark) => {
   const lobbyChannel = useRef(null);
   const gameChannel = useRef(null);
   const roomId = useRef(null);
@@ -18,14 +18,14 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
   const { players, setPlayers, setCode } = useContext(RoomContext);
 
   const pubnub = new PubNub({
-    publishKey: "pub-c-d1c0326e-1d91-434d-a115-8a73c59e3381",
-    subscribeKey: "sub-c-bf23c8b4-5bf8-11ea-9a59-eab2515ceb0d"
+    publishKey: "pub-c-a872a814-ff46-40a2-813c-482cdcef049b"/*'pub-c-7045c7b8-54ee-4831-81e0-35058c0eabff'*/,
+    subscribeKey: "sub-c-1564b086-71e2-11ea-895f-e20534093ea4"/*'sub-c-f28bdf0c-3db7-11ea-afe9-722fee0ed680'*/
   });
 
   useEffect(() => {
     pubnub.addListener({
       status: function(statusEvent) { },
-      message: function(msg) {
+      message: async function(msg) {
         if (msg.message.text === "Game Started") {
           setIsPlaying(true);
           gameChannel.current = 'game--' + roomId.current;
@@ -132,17 +132,15 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           setBiddingTurnIdx(prevBidIdx => {
             let newBidIdx = (prevBidIdx + 1) % Object.entries(pg).length;
 
-            // while (!pg[Object.keys(pg)[newBidIdx]].bidding) {
-              // newBidIdx = (newBidIdx + 1) % Object.entries(pg).length
-            // }
-            console.log("checking equal", me.current, phb.player.name);
-
             if (me.current !== phb.player.name && me.current === Object.keys(pg)[newBidIdx]) setOpenBid(true);
 
             newMe = pg[me.current];
             if (me.current === phb.player.name) {
               console.log("previous inventory", newMe.inventory);
-              newMe = { ...newMe, inventory: [ ...newMe.inventory, msg.message.propName ] }
+              //name, type, index, color, rent, src, buildingCost, price, mortgage
+              const tile = board.filter(t => t.name === msg.message.propName)[0];
+              console.log("tile", tile);
+              newMe = { ...newMe, money: newMe.money - msg.message.highestBidAmount, inventory: [ ...newMe.inventory, new Deeds(msg.message.propName, tile.type, tile.index, tile.color, tile.rentNormal, tile.src, tile.buildingCost, tile.price, false) ] }
               biddingEnded = true;
             }
 
@@ -151,6 +149,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
 
           if (biddingEnded) {
             // setGamers(prevGamers => { return { ...prevGamers, [me.current]: newMe } });
+            console.log("newMe", newMe);
+            console.log("propName", typeof msg.message.propName)
             pubnub.publish({ channel: gameChannel.current, message: { text: "Bidding Ended", newMe } });
 
           }
@@ -168,7 +168,6 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             });
   
             await setHighestBid(prevHighestBid => {
-              console.log("phb", phb, prevHighestBid)
               phb = prevHighestBid;
               return prevHighestBid;
             });
@@ -181,13 +180,13 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
               // while (!pg[Object.keys(pg)[newBidIdx]].bidding) {
                 // newBidIdx = (newBidIdx + 1) % Object.entries(pg).length
               // }
-
-              if (me.current !== phb.player.name && me.current === Object.keys(pg)[newBidIdx]) setOpenBid(true);
+              // console.log(me.current, phb);
 
               return newBidIdx;
             })
-            console.log("new bidder", msg.message.newBid, pg[msg.message.playerName])
-            setHighestBid(prevHighestBid => { return { amount: msg.message.newBid, player: pg[msg.message.playerName] } });
+            // console.log("new bidder", msg.message.newBid, pg[msg.message.playerName])
+            setHighestBid(prevHighestBid => { phb = { amount: msg.message.newBid, player: pg[msg.message.playerName] }; return { amount: msg.message.newBid, player: pg[msg.message.playerName] } });
+            if (me.current !== phb.player.name && me.current === Object.keys(pg)[nbi]) setOpenBid(true);
           }
           meow();
         } else if (msg.message.text === "Bidding Ended") {
@@ -218,6 +217,30 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             return prevReactDice;
           })
           if (msg.message.player !== me.current) rDice.rollAll([ msg.message.d1, msg.message.d2 ]);
+        } else if (msg.message.text === "Change Player Stuff") {
+          setGamers(prevGamers => {
+            return { ...prevGamers, [msg.message.player]: { ...prevGamers[msg.message.player], money: msg.message.money, inventory: msg.message.inventory, index: msg.message.index, location: msg.message.location, bankrupt: msg.message.bankrupt } };
+          });
+        } else if (msg.message.text === "Set Prop Name") {
+          setName(msg.message.propName);
+        } else if (msg.message.text === "Open Build Window") {
+          if (msg.message.player.name === me.current) {
+            await setRent(msg.message.rent);
+            await setLoanShark(msg.message.loanShark);
+            await setOpenBuild(true);
+            document.querySelector('.manage-button').click();
+          }
+        } else if (msg.message.text === "Set Activator") {
+          setActivator(msg.message.player);
+        } else if (msg.message.text === "Set Finished Player") {
+          // console.log("finished player", msg.message.player);
+          finishedPlayer.current = msg.message.player;
+        } else if (msg.message.text === "Disown Inventory") {
+          for (let deed of msg.message.inventory) {
+            board[deed.index].owned = false;
+            board[deed.index].owner = "Bank";
+            board[deed.index].mortgaged = false;
+          }
         }
       }
     });
@@ -242,28 +265,16 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     pubnub.hereNow({
       channels: [lobbyChannel.current]
     }).then(response => {
+      let pg = 0;
+      setGamers(prevGamers => pg = prevGamers);
+      console.log("occupancy", response.totalOccupancy);
+      
       if (response.totalOccupancy < 4) {
         pubnub.subscribe({
           channels: [lobbyChannel.current],
-          withPresence: true,
-          error: error => {
-            Swal.fire({
-              position: 'center',
-              allowOutsideClick: false,
-              title: 'Error',
-              text: JSON.stringify(error),
-              width: 275,
-              padding: '0.7em',
-              customClass: {
-                heightAuto: false,
-                title: 'title-class',
-                popup: 'popup-class',
-                confirmButton: 'button-class'
-              }
-            });
-          }
-        })
-
+          withPresence: true
+        });
+        
         backend.put('/room/join', { roomId: roomId.current })
           .then(res => {
             setCode(roomId.current);
@@ -282,8 +293,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             const currentPlayer = new Player(me.current);
 
             setGamers({ ...existingPlayers, [me.current]: currentPlayer });
-
-            if (response.totalOccupancy ===1) {
+            console.log("players length", res.data.players);
+            if (/*response.totalOccupancy*/res.data.players.length === 2) {
               pubnub.publish({ channel: lobbyChannel.current, message: { text: "Game Started" } });
               gameChannel.current = 'game--' + roomId.current;
               pubnub.subscribe({ channels: [gameChannel.current], withPresence: true });
@@ -291,6 +302,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             }
           });
       } else {
+        console.log("else");
         Swal.fire({
           position: 'center',
           allowOutsideClick: false,
@@ -313,7 +325,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     pubnub.publish({ channel: gameChannel.current, message: { text: "Opened Trade", player: me.current, checkedStuff: checkedStuff, open } });
   }
 
-  const handleCreateRoom = () => {
+  const handleCreateRoom = async () => {
     roomId.current = shortid.generate().substring(0,5);
     lobbyChannel.current = 'lobby--' + roomId.current;
 
@@ -337,7 +349,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
         });
       }
     });
-
+    
     backend.post('/room/create', { roomId: roomId.current })
       .then(res => {
         setPlayers(res.data.players);
@@ -409,8 +421,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     pubnub.publish({ channel: gameChannel.current, message: { text: "Next Turn" } });
   }
 
-  const handleDeclineBidding = (player, propName) => {
-    pubnub.publish({ channel: gameChannel.current, message: { text: "Decline Bidding", player: player.name, propName } });
+  const handleDeclineBidding = (player, propName, highestBidAmount) => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Decline Bidding", player: player.name, propName, highestBidAmount } });
   }
 
   const handleAcceptBidding = (newBid, playerName) => {
@@ -430,7 +442,31 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     pubnub.publish({ channel: gameChannel.current, message: { text: "Sync Roll", d1, d2, player } });
   }
 
-  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll];
+  const handlePlayerChange = (player, money, location, inventory, index, bankrupt = false) => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Change Player Stuff", player, money, location, inventory, index, bankrupt } });
+  }
+
+  const handleSetPropName = propName => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Set Prop Name", propName } });
+  }
+
+  const handleOpenBuildWindow = (player, rent, loanShark) => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Open Build Window", player, rent, loanShark } });
+  }
+
+  const handleSetActivator = player => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Set Activator", player } });
+  }
+
+  const handleSetFinishedPlayer = player => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Set Finished Player", player } });
+  }
+
+  const handleDisownInventory = inventory => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Disown Inventory", inventory } });
+  }
+
+  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory];
 }
 
 export default usePubNub;

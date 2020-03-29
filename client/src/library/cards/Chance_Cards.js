@@ -63,5 +63,9 @@ export default [
   {
     text:"Your building and loan matures. Collect $150",
     number: 15
+  },
+  {
+    text:"Advance token to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay the owner twice the rental to which they are otherwise entitled",
+    number: 5
   }
 ];

@@ -26,8 +26,8 @@
   height: inherit;
 }
 
-#confirm-button {
-  display: block;
+.confirm-button {
+  display: flex;
 }
 
 #cost {
@@ -45,4 +45,5 @@
 
 .cost-container {
   display: flex;
+  flex-direction: column;
 }

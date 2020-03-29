@@ -35,9 +35,11 @@ export default class Player {
     this.name = name;
     this.location = "Go";
     this.index = 0;
-    //this.money = 1500;
-    this.money = 10000;
-    //this.money = 0;
+    // this.location = "Park Place";
+    // this.index = 37;
+    // this.money = 1500;
+    // this.money = 10000;
+    this.money = 0;
     this.jail = false;
     this.jailroll = 0;
     this.doubles = 0;
@@ -45,40 +47,40 @@ export default class Player {
     this.c_JailCard = false;
     this.bidding = true;
     this.bankrupt = false;
-    this.inventory = [];
-    // if (name === "1@1.com") {
-    //   this.inventory = [
-    //     new Deeds("Mediterranean Avenue", "property", 1, "Brown" , 2, MediterraneanAvenue, 50, 60, false),
-    //     new Deeds("Baltic Avenue", "property", 3, "Brown", 4, BalticAvenue, 50, 60, false),
-    //     new Deeds("Oriental Avenue", "property", 6, "LightBlue", 6, OrientalAvenue, 50, 100, false)]
-    // } else { this.inventory = [
-    //   new Deeds("Vermont Avenue", "property", 8, "LightBlue", 6, VermontAvenue, 50, 100, false),
-    //   new Deeds("Connecticut Avenue", "property", 9, "LightBlue", 8, ConnecticutAvenue, 50, 120, false),
-    //   new Deeds("St. Charles Place", "property", 11, "Pink", 10, StCharlesPlace, 100, 140, false)]
-    // }
+    // this.inventory = [];
+    if (name === "1@1.com") {
+      this.inventory = [
+        new Deeds("Mediterranean Avenue", "Property", 1, "Brown" , 2, MediterraneanAvenue, 50, 60, false),
+        new Deeds("Baltic Avenue", "Property", 3, "Brown", 4, BalticAvenue, 50, 60, false),
+        new Deeds("Oriental Avenue", "Property", 6, "LightBlue", 6, OrientalAvenue, 50, 100, false)]
+    } else { this.inventory = [
+      new Deeds("Vermont Avenue", "Property", 8, "LightBlue", 6, VermontAvenue, 50, 100, false),
+      new Deeds("Connecticut Avenue", "Property", 9, "LightBlue", 8, ConnecticutAvenue, 50, 120, false),
+      new Deeds("St. Charles Place", "Property", 11, "Pink", 10, StCharlesPlace, 100, 140, false)]
+    }
   }
-  setLocation(location, index) {
-    this.location = location;
-    this.index = index;
-  }
-  setMoney(amount){
-    this.money += amount;
-  }
-  setJail(status) {
-    this.jail = status;
-  }
-  setJailroll() {
-    this.jailroll++;
-  }
-  resetJailroll() {
-    this.jailroll = 0;
-  }
-  setDoubles() {
-    this.doubles++;
-  }
-  resetDoubles() {
-    this.doubles = 0;
-  }
+  // setLocation(location, index) {
+  //   this.location = location;
+  //   this.index = index;
+  // }
+  // setMoney(amount){
+  //   this.money += amount;
+  // }
+  // setJail(status) {
+  //   this.jail = status;
+  // }
+  // setJailroll() {
+  //   this.jailroll++;
+  // }
+  // resetJailroll() {
+  //   this.jailroll = 0;
+  // }
+  // setDoubles() {
+  //   this.doubles++;
+  // }
+  // resetDoubles() {
+  //   this.doubles = 0;
+  // }
   addInventory(deed) {
     this.inventory.push(deed);
   }
