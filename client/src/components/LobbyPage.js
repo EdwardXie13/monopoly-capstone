@@ -14,6 +14,7 @@ import Card from './Card'
 import BuildButton from './BuildButton';
 import TradeButton from './TradeButton';
 import Deeds from '../classes/Deeds';
+import Home from './Home'
 
 import Default from '../assets/cards/Default.png';
 import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
@@ -92,12 +93,12 @@ const Lobby = () => {
     // style={{ position: "absolute", top:"2px",left: "5px", width:"17.5%" }} 
   }
 
-  const renderHome = () => (
-    <div style={{ textAlign: "center" }}>
-      <h3 style={{ color: "#64b5f6", textShadow: "2px 2px 5px rgba(0,0,0,0.2)" }}><Link to="/">Monopoly</Link></h3>
-      <button className="btn blue lighten-3" onClick={handleCreateRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Create Room</button>
-      <button className="btn blue lighten-3" onClick={handleJoinRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Join Room</button>
-    </div>
+  const renderHome = (handleCreateRoom,handleJoinRoom) => (
+        <div>
+          <Home handleCreateRoom= {handleCreateRoom} handleJoinRoom={handleJoinRoom}></Home>
+        </div>
+
+        
   );
 
   const renderPlayers = () => {
