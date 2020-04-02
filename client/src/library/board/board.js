@@ -80,6 +80,7 @@ export default [
   },
   {
     name: "Reading Railroad",
+    color: "Black",
     type: "Railroad",
     index: 5,
     price: 200,
@@ -228,6 +229,7 @@ export default [
   },
   {
     name: "Pennsylvania Railroad",
+    color: "Black",
     type: "Railroad",
     index: 15,
     price: 200,
@@ -368,6 +370,7 @@ export default [
   },
   {
     name: "B. & O. Railroad",
+    color: "Black",
     type: "Railroad",
     index: 25,
     price: 200,
@@ -516,6 +519,7 @@ export default [
   },
   {
     name: "Short Line Railroad",
+    color: "Black",
     type: "Railroad",
     index: 35,
     price: 200,

@@ -50,6 +50,9 @@ import VirginiaAvenue from '../assets/cards/Virginia Avenue.png';
 import WaterWorks from '../assets/cards/Water Works.png';
 
 import FlyingChicken from '../assets/sprites/149/149_left.gif';
+import OnionFrog from '../assets/sprites/003/003_left.gif';
+import CrawlingMonkey from '../assets/sprites/059/059_left.gif';
+import BigHeadedSnake from '../assets/sprites/150/150_left.gif';
 
 import 'react-dice-complete/dist/react-dice-complete.css'
 import Dice from '../components/Dice';
@@ -96,11 +99,12 @@ const Lobby = () => {
   const { reactDice, isRolled, setIsRolled, double, setDouble, setReactDice } = useContext(ReactDiceContext);
   const { theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, /*modalIsOpen, setIsOpen, */trader, setTrader, myStuffMoney, setMyStuffMoney, leftTrades, setLeftTrades, rightSelect, setRightSelect, rightValue, setRightValue, rightTrades, setRightTrades, isConfirm, setIsConfirm } = useContext(TradeSyncContext);
   const { openBid, setOpenBid, name, setName } = useContext(BiddingContext);
-  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark);
-  console.log("turn", Object.keys(gamers)[turnIdx], me.current? gamers[me.current].bankrupt : null, isRolled);
-
+  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark);
+  // console.log("turn", Object.keys(gamers)[turnIdx], me.current? gamers[me.current].bankrupt : null, isRolled);
+  console.log(gamers);
+  // console.log("board", board);
   const [history, renderHistory, addToHistory] = useCard();
-  const [rollEvent, payJail] = useGame(addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, handleSetActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent);
+  const [rollEvent, payJail] = useGame(addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, handleSetActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent, handlePieceMove);
   const [width, height] = useWindowSize();
   // console.log("turn", Object.keys(gamers)[turnIdx]);
   // console.log("isRolled", isRolled);
@@ -169,9 +173,11 @@ const Lobby = () => {
         </div>
 
         <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
-          <img src={boardImage} style={{zIndex:"2",width: "auto", height: window.innerHeight, marginBottom: "0px"}} />
-          <img src={FlyingChicken} id="image" style={{ position: "absolute", width: "32px", height: "32px", top: "810px", left: "830px" }}/>
-          
+          <img src={boardImage} style={{zIndex:"2",width: "auto", height: "937px", marginBottom: "0px"}} />
+          <img src={FlyingChicken} className="sprite-0" style={{ position: "absolute", width: "32px", height: "32px", top: "840px", left: "835px" }} />
+          <img src={OnionFrog} className="sprite-1" style={{ position: "absolute", width: "32px", height: "32px", top: "840px", left: "870px" }} />
+          <img src={CrawlingMonkey} className="sprite-2" style={{ position: "absolute", width: "32px", height: "32px", top: "870px", left: "835px" }} />
+          <img src={BigHeadedSnake} className="sprite-3" style={{ position: "absolute", width: "32px", height: "32px", top: "870px", left: "870px" }} />
           <div style={{position:"absolute", zIndex:"0",width:"60%",height:"30%",left:"20%",top:"40%"}}>
             <div style={{position:"absolute",top:"25%",left:"23%",zIndex:"3"}}>
               <Dice utilityDice={utilityDice} setUtilityDice={setUtilityDice} rollEvent={rollEvent} turnIdx={turnIdx} gamers={gamers} handleDiceRoll={handleDiceRoll} handleSyncRoll={handleSyncRoll} me={me} ></Dice>
@@ -193,12 +199,12 @@ const Lobby = () => {
                 <div class="waves-effect waves-light btn-large" onClick={async () => {
                   await payJail(gamers[me.current]);
                   await setIsRolled(true); 
-                  reactDice.rollAll([2 ,1]);
+                  reactDice.rollAll([5,5]);
                   }} disabled={ gamers[me.current].bankrupt || (Object.keys(gamers)[turnIdx] !== me.current) || (isRolled && /*gamers[me.current].doubles*/ double === 0) } >Roll Dice</div>
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { console.log(reactDice.diceContainer.dice[0].state) }}>Roll Dice</div> */}
               </div>
             <div style={{position:"absolute",backgroundColor:"gray",right:"25%",bottom:"5%"}}>
-              <a class="waves-effect waves-light btn-large end-button"  onClick={() => { handleNextTurn(); setIsRolled(false); }} disabled={!isRolled} >   End Turn </a>
+              <a class="waves-effect waves-light btn-large end-button"  onClick={() => { handleNextTurn(); setIsRolled(false); }} disabled={!isRolled} > End Turn </a>
             </div>
           </div>
           

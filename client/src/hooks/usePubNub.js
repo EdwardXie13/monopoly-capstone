@@ -56,7 +56,10 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           
           const currentPlayer = new Player(msg.message.players[msg.message.players.length-1].email);
 
-          setGamers(prevGamers => { return { ...prevGamers, [msg.message.players[msg.message.players.length-1].email]: currentPlayer } });
+          setGamers(prevGamers => {
+            currentPlayer.sprite = `sprite-${Object.keys(prevGamers).length}`;
+            return { ...prevGamers, [msg.message.players[msg.message.players.length-1].email]: currentPlayer }
+          });
           
         } else if (msg.message.text === "Opened Trade") {
           setLeftTrades(new Set([]))
@@ -205,9 +208,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
         } else if (msg.message.text === "Set Owner") {
           board[msg.message.boardIdx].owned = true;
           board[msg.message.boardIdx].owner = msg.message.owner;
-
           const tile = board[msg.message.boardIdx];
-          const price = tile.type === "Property"? tile.price : 0;
+          const price = tile.type !== "Tile"? tile.price : 0;
           setGamers(prevGamers => { return { ...prevGamers, [msg.message.owner.name]: { ...prevGamers[msg.message.owner.name], money: prevGamers[msg.message.owner.name].money - price, location: board[msg.message.boardIdx].name, inventory: [...prevGamers[msg.message.owner.name].inventory, new Deeds(tile.name, tile.type, tile.index, tile.color, tile.rentNormal, tile.src, tile.buildingCost, tile.price, tile.mortgaged)] } } })
         } else if (msg.message.text === "Sync Roll") {
           let rDice = null;
@@ -240,6 +242,141 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             board[deed.index].owned = false;
             board[deed.index].owner = "Bank";
             board[deed.index].mortgaged = false;
+          }
+        } else if (msg.message.text === "Piece Move") {
+          let player = msg.message.player;
+          console.log("player moved", player);
+          let currentIndex = msg.message.player.index;
+          const destinationIndex = msg.message.destinationIndex;
+          
+          let playerOrder = -1;
+          setPlayers(prevPlayers => {
+            prevPlayers.forEach((p, i) => { if (p.email === player.name) {
+              playerOrder = i;
+              return;
+            } });
+            return prevPlayers;
+          });
+
+          if (destinationIndex === 30) {
+            console.log("destination is Jail")
+            if (playerOrder === 0) {
+              document.querySelector(`.${player.sprite}`).style.top = "810px";
+              document.querySelector(`.${player.sprite}`).style.left = "40px";
+            } else if (playerOrder === 1) {
+              document.querySelector(`.${player.sprite}`).style.top = "810px";
+              document.querySelector(`.${player.sprite}`).style.left = "95px";
+            } else if (playerOrder === 2) {
+              document.querySelector(`.${player.sprite}`).style.top = "860px";
+              document.querySelector(`.${player.sprite}`).style.left = "40px";
+            } else if (playerOrder === 3) {
+              document.querySelector(`.${player.sprite}`).style.top = "860px";
+              document.querySelector(`.${player.sprite}`).style.left = "95px";
+            }
+          } else {
+            // playerOrder = 1;
+            // player.sprite = "onion-frog";
+            for (; currentIndex !== destinationIndex; currentIndex = (currentIndex+1) % 40) {
+              // Left 0-9
+              // Up 10-19
+              // Right 20-29
+              // Down 30-39
+              let top = document.querySelector(`.${player.sprite}`).style.top;
+              let left = document.querySelector(`.${player.sprite}`).style.left;
+
+              if (currentIndex === 0) {
+                // document.querySelector(`.${player.sprite}`).style.top = `${parseInt(top.slice(0, top.length-2)) + 30 }px`;
+                document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) - 95 }px`; 
+              } else if (currentIndex >= 1 && currentIndex <= 8) {
+                document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) - 77 }px`; 
+              } else if (currentIndex === 9) { //index 9 go to 10
+                if (playerOrder == 0) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 30 }px`*/"815px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 120 }px`*/"5px";
+                } else if (playerOrder === 1) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 10 }px`*/"860px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 155 }px`*/"5px";
+                } else if (playerOrder === 2) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 25 }px`*/"895px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 77 }px`*/"40px"; 
+                } else if (playerOrder === 3) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 25 }px`*/"895px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 67 }px`*/"85px"; 
+                }
+              } else if (currentIndex === 10 ) { //index 10 go to 11
+                if (playerOrder == 0) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 83 }px`*/"735px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) + 65 }px`*/"65px";
+                } else if (playerOrder === 1) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 83 }px`*/"775px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) + 65 }px`*/"65px";
+                } else if (playerOrder === 2) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 125 }px`*/"735px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 40 }px`*/"10px"; 
+                } else if (playerOrder === 3) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 125 }px`*/"775px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 80 }px`*/"10px"; 
+                } 
+              } else if (currentIndex >= 11 && currentIndex <= 18) {
+                document.querySelector(`.${player.sprite}`).style.top = `${parseInt(top.slice(0, top.length-2)) - 76 }px`;
+              } else if (currentIndex === 19) { //index 19 go to 20
+                if (playerOrder == 0) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 60 }px`*/"65px";
+                } else if (playerOrder === 1) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 100 }px`*/"65px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 39 }px`*/"30px";
+                } else if (playerOrder === 2) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 150 }px`*/"15px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) + 60 }px`*/"65px";
+                } else if (playerOrder === 3) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 150 }px`*/"15px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) + 20 }px`*/"30px";
+                }
+              } else if (currentIndex === 20) { //index 20 go to 21
+                  if (playerOrder === 0 || playerOrder === 2) {
+                    document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) + 100 }px`;
+                  } else if (playerOrder === 1 || playerOrder === 3) {
+                    document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) + 105 }px`;
+                  }
+              } else if (currentIndex >= 21 && currentIndex <= 28) {
+                document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) + 75 }px`; 
+              } else if (currentIndex === 29) { //index 29 go to 30
+                if (playerOrder == 0) {
+                  document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 55 }px`*/"835px";  
+                } else if (playerOrder == 1) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 39 }px`*/"15px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 100 }px`*/"835px";  
+                } else if (playerOrder == 2) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 50 }px`*/"65px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 100 }px`*/"880px";
+                } else if (playerOrder == 3) {
+                  document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 45 }px`*/"15px";
+                  document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 150 }px`*/"880px";
+                }
+              } else if (currentIndex === 30) { //index 30 go to 31
+                if (playerOrder === 0 || playerOrder === 2) {
+                  document.querySelector(`.${player.sprite}`).style.top = `${parseInt(top.slice(0, top.length-2)) + 100 }px`;
+                } else if (playerOrder === 1 || playerOrder === 3) {
+                  document.querySelector(`.${player.sprite}`).style.top = `${parseInt(top.slice(0, top.length-2)) + 115 }px`;
+                }
+              } else if (currentIndex >= 31 && currentIndex <= 38) {
+                document.querySelector(`.${player.sprite}`).style.top = `${parseInt(top.slice(0, top.length-2)) + 75 }px`;
+              } else if (currentIndex === 39) {
+                if (playerOrder == 0) {
+                  document.querySelector(`.${player.sprite}`).style.top = "840px";
+                  document.querySelector(`.${player.sprite}`).style.left = "835px";
+                } else if (playerOrder == 1) {
+                  document.querySelector(`.${player.sprite}`).style.top = "840px";
+                  document.querySelector(`.${player.sprite}`).style.left = "870px";
+                } else if (playerOrder == 2) {
+                  document.querySelector(`.${player.sprite}`).style.top = "870px";
+                  document.querySelector(`.${player.sprite}`).style.left = "835px";
+                } else if (playerOrder == 3) {
+                  document.querySelector(`.${player.sprite}`).style.top = "870px";
+                  document.querySelector(`.${player.sprite}`).style.left = "870px";
+                }
+              }
+            }
           }
         }
       }
@@ -286,14 +423,17 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             
             let existingPlayers = {};
 
-            for (let p of res.data.players) {
+            for (let i = 0; i < res.data.players.length; ++i) {
+              const p = res.data.players[i];
               existingPlayers[p.email] = new Player(p.email);
+              existingPlayers[p.email].sprite = `sprite-${i}`;
             }
 
-            const currentPlayer = new Player(me.current);
+            // const currentPlayer = new Player(me.current);
+            // currentPlayer.sprite = `sprite-${res.data.players.length-1}`;
+            console.log("existing players", existingPlayers);
+            setGamers({ ...existingPlayers/*, [me.current]: currentPlayer*/ });
 
-            setGamers({ ...existingPlayers, [me.current]: currentPlayer });
-            console.log("players length", res.data.players);
             if (/*response.totalOccupancy*/res.data.players.length === 2) {
               pubnub.publish({ channel: lobbyChannel.current, message: { text: "Game Started" } });
               gameChannel.current = 'game--' + roomId.current;
@@ -359,6 +499,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
         me.current = res.data.players[0].email;
         
         const currentPlayer = new Player(me.current);
+
+        currentPlayer.sprite = `sprite-0`;
 
         setGamers({ ...gamers, [me.current]: currentPlayer });
       });
@@ -466,7 +608,11 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     pubnub.publish({ channel: gameChannel.current, message: { text: "Disown Inventory", inventory } });
   }
 
-  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory];
+  const handlePieceMove = (player, destinationIndex, direction = "forward") => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Piece Move", player, destinationIndex, direction } });
+  }
+
+  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove];
 }
 
 export default usePubNub;

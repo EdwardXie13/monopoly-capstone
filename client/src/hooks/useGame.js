@@ -1,8 +1,8 @@
 import Swal from 'sweetalert2';
-import board from '../library/board/board.js';
+import board from '../library/board/board';
 import useEffects from '../hooks/useEffects';
 
-const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, setActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent) => {
+const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, setActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent, handlePieceMove) => {
   const monopolyRent = (i) => {
     if (board[i].color === "Brown") {
       //1 3
@@ -101,18 +101,52 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
       resolve("ok");
     }
     
-    
+    if (loanShark !== "Board") {
+      // handlePlayerChange(player.name, 0, player.location, player.inventory, player.index, player.bankrupt);;
+      handlePlayerChange(player.name, gamers[player.name].money-rent, player.location, player.inventory, player.index, player.bankrupt);
+      handlePlayerChange(loanShark.name, gamers[loanShark.name].money+rent, loanShark.location, gamers[loanShark.name].inventory, loanShark.index, loanShark.bankrupt);
+    } else {
+      handlePlayerChange(player.name, gamers[player.name].money-rent, player.location, player.inventory, player.index, player.bankrupt);
+    }
 
   });
 
-  const [communityEffect, chanceEffect] = useEffects(reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer);
+  const checkPlayer = async (player, die1, die2, setIsRolled, setDouble) => {
+    if (board[player.index].type !== "Tile" && board[player.index].type !== "Event") {
+      addToHistory(`${player.name} has landed on ${board[player.index].name}`)
+      await checkOwner(player, die1, die2);
+    } else {
+      if (board[player.index].name === "Community Chest") {
+        addToHistory(`${player.name} has landed on community chest`);
+        communityEffect(player);  
+      } else if (board[player.index].name === "Chance") {
+        addToHistory(`${player.name} has landed on Chance`);
+        chanceEffect(player);
+      } else if (board[player.index].name === "Income Tax") {
+        addToHistory(`${player.name} has landed on Income Tax`);
+        await payRent(player, 200, "Board");
+      } else if (board[player.index].name === "Go To Jail") {
+        addToHistory(`${player.name} goes to Jail`);
+        setIsRolled(true);
+        setDouble(0);
+        player.jail = true;
+        handlePieceMove(player, 30);
+      } else if (board[player.index].name === "Luxury Tax") {
+        addToHistory(`${player.name} has landed on Luxury Tax`);
+        await payRent(player, 100, "Board");
+      }
+    }
+  }
+
+  const [communityEffect, chanceEffect] = useEffects(reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer);
 
   const rollEvent = async (die1, die2, player, setIsRolled, setDouble) => { 
     if (player.bankrupt === false) {
       if (player.jail === false) {
         if (die1 === die2) {
           if (player.doubles === 2) {
-            addToHistory("Triple Doubles, Go to Jail")
+            addToHistory(`oh no, triple doubles. ${player.name} heads to jail`)
+            handlePieceMove(player, 30);
             player.doubles = 0;
             setDouble(0);
             setIsRolled(true);
@@ -122,12 +156,12 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
             player.doubles++;
             setDouble(prevDouble => prevDouble + 1);
             setIsRolled(false);
-            addToHistory(player.doubles, " Double");
-            movePlayer(die1, die2, player);
+            addToHistory(`${player.name} has rolled a Double`);
+            movePlayer(die1, die2, player, setIsRolled, setDouble);
           }
         }
         else {
-          movePlayer(die1, die2, player);
+          movePlayer(die1, die2, player, setIsRolled, setDouble);
           player.doubles = 0;
           setDouble(0);
           setIsRolled(true);
@@ -135,26 +169,26 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
       }
       else if (player.jail === true) {
         if (die1 === die2) {
-          addToHistory("freed from jail");
+          addToHistory(`${player.name} has freed been from jail`);
           player.jail = false;
           player.jailroll = 0;
           player.location = "Just Visiting";
           player.index = 10;
-          movePlayer(die1, die2, player);
+          movePlayer(die1, die2, player, setIsRolled, setDouble);
         } else {
           if (player.jailroll === 2) {
             if (player.money > 49) {
-              addToHistory("failed last doubles attempt, $50 was taken from you");
+              addToHistory(`${player.name} has failed their last doubles attempt, $50 was taken`);
               player.money -= 50;
               player.jail = false;
               player.jailroll = 0;
               player.location = "Just Visiting";
               player.index = 10;
               handlePlayerChange(player.name, gamers[player.name].money - 50, player.location, player.inventory, player.index);
-              movePlayer(die1, die2, player);
+              movePlayer(die1, die2, player, setIsRolled, setDouble);
             } else {
               console.log("trigger selling mode");
-              payRent(player, 50);
+              payRent(player, 50, "Board");
             }
           }
           else {
@@ -181,10 +215,11 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
         if (result.value === true) {
           player.jail = false;
           player.money -= 50;
+          handlePieceMove(player, 10);
           player.location = "Just Visiting";
           player.index = 10;
           handlePlayerChange(player.name, gamers[player.name].money - 50, player.location, player.inventory, player.index);
-          addToHistory(player.money);
+          addToHistory(`${player.name} paid $50 to get out of jail`);
           resolve("done");
         }
       })
@@ -192,43 +227,45 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
     else resolve("done");
   })
 
-  const movePlayer = async (die1, die2, player) => {
+  const movePlayer = async (die1, die2, player, setIsRolled, setDouble) => {
     //save state here maybe?
+    // die1 = 1;
+    // die2 = 1;
     if (player.index + die1 + die2 > 39) {
-      addToHistory(player.money,"Pass go collect 200");
       player.money += 200;
-      handlePlayerChange(player.name, gamers[player.name].money + 200, player.location, player.inventory, player.index);
-      addToHistory(player.money);
+      handlePlayerChange(player.name, gamers[player.name].money + 200, player.location, player.inventory, (player.index + die1 + die2) % 40);
+      addToHistory(`${player.name} has passed go. Collects $200`);
     }
     // player.setLocation( board[((player.index+die1 + die2)%40)].name, ((player.index+die1 + die2)%40));
+
+    handlePieceMove(player, (player.index+die1 + die2)%40);
     player.location = board[((player.index + die1 + die2)%40)].name;
-    console.log("player", player.location);
     player.index = (player.index+die1 + die2)%40;
 
-    addToHistory(player.location);
-    if (board[player.index].type !== "Tile" && board[player.index].type !== "Event") {
-      await checkOwner(die1, die2, player);
-    } else {
-      if (board[player.index].name === "Community Chest") {
-        addToHistory("Community Chest");
-        communityEffect(player);  
-      } else if (board[player.index].name === "Chance") {
-        addToHistory("Chance");
-        chanceEffect(player);
-      } else if (board[player.index].name === "Income Tax") {
-        addToHistory("Income Tax");
-        await payRent(player, 200, "Board");
-      } else if (board[player.index].name === "Go To Jail") {
-        addToHistory("Jail");
-        player.jail = true;
-      } else if (board[player.index].name === "Luxury Tax") {
-        addToHistory("Lux Tax");
-        await payRent(player, 100, "Board");
-      }
-    }
+    // if (board[player.index].type !== "Tile" && board[player.index].type !== "Event") {
+    //   await checkOwner(die1, die2, player);
+    // } else {
+    //   if (board[player.index].name === "Community Chest") {
+    //     addToHistory("Community Chest");
+    //     communityEffect(player);  
+    //   } else if (board[player.index].name === "Chance") {
+    //     addToHistory("Chance");
+    //     chanceEffect(player);
+    //   } else if (board[player.index].name === "Income Tax") {
+    //     addToHistory("Income Tax");
+    //     await payRent(player, 200, "Board");
+    //   } else if (board[player.index].name === "Go To Jail") {
+    //     addToHistory("Jail");
+    //     player.jail = true;
+    //   } else if (board[player.index].name === "Luxury Tax") {
+    //     addToHistory("Lux Tax");
+    //     await payRent(player, 100, "Board");
+    //   }
+    // }
+    checkPlayer(player, die1, die2, setIsRolled, setDouble);
   }
   
-  const checkOwner = (die1, die2, player) => new Promise(function(resolve, reject) {
+  const checkOwner = (player, die1, die2) => new Promise(function(resolve, reject) {
     if (board[player.index].owned === false && player.money > board[player.index].price) {
       Swal.fire({
         position: 'center',
@@ -243,7 +280,7 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
           // player.money -= board[player.index].price;
           board[player.index].owner = player;
           handleBuyProp(player.index, player);
-          addToHistory(player.money);
+          addToHistory(`${player.name} has acquired ${board[player.index].name}`);
         }
         else {
           addToHistory("bidding begins");
@@ -259,19 +296,19 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
           var rent = 0;
           if (board[28].owner.name === board[12].owner.name) {
             rent = 10 * (die1 + die2);  
-            addToHistory("pay " + board[player.index].owner.name + " $" + rent);
-            payRent(player, rent);
-          }
-          else {
+            addToHistory(`${player.name} owes ${board[player.index].name} $ ${rent}`);
+            payRent(player, rent, board[player.index].owner);
+          } else {
             rent = 4 * (die1 + die2);
-            addToHistory("pay " + board[player.index].owner.name + " $" + rent);
-            payRent(player, rent);
+            addToHistory(`${player.name} owes ${board[player.index].name} $ ${rent}`);
+            payRent(player, rent, board[player.index].owner);
           }
         }
         //=============================
         else if (board[player.index].type === "Railroad") {
           let rent = railroadRent(player);
-          payRent(player, rent);
+          addToHistory(`${player.name} owes ${board[player.index].name} $ ${rent}`);
+          payRent(player, rent, board[player.index].owner);
         }
         //=============================
         else {
@@ -294,8 +331,8 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
             }
           }
 
-          addToHistory("pay " + board[player.index].owner.name + " $" + rent);
-          payRent(player, rent);
+          addToHistory(`${player.name} owes ${board[player.index].name} $ ${rent}`);
+          payRent(player, rent, board[player.index].owner);
         }
       }
     }
