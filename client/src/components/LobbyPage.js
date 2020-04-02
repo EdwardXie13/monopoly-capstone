@@ -16,6 +16,8 @@ import Player from '../classes/Player';
 import Card from './Card'
 import BuildButton from './BuildButton';
 import TradeButton from './TradeButton';
+import Deeds from '../classes/Deeds';
+import Home from './Home'
 import TradeSync from './TradeSync';
 import Bid from '../components/Bid';
 
@@ -48,12 +50,10 @@ import VentnorAvenue from '../assets/cards/Ventnor Avenue.png';
 import VermontAvenue from '../assets/cards/Vermont Avenue.png';
 import VirginiaAvenue from '../assets/cards/Virginia Avenue.png';
 import WaterWorks from '../assets/cards/Water Works.png';
-
 import FlyingChicken from '../assets/sprites/149/149_left.gif';
 import OnionFrog from '../assets/sprites/003/003_left.gif';
 import CrawlingMonkey from '../assets/sprites/059/059_left.gif';
 import BigHeadedSnake from '../assets/sprites/150/150_left.gif';
-
 import 'react-dice-complete/dist/react-dice-complete.css'
 import Dice from '../components/Dice';
 import Trade from './GamePage';
@@ -100,9 +100,8 @@ const Lobby = () => {
   const { theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, /*modalIsOpen, setIsOpen, */trader, setTrader, myStuffMoney, setMyStuffMoney, leftTrades, setLeftTrades, rightSelect, setRightSelect, rightValue, setRightValue, rightTrades, setRightTrades, isConfirm, setIsConfirm } = useContext(TradeSyncContext);
   const { openBid, setOpenBid, name, setName } = useContext(BiddingContext);
   const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark);
-  // console.log("turn", Object.keys(gamers)[turnIdx], me.current? gamers[me.current].bankrupt : null, isRolled);
-  console.log(gamers);
-  // console.log("board", board);
+
+
   const [history, renderHistory, addToHistory] = useCard();
   const [rollEvent, payJail] = useGame(addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, handleSetActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent, handlePieceMove);
   const [width, height] = useWindowSize();
@@ -126,10 +125,13 @@ const Lobby = () => {
   }
 
   const renderHome = () => (
-    <div style={{ textAlign: "center" }}>
-      <h3 style={{ color: "#64b5f6", textShadow: "2px 2px 5px rgba(0,0,0,0.2)" }}><Link to="/">Monopoly</Link></h3>
-      <button className="btn blue lighten-3" onClick={handleCreateRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Create Room</button>
-      <button className="btn blue lighten-3" onClick={handleJoinRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Join Room</button>
+    <div>
+      <Home handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom}></Home>
+      {/* <div style={{ textAlign: "center" }}>
+        <h3 style={{ color: "#64b5f6", textShadow: "2px 2px 5px rgba(0,0,0,0.2)" }}><Link to="/">Monopoly</Link></h3>
+        <button className="btn blue lighten-3" onClick={handleCreateRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Create Room</button>
+        <button className="btn blue lighten-3" onClick={handleJoinRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Join Room</button>
+      </div> */}
     </div>
   );
 
