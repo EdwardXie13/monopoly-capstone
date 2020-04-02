@@ -17,3 +17,7 @@
 .inv-text-styling {
   vertical-align: 10px;
 }
+
+#bottom-trade-button {
+  display: block;
+}

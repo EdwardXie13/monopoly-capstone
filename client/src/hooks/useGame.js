@@ -1,303 +1,8 @@
 import Swal from 'sweetalert2';
-
 import board from '../library/board/board.js';
 import useEffects from '../hooks/useEffects';
-import Deeds from '../classes/Deeds';
 
-import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
-import BandORailroad from '../assets/cards/B and O Railroad.png';
-import BalticAvenue from '../assets/cards/Baltic Avenue.png';
-import Boardwalk from '../assets/cards/Boardwalk.png';
-import ConnecticutAvenue from '../assets/cards/Connecticut Avenue.png';
-import ElectricCompany from '../assets/cards/Electric Company.png';
-import IllinoisAvenue from '../assets/cards/Illinois Avenue.png';
-import IndianaAvenue from '../assets/cards/Indiana Avenue.png';
-import KentuckyAvenue from '../assets/cards/Kentucky Avenue.png';
-import MarvinGardens from '../assets/cards/Marvin Gardens.png';
-import MediterraneanAvenue from '../assets/cards/Mediterranean Avenue.png';
-import NewYorkAvenue from '../assets/cards/New York Avenue.png';
-import NorthCarolinaAvenue from '../assets/cards/North Carolina Avenue.png';
-import OrientalAvenue from '../assets/cards/Oriental Avenue.png';
-import PacificAvenue from '../assets/cards/Pacific Avenue.png';
-import ParkPlace from '../assets/cards/Park Place.png';
-import PennsylvaniaAvenue from '../assets/cards/Pennsylvania Avenue.png';
-import PennsylvaniaRailroad from '../assets/cards/Pennsylvania Railroad.png';
-import ReadingRailroad from '../assets/cards/Reading Railroad.png';
-import ShortLineRailroad from '../assets/cards/Short Line Railroad.png';
-import StCharlesPlace from '../assets/cards/St Charles Place.png';
-import StJamesPlace from '../assets/cards/St James Place.png';
-import StatesAvenue from '../assets/cards/States Avenue.png';
-import TennesseeAvenue from '../assets/cards/Tennessee Avenue.png';
-import VentnorAvenue from '../assets/cards/Ventnor Avenue.png';
-import VermontAvenue from '../assets/cards/Vermont Avenue.png';
-import VirginiaAvenue from '../assets/cards/Virginia Avenue.png';
-import WaterWorks from '../assets/cards/Water Works.png';
-
-const useGame = (addToHistory) => {
-  const [communityEffect, chanceEffect] = useEffects();
-  
-  var die1, die2;
-
-  const endTurn = () => {
-    
-  }
-  
-  const diceRoll = () => {
-    die1 = Math.floor(Math.random() * 6) + 1;
-    die2 = Math.floor(Math.random() * 6) + 1;
-    // console.log(die1, die2);
-  }
-
-  const rollEvent = async (player) => { 
-    if (player.bankrupt === false) {
-      await payJail(player);
-
-      if (player.jail === false) {
-        diceRoll();
-        if (die1 === die2) {
-          if (player.doubles === 2) {
-            addToHistory("Triple Doubles, Go to Jail")
-            player.setJail(true);
-            player.resetDoubles();
-          }
-          else {
-            player.setDoubles();
-            addToHistory(player.doubles, " Double");
-            movePlayer(player, die1+die2);
-          }
-        }
-        else {
-          movePlayer(player, die1+die2);
-          player.resetDoubles();
-        }
-      }
-      else if (player.jail === true) {
-        diceRoll();
-        if (die1 === die2) {
-          addToHistory("freed from jail");
-          player.setJail(false);
-          player.resetJailroll();
-          player.setLocation("Just Visiting", 10);
-          movePlayer(player, die1+die2);
-        } else {
-          if (player.jailroll === 2) {
-            if (player.money > 49) {
-              addToHistory("failed last doubles attempt, $50 was taken from you");
-              player.setMoney(-50);
-              player.setJail(false);
-              player.resetJailroll();
-              player.setLocation("Just Visiting", 10);
-              movePlayer(player, die1+die2);
-            } else {
-              console.log("trigger selling mode");
-              sellStuff = (player, 50)
-            }
-          }
-          else {
-            player.setJailroll();
-            addToHistory("failed doubles roll");
-          }
-        }
-      }
-    }
-  }
-
-  const payJail = (player) => new Promise(function(resolve, reject) {
-    if (player.jail === false)
-      resolve (false);
-    else if (player.money > 49) {
-      Swal.fire({
-        position: 'center',
-        allowOutsideClick: false,
-        showCancelButton: true,
-        title: "Do you want to pay $50 to get out of jail?",
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No'
-      }).then((result) => {
-        if (result.value === true) {
-          player.setJail(false);
-          player.setMoney(-50);
-          player.setLocation("Just Visiting", 10)
-          addToHistory(player.money);
-          resolve(true);
-        }
-        else {
-          resolve (false);
-        }
-      })
-    }
-    else resolve (false);
-  })
-
-  const movePlayer = async (player, roll) => {
-    //save state here maybe?
-    if (player.index + roll > 39) {
-      addToHistory(player.money,"Pass go collect 200");
-      player.setMoney(200);
-      addToHistory(player.money);
-    }
-    // for (let i = 0; i < roll * 100; i++) {
-      let test = document.querySelector('#image');
-      test.style.left = `${parseInt(test.style.left) - 78}px`;
-    // }
-    player.setLocation( board[((player.index+roll)%40)].name, ((player.index+roll)%40));
-    addToHistory(player.location);
-    if (board[player.index].type !== "Tile" && board[player.index].type !== "Event") {
-      await checkOwner(player);
-    } else {
-      if (board[player.index].name === "Community Chest") {
-        addToHistory("Community Chest");
-        communityEffect(player);  
-      }
-      else if (board[player.index].name === "Chance") {
-        addToHistory("Chance");
-        chanceEffect(player);
-      }
-      else if (board[player.index].name === "Income Tax") {
-        addToHistory("Income Tax");
-        if (player.money < 200) {
-          sellStuff(player, 200);
-        }
-        else {
-          player.setMoney(-200);
-          addToHistory(player.money);
-        }
-      }
-      else if (board[player.index].name === "Go To Jail") {
-        addToHistory("Jail");
-        player.setJail(true);
-      }
-      else if (board[player.index].name === "Luxury Tax") {
-        addToHistory("Lux Tax");
-        if (player.money < 100) {
-          sellStuff(player, 100);
-        }
-        else {
-          player.setMoney(-100);
-          addToHistory(player.money);
-        }
-      }
-    }
-  }
-  
-  const checkOwner = (player) => new Promise(function(resolve, reject) {
-    if (board[player.index].owned === false && player.money > board[player.index].price) {
-      Swal.fire({
-        position: 'center',
-        allowOutsideClick: false,
-        showCancelButton: true,
-        title: "Do you want to buy?",
-        text: board[player.index].name + " costs " + board[player.index].price + " dollars",
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No'
-      }).then((result) => {
-        if (result.value === true) {
-          player.setMoney(-board[player.index].price);
-          board[player.index].owned = true;
-          board[player.index].owner = player;
-          player.addInventory(new Deeds(board[player.index].name, board[player.index].type, player.index, board[player.index].rentNormal));
-          console.log(player.inventory);
-          addToHistory(player.money);
-        }
-        else {
-          //work on bidding after get multiple players
-          //if no bidding begins
-          //window pop up to prompt bid amount
-          addToHistory("bidding begins");
-        }
-      })
-    }
-    else if (board[player.index].owned === true) {
-      if (board[player.index].owner.name !== player.name) {
-        if (board[player.index].type === "Utilities") {
-          var amount = 0;
-          if (board[28].owner.name === board[12].owner.name) {
-            amount = 10 * (die1 + die2);  
-            addToHistory("pay " + board[player.index].owner.name + " $" + amount);
-            if (player.money < amount) {
-              sellStuff(player, amount);
-            }
-            else {
-              player.setMoney(-amount);
-              board[player.index].owner.setMoney(amount);
-            }
-          }
-          else {
-            amount = 4 * (die1 + die2);
-            addToHistory("pay " + board[player.index].owner.name + " $" + amount);
-            if (player.money < amount) {
-              sellStuff(player, amount);
-            }
-            else {
-              player.setMoney(-amount);
-              board[player.index].owner.setMoney(amount);
-            }
-          }
-        }
-        //=============================
-        else if (board[player.index].type === "Railroad") {
-          var temp = 0;
-          if (board[player.index].owner.name === board[5].owner.name)
-            temp++;
-          if (board[player.index].owner.name === board[15].owner.name)
-            temp++;
-          if (board[player.index].owner.name === board[25].owner.name)
-            temp++;
-          if (board[player.index].owner.name === board[35].owner.name)
-            temp++;
-          if (temp === 1) {
-            player.setMoney(-board[player.index].rentNormal);
-            board[player.index].owner.setMoney(board[player.index].rentNormal)
-          }
-          else if (temp === 2) {
-            player.setMoney(-board[player.index].rentRR2);
-            board[player.index].owner.setMoney(board[player.index].rentRR2)
-          }
-          else if (temp ===3) {
-            player.setMoney(-board[player.index].rentRR3);
-            board[player.index].owner.setMoney(board[player.index].rentRR3);
-          }
-          else if (temp ===4) {
-            player.setMoney(-board[player.index].rentRR4);
-            board[player.index].owner.setMoney(board[player.index].rentRR4);
-          }
-
-        }
-        //=============================
-        else {
-          var amount = 0;
-          if (board[player.index].house === 1)
-            amount = board[player.index].rentHouse1;
-          else if (board[player.index].house === 2)
-            amount = board[player.index].rentHouse2;
-          else if (board[player.index].house === 3)
-            amount = board[player.index].rentHouse3;
-          else if (board[player.index].house === 4)
-            amount = board[player.index].rentHouse4;
-          else if (board[player.index].house === 5)
-            amount = board[player.index].rentHotel;
-          else {
-            if (monopolyRent(player.index) === true) {
-              amount = 2 * board[player.index].rentNormal
-              console.log("double rent ", amount);
-            } else {
-              amount = board[player.index].rentNormal
-              console.log("normal rent ", amount);
-            }
-          }
-
-          addToHistory("pay " + board[player.index].owner.name + " $" + amount);
-          if (player.money < amount) {
-            sellStuff(player, amount);
-          } else {
-            player.setMoney(-amount);
-            board[player.index].owner.setMoney(amount);
-          }
-        }
-      }
-    }
-  })
-
+const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, setActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent) => {
   const monopolyRent = (i) => {
     if (board[i].color === "Brown") {
       //1 3
@@ -334,6 +39,269 @@ const useGame = (addToHistory) => {
     return false;
   }
 
+  const railroadRent = (player) => {
+    let count = 0;
+    if (board[player.index].owner.name === board[5].owner.name)
+      count++;
+    if (board[player.index].owner.name === board[15].owner.name)
+      count++;
+    if (board[player.index].owner.name === board[25].owner.name)
+      count++;
+    if (board[player.index].owner.name === board[35].owner.name)
+      count++;
+    
+    if (count === 1) {
+      return board[player.index].rentNormal;
+    } else if (count === 2) {
+      return board[player.index].rentRR2;
+    } else if (count === 3) {
+      return board[player.index].rentRR3;
+    } else if (count === 4) {
+      return board[player.index].rentRR4;
+    }
+  }
+  //passed in gamers, refactor code
+  const payRent = (player, rent, loanShark, activator) => new Promise(async function(resolve, reject) {
+    const debtChecker = /*new Promise (async (resolve2, reject2)*/() => {
+      if (player.money < rent) {
+        const prevPlayerMoney = player.money;
+        setRent(rent - prevPlayerMoney);
+        setInitialRent(prevPlayerMoney);
+        player.money = 0;
+        handleOpenBuildWindow(player, rent - prevPlayerMoney, loanShark );
+       }
+    }//);
+
+    /*.then(res => {
+      console.log("promise resolve value:", res);
+      console.log("tax", gamers[player.name])
+      handlePlayerChange(gamers[player.name].name, gamers[player.name].money - rent, player.location, player.inventory, player.index);
+  
+      if (board[player.index].type !== "Tile") {
+        handlePlayerChange(board[player.index].owner.name, gamers[board[player.index].owner.name].money + rent, board[player.index].owner.location, board[player.index].owner.inventory, board[player.index].owner.index);
+      }
+      resolve("done");
+    });*/
+
+    debtChecker();
+
+
+    const interval = setInterval(() => {
+      console.log("payrent still running.", finishedPlayer.current.name, player.name, finishedPlayer.name === player.name);
+      if (finishedPlayer.current.name === player.name) {
+        clearInterval(interval);
+        console.log("resolved");
+        resolve("ok");
+      }
+    }, 1000);
+
+    if (activator === undefined) { 
+      console.log("ended")
+      clearInterval(interval);
+      resolve("ok");
+    }
+    
+    
+
+  });
+
+  const [communityEffect, chanceEffect] = useEffects(reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer);
+
+  const rollEvent = async (die1, die2, player, setIsRolled, setDouble) => { 
+    if (player.bankrupt === false) {
+      if (player.jail === false) {
+        if (die1 === die2) {
+          if (player.doubles === 2) {
+            addToHistory("Triple Doubles, Go to Jail")
+            player.doubles = 0;
+            setDouble(0);
+            setIsRolled(true);
+            player.jail = true;
+          }
+          else {
+            player.doubles++;
+            setDouble(prevDouble => prevDouble + 1);
+            setIsRolled(false);
+            addToHistory(player.doubles, " Double");
+            movePlayer(die1, die2, player);
+          }
+        }
+        else {
+          movePlayer(die1, die2, player);
+          player.doubles = 0;
+          setDouble(0);
+          setIsRolled(true);
+        }
+      }
+      else if (player.jail === true) {
+        if (die1 === die2) {
+          addToHistory("freed from jail");
+          player.jail = false;
+          player.jailroll = 0;
+          player.location = "Just Visiting";
+          player.index = 10;
+          movePlayer(die1, die2, player);
+        } else {
+          if (player.jailroll === 2) {
+            if (player.money > 49) {
+              addToHistory("failed last doubles attempt, $50 was taken from you");
+              player.money -= 50;
+              player.jail = false;
+              player.jailroll = 0;
+              player.location = "Just Visiting";
+              player.index = 10;
+              handlePlayerChange(player.name, gamers[player.name].money - 50, player.location, player.inventory, player.index);
+              movePlayer(die1, die2, player);
+            } else {
+              console.log("trigger selling mode");
+              payRent(player, 50);
+            }
+          }
+          else {
+            player.jailroll = 0;
+            addToHistory("failed doubles roll");
+          }
+        }
+      }
+    }
+  }
+
+  const payJail = (player) => new Promise(function(resolve, reject) {
+    if (player.jail === false)
+      resolve (false);
+    else if (player.money > 49) {
+      Swal.fire({
+        position: 'center',
+        allowOutsideClick: false,
+        showCancelButton: true,
+        title: "Do you want to pay $50 to get out of jail?",
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+      }).then((result) => {
+        if (result.value === true) {
+          player.jail = false;
+          player.money -= 50;
+          player.location = "Just Visiting";
+          player.index = 10;
+          handlePlayerChange(player.name, gamers[player.name].money - 50, player.location, player.inventory, player.index);
+          addToHistory(player.money);
+          resolve("done");
+        }
+      })
+    }
+    else resolve("done");
+  })
+
+  const movePlayer = async (die1, die2, player) => {
+    //save state here maybe?
+    if (player.index + die1 + die2 > 39) {
+      addToHistory(player.money,"Pass go collect 200");
+      player.money += 200;
+      handlePlayerChange(player.name, gamers[player.name].money + 200, player.location, player.inventory, player.index);
+      addToHistory(player.money);
+    }
+    // player.setLocation( board[((player.index+die1 + die2)%40)].name, ((player.index+die1 + die2)%40));
+    player.location = board[((player.index + die1 + die2)%40)].name;
+    console.log("player", player.location);
+    player.index = (player.index+die1 + die2)%40;
+
+    addToHistory(player.location);
+    if (board[player.index].type !== "Tile" && board[player.index].type !== "Event") {
+      await checkOwner(die1, die2, player);
+    } else {
+      if (board[player.index].name === "Community Chest") {
+        addToHistory("Community Chest");
+        communityEffect(player);  
+      } else if (board[player.index].name === "Chance") {
+        addToHistory("Chance");
+        chanceEffect(player);
+      } else if (board[player.index].name === "Income Tax") {
+        addToHistory("Income Tax");
+        await payRent(player, 200, "Board");
+      } else if (board[player.index].name === "Go To Jail") {
+        addToHistory("Jail");
+        player.jail = true;
+      } else if (board[player.index].name === "Luxury Tax") {
+        addToHistory("Lux Tax");
+        await payRent(player, 100, "Board");
+      }
+    }
+  }
+  
+  const checkOwner = (die1, die2, player) => new Promise(function(resolve, reject) {
+    if (board[player.index].owned === false && player.money > board[player.index].price) {
+      Swal.fire({
+        position: 'center',
+        allowOutsideClick: false,
+        showCancelButton: true,
+        title: "Do you want to buy?",
+        text: board[player.index].name + " costs " + board[player.index].price + " dollars",
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+      }).then((result) => {
+        if (result.value === true) {
+          // player.money -= board[player.index].price;
+          board[player.index].owner = player;
+          handleBuyProp(player.index, player);
+          addToHistory(player.money);
+        }
+        else {
+          addToHistory("bidding begins");
+          setName(board[player.index].name);
+          handleSetPropName(board[player.index].name);
+          setOpenBid(true);
+        }
+      })
+    }
+    else if (board[player.index].owned === true) {
+      if (board[player.index].owner.name !== player.name) {
+        if (board[player.index].type === "Utilities") {
+          var rent = 0;
+          if (board[28].owner.name === board[12].owner.name) {
+            rent = 10 * (die1 + die2);  
+            addToHistory("pay " + board[player.index].owner.name + " $" + rent);
+            payRent(player, rent);
+          }
+          else {
+            rent = 4 * (die1 + die2);
+            addToHistory("pay " + board[player.index].owner.name + " $" + rent);
+            payRent(player, rent);
+          }
+        }
+        //=============================
+        else if (board[player.index].type === "Railroad") {
+          let rent = railroadRent(player);
+          payRent(player, rent);
+        }
+        //=============================
+        else {
+          var rent = 0;
+          if (board[player.index].house === 1)
+            rent = board[player.index].rentHouse1;
+          else if (board[player.index].house === 2)
+            rent = board[player.index].rentHouse2;
+          else if (board[player.index].house === 3)
+            rent = board[player.index].rentHouse3;
+          else if (board[player.index].house === 4)
+            rent = board[player.index].rentHouse4;
+          else if (board[player.index].house === 5)
+            rent = board[player.index].rentHotel;
+          else {
+            if (monopolyRent(player.index) === true) {
+              rent = 2 * board[player.index].rentNormal
+            } else {
+              rent = board[player.index].rentNormal
+            }
+          }
+
+          addToHistory("pay " + board[player.index].owner.name + " $" + rent);
+          payRent(player, rent);
+        }
+      }
+    }
+    resolve("done");
+  })
+  
   const monopolyCheck = (p1, p2, p3) => {
     if (p3 == 0) {
       if (board[p1].owner.name === board[p2].owner.name) {
@@ -345,70 +313,7 @@ const useGame = (addToHistory) => {
     }
   }
 
-  const sellStuff = (player, amount) => new Promise(function(resolve, reject) {
-    if (player.inventory.length > 0 || player.cc_JailCard === true || player.c_JailCard === true) {  
-      //gui pop displaying items and all other players + bank
-    } 
-    else {
-      addToHistory("player bankrupt");
-      player.bankrupt = true;
-    }
-  })
-
-  const tradeWindow = () => new Promise(function(resolve, reject) {
-    Swal.fire({
-      title: 'Trade',
-      customClass: {
-        container: 'container-class',
-        popup: 'popup-class',
-        header: 'header-class',
-        title: 'title-class',
-        text: 'text-class',
-        closeButton: 'close-button-class',
-        icon: 'icon-class',
-        image: 'image-class',
-        content: 'content-class',
-        actions: 'actions-class',
-        confirmButton: 'confirm-button-class',
-        cancelButton: 'cancel-button-class',
-        footer: 'footer-class'
-      }
-    })
-    //both players inventory shows up
-    //player 1 chooses what he wants to trade then presses ok
-    //player 2 sees the offer
-    // if player 2 accepts then trade goes through
-    // if player 2 declines then trade window closes
-    // if player 2 counter-offers then player 2 is allowed to choose and press ok
-    //======Recurse?=====
-    //player 1 sees the offer
-    // if player 1 accepts, trade goes through
-    // if player 1 declines then trade window closes
-    // if player 1 counter-offers then player 1 is allowed to choose
-  })
-
-  const buildWindow = () => new Promise(function(resolve, reject) {
-    Swal.fire({
-      title: 'Build',
-      customClass: {
-        container: 'container-class',
-        popup: 'popup-class',
-        header: 'header-class',
-        title: 'title-class',
-        text: 'text-class',
-        closeButton: 'close-button-class',
-        icon: 'icon-class',
-        image: 'image-class',
-        content: 'content-class',
-        actions: 'actions-class',
-        confirmButton: 'confirm-button-class',
-        cancelButton: 'cancel-button-class',
-        footer: 'footer-class'
-      }
-    })
-  })
-
-  return [rollEvent, tradeWindow, buildWindow];
+  return [rollEvent, payJail];
 }
 
 export default useGame;

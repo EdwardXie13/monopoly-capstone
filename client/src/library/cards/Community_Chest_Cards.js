@@ -63,5 +63,9 @@ export default [
     {
         text: "You inherit $100",
         number: 15
+    },
+    {
+        text: "It is your birthday. Collect $10 from every player",
+        number: 8
     }
 ];

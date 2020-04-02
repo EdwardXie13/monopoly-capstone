@@ -1,3 +1,32 @@
+import AtlanticAvenue from '../../assets/cards/Atlantic Avenue.png';
+import BandORailroad from '../../assets/cards/B and O Railroad.png';
+import BalticAvenue from '../../assets/cards/Baltic Avenue.png';
+import Boardwalk from '../../assets/cards/Boardwalk.png';
+import ConnecticutAvenue from '../../assets/cards/Connecticut Avenue.png';
+import ElectricCompany from '../../assets/cards/Electric Company.png';
+import IllinoisAvenue from '../../assets/cards/Illinois Avenue.png';
+import IndianaAvenue from '../../assets/cards/Indiana Avenue.png';
+import KentuckyAvenue from '../../assets/cards/Kentucky Avenue.png';
+import MarvinGardens from '../../assets/cards/Marvin Gardens.png';
+import MediterraneanAvenue from '../../assets/cards/Mediterranean Avenue.png';
+import NewYorkAvenue from '../../assets/cards/New York Avenue.png';
+import NorthCarolinaAvenue from '../../assets/cards/North Carolina Avenue.png';
+import OrientalAvenue from '../../assets/cards/Oriental Avenue.png';
+import PacificAvenue from '../../assets/cards/Pacific Avenue.png';
+import ParkPlace from '../../assets/cards/Park Place.png';
+import PennsylvaniaAvenue from '../../assets/cards/Pennsylvania Avenue.png';
+import PennsylvaniaRailroad from '../../assets/cards/Pennsylvania Railroad.png';
+import ReadingRailroad from '../../assets/cards/Reading Railroad.png';
+import ShortLineRailroad from '../../assets/cards/Short Line Railroad.png';
+import StCharlesPlace from '../../assets/cards/St Charles Place.png';
+import StJamesPlace from '../../assets/cards/St James Place.png';
+import StatesAvenue from '../../assets/cards/States Avenue.png';
+import TennesseeAvenue from '../../assets/cards/Tennessee Avenue.png';
+import VentnorAvenue from '../../assets/cards/Ventnor Avenue.png';
+import VermontAvenue from '../../assets/cards/Vermont Avenue.png';
+import VirginiaAvenue from '../../assets/cards/Virginia Avenue.png';
+import WaterWorks from '../../assets/cards/Water Works.png';
+
 export default [
   {
     name: "Go",
@@ -7,6 +36,7 @@ export default [
     name: "Mediterranean Avenue",
     color: "Brown",
     type: "Property",
+    index: 1,
     price: 60,
     rentNormal: 2,
     rentHouse1: 10,
@@ -18,7 +48,8 @@ export default [
     owner: "Bank",
     buildingCosts: 50,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: MediterraneanAvenue
   },
   {
     name: "Community Chest",
@@ -28,6 +59,7 @@ export default [
     name: "Baltic Avenue",
     color: "Brown",
     type: "Property",
+    index: 3,
     price: 60,
     rentNormal: 4,
     rentHouse1: 20,
@@ -39,7 +71,8 @@ export default [
     owner: "Bank",
     buildingCosts: 50,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: BalticAvenue
   },
   {
     name: "Income Tax",
@@ -48,6 +81,7 @@ export default [
   {
     name: "Reading Railroad",
     type: "Railroad",
+    index: 5,
     price: 200,
     rentNormal: 25,
     rentRR2: 50,
@@ -55,12 +89,14 @@ export default [
     rentRR4: 200,
     owned: false,
     owner: "Bank",
-    mortgaged: false
+    mortgaged: false,
+    src: ReadingRailroad
   },
   {
     name: "Oriental Avenue",
-    color: "Light Blue",
+    color: "LightBlue",
     type: "Property",
+    index: 6,
     price: 100,
     rentNormal: 6,
     rentHouse1: 30,
@@ -72,7 +108,8 @@ export default [
     owner: "Bank",
     buildingCosts: 50,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: OrientalAvenue
   },
   {
     name: "Chance",
@@ -80,8 +117,9 @@ export default [
   },
   {
     name: "Vermont Avenue",
-    color: "Light Blue",
+    color: "LightBlue",
     type: "Property",
+    index: 8,
     price: 100,
     rentNormal: 6,
     rentHouse1: 30,
@@ -93,12 +131,14 @@ export default [
     owner: "Bank",
     buildingCosts: 50,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: VermontAvenue
   },
   {
     name: "Connecticut Avenue",
-    color: "Light Blue",
+    color: "LightBlue",
     type: "Property",
+    index: 9,
     price: 120,
     rentNormal: 8,
     rentHouse1: 40,
@@ -110,7 +150,8 @@ export default [
     owner: "Bank",
     buildingCosts: 50,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: ConnecticutAvenue
   },
   {
     name: "Just Visiting",
@@ -120,6 +161,7 @@ export default [
     name: "St. Charles Place",
     color: "Pink",
     type: "Property",
+    index: 11,
     price: 140,
     rentNormal: 10,
     rentHouse1: 50,
@@ -131,22 +173,26 @@ export default [
     owner: "Bank",
     buildingCosts: 100,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: StCharlesPlace
   },
   {
     name: "Electric Company",
     type: "Utilities",
+    index: 12,
     price: 150,
     rentNormal: 4,
     rentBoth: 10,
     owned: false,
     owner: "Bank",
-    mortgaged: false
+    mortgaged: false,
+    src: ElectricCompany
   },
   {
     name: "States Avenue",
     color: "Pink",
     type: "Property",
+    index: 13,
     price: 140,
     rentNormal: 10,
     rentHouse1: 50,
@@ -158,12 +204,14 @@ export default [
     owner: "Bank",
     buildingCosts: 100,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: StatesAvenue
   },
   {
     name: "Virginia Avenue",
     color: "Pink",
     type: "Property",
+    index: 14,
     price: 160,
     rentNormal: 12,
     rentHouse1: 60,
@@ -175,11 +223,13 @@ export default [
     owner: "Bank",
     buildingCosts: 100,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: VirginiaAvenue
   },
   {
     name: "Pennsylvania Railroad",
     type: "Railroad",
+    index: 15,
     price: 200,
     rentNormal: 25,
     rentRR2: 50,
@@ -187,12 +237,14 @@ export default [
     rentRR4: 200,
     owned: false,
     owner: "Bank",
-    mortgaged: false
+    mortgaged: false,
+    src: PennsylvaniaRailroad
   },
   {
     name: "St. James Place",
     color: "Orange",
     type: "Property",
+    index: 16,
     price: 180,
     rentNormal: 14,
     rentHouse1: 70,
@@ -204,7 +256,8 @@ export default [
     owner: "Bank",
     buildingCosts: 100,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: StJamesPlace
   },
   {
     name: "Community Chest",
@@ -214,6 +267,7 @@ export default [
     name: "Tennessee Avenue",
     color: "Orange",
     type: "Property",
+    index: 18,
     price: 180,
     rentNormal: 14,
     rentHouse1: 70,
@@ -225,12 +279,14 @@ export default [
     owner: "Bank",
     buildingCosts: 100,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: TennesseeAvenue
   },
   {
     name: "New York Avenue",
     color: "Orange",
     type: "Property",
+    index: 19,
     price: 200,
     rentNormal: 16,
     rentHouse1: 80,
@@ -242,7 +298,8 @@ export default [
     owner: "Bank",
     buildingCosts: 100,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: NewYorkAvenue
   },
   {
     name: "Free Parking",
@@ -252,6 +309,7 @@ export default [
     name: "Kentucky Avenue",
     color: "Red",
     type: "Property",
+    index: 21,
     price: 220,
     rentNormal: 18,
     rentHouse1: 90,
@@ -263,7 +321,8 @@ export default [
     owner: "Bank",
     buildingCosts: 150,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: KentuckyAvenue
   },
   {
     name: "Chance",
@@ -273,6 +332,7 @@ export default [
     name: "Indiana Avenue",
     color: "Red",
     type: "Property",
+    index: 23,
     price: 220,
     rentNormal: 18,
     rentHouse1: 90,
@@ -284,12 +344,14 @@ export default [
     owner: "Bank",
     buildingCosts: 150,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: IndianaAvenue
   },
   {
     name: "Illinois Avenue",
     color: "Red",
     type: "Property",
+    index: 24,
     price: 240,
     rentNormal: 20,
     rentHouse1: 100,
@@ -301,11 +363,13 @@ export default [
     owner: "Bank",
     buildingCosts: 150,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: IllinoisAvenue
   },
   {
     name: "B. & O. Railroad",
     type: "Railroad",
+    index: 25,
     price: 200,
     rentNormal: 25,
     rentRR2: 50,
@@ -313,12 +377,14 @@ export default [
     rentRR4: 200,
     owned: false,
     owner: "Bank",
-    mortgaged: false
+    mortgaged: false,
+    src: BandORailroad
   },
   {
     name: "Atlantic Avenue",
     color: "Yellow",
     type: "Property",
+    index: 26,
     price: 260,
     rentNormal: 22,
     rentHouse1: 110,
@@ -330,12 +396,14 @@ export default [
     owner: "Bank",
     buildingCosts: 150,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: AtlanticAvenue
   },
   {
     name: "Ventor Avenue",
     color: "Yellow",
     type: "Property",
+    index: 27,
     price: 260,
     rentNormal: 22,
     rentHouse1: 110,
@@ -347,22 +415,26 @@ export default [
     owner: "Bank",
     buildingCosts: 150,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: VentnorAvenue
   },
   {
     name: "Water Works",
     type: "Utilities",
+    index: 28,
     price: 150,
     rentNormal: 4,
     rentBoth: 10,
     owned: false,
     owner: "Bank",
-    mortgaged: false
+    mortgaged: false,
+    src: WaterWorks
   },
   {
     name: "Marvin Gardens",
     color: "Yellow",
     type: "Property",
+    index: 29,
     price: 280,
     rentNormal: 24,
     rentHouse1: 120,
@@ -374,7 +446,8 @@ export default [
     owner: "Bank",
     buildingCosts: 150,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: MarvinGardens
   },
   {
     name: "Go To Jail",
@@ -384,6 +457,7 @@ export default [
     name: "Pacific Avenue",
     color: "Green",
     type: "Property",
+    index: 31,
     price: 300,
     rentNormal: 26,
     rentHouse1: 130,
@@ -395,12 +469,14 @@ export default [
     owner: "Bank",
     buildingCosts: 200,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: PacificAvenue
   },
   {
     name: "North Carolina Avenue",
     color: "Green",
     type: "Property",
+    index: 32,
     price: 300,
     rentNormal: 26,
     rentHouse1: 130,
@@ -412,7 +488,8 @@ export default [
     owner: "Bank",
     buildingCosts: 200,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: NorthCarolinaAvenue
   },
   {
     name: "Community Chest",
@@ -422,6 +499,7 @@ export default [
     name: "Pennsylvania Avenue",
     color: "Green",
     type: "Property",
+    index: 34,
     price: 320,
     rentNormal: 28,
     rentHouse1: 150,
@@ -433,11 +511,13 @@ export default [
     owner: "Bank",
     buildingCosts: 200,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: PennsylvaniaAvenue
   },
   {
     name: "Short Line Railroad",
     type: "Railroad",
+    index: 35,
     price: 200,
     rentNormal: 25,
     rentRR2: 50,
@@ -445,7 +525,8 @@ export default [
     rentRR4: 200,
     owned: false,
     owner: "Bank",
-    mortgaged: false
+    mortgaged: false,
+    src: ShortLineRailroad
   },
   {
     name: "Chance",
@@ -453,8 +534,9 @@ export default [
   },
   {
     name: "Park Place",
-    color: "Dark Blue",
+    color: "DarkBlue",
     type: "Property",
+    index: 37,
     price: 350,
     rentNormal: 35,
     rentHouse1: 175,
@@ -466,7 +548,8 @@ export default [
     owner: "Bank",
     buildingCosts: 200,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: ParkPlace
   },
   {
     name: "Luxury Tax",
@@ -474,8 +557,9 @@ export default [
   },
   {
     name: "Boardwalk",
-    color: "Dark Blue",
+    color: "DarkBlue",
     type: "Property",
+    index: 39,
     price: 400,
     rentNormal: 50,
     rentHouse1: 200,
@@ -487,6 +571,7 @@ export default [
     owner: "Bank",
     buildingCosts: 200,
     mortgaged: false,
-    house: 0
+    house: 0,
+    src: Boardwalk
   }
 ]
