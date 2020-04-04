@@ -57,11 +57,30 @@ router.put('/join', passport.isLoggedIn(), (req, res, next) => {
 });
 
 // Leave current room.
-router.put('/leave', passport.isLoggedIn(), (req, res, next) => {
+router.put('/leave', (req, res, next) => {
     Room.findOne({ name: req.body.roomName }, (err, foundRoom) => {
         if (err) next(err);
 
-        Ro
+        const { roomName, playerName } = req.body;
+
+        const filtered = foundRoom.players.filter(player => {
+          return player.email != playerName;
+        });
+        const query = { name: roomName };
+        const update = { players: filtered };
+
+        if (update.players.length == 0) {
+          // Delete the room.
+          Room.deleteOne({ name: req.body.roomName }, (deleteErr, deleteRes) => {
+            if (deleteErr) next(deleteErr);
+            res.send({});
+          });
+        } else {
+          Room.updateOne(query, update, (updateErr) => {
+            if (updateErr) next(updateErr);
+            res.json({ ...foundRoom, ...update });
+          });
+        }
     });
 });
 
