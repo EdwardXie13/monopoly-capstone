@@ -465,32 +465,16 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     pubnub.publish({ channel: gameChannel.current, message: { text: "Opened Trade", player: me.current, checkedStuff: checkedStuff, open } });
   }
 
-  const handleCreateRoom = async () => {
+  const handleCreateRoom = async form => {
     roomId.current = shortid.generate().substring(0,5);
-    lobbyChannel.current = 'lobby--' + roomId.current;
+    lobbyChannel.current =  'lobby--' + form.roomName;//roomId.current;
 
     pubnub.subscribe({
       channels: [lobbyChannel.current],
       withPresence: true,
-      error: error => {
-        Swal.fire({
-          position: 'center',
-          allowOutsideClick: false,
-          title: 'Error',
-          text: JSON.stringify(error),
-          width: 275,
-          padding: '0.7em',
-          customClass: {
-            heightAuto: false,
-            title: 'title-class',
-            popup: 'popup-class',
-            confirmButton: 'button-class'
-          }
-        });
-      }
     });
     
-    backend.post('/room/create', { roomId: roomId.current })
+    backend.post('/room/create', { ...form, roomId: roomId.current })
       .then(res => {
         setPlayers(res.data.players);
         setCode(roomId.current);

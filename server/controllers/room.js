@@ -13,18 +13,31 @@ const Room = require('../models/room');
 //  Endpoints
 // ----------------------------------------------------------------------------------------------
 
+// Get all the existing rooms.
+router.get('/', passport.isLoggedIn(), (req, res, err) => {
+    Room.find({} , (err, foundRooms) => {
+        if (err) next(err);
+        res.json(foundRooms);
+    });
+});
+
 // Creates new room.
 router.post('/create', passport.isLoggedIn(), (req, res, next) => {
     const newRoom = new Room({
+        name: req.body.roomName,
         roomId: req.body.roomId,
-        players: [req.user]
+        players: [req.user],
+        private: req.body.private,
+        password: req.body.password
     });
 
     newRoom.save(err => {
         if (err) return next(err);
         res.send({
+            name: req.body.roomName,
             roomId: req.body.roomId,
-            players: [req.user]
+            players: [req.user],
+            private: req.body.private
         });
     });
 });
@@ -45,7 +58,7 @@ router.put('/join', passport.isLoggedIn(), (req, res, next) => {
 
 // Delete an existing room.
 router.delete('/', (req, res, next) => {
-    Room.deleteOne({ roomId: req.body.roomId }, (err, result) => {
+    Room.deleteOne({ name: req.body.roomName }, (err, result) => {
         if (err) next(err);
         res.send(result);
     });
