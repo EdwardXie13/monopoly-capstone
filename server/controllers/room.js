@@ -56,6 +56,15 @@ router.put('/join', passport.isLoggedIn(), (req, res, next) => {
     });
 });
 
+// Leave current room.
+router.put('/leave', passport.isLoggedIn(), (req, res, next) => {
+    Room.findOne({ name: req.body.roomName }, (err, foundRoom) => {
+        if (err) next(err);
+
+        Ro
+    });
+});
+
 // Delete an existing room.
 router.delete('/', (req, res, next) => {
     Room.deleteOne({ name: req.body.roomName }, (err, result) => {
