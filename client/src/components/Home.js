@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import CreateRoomModal from './CreateRoomModal';
 import backend from '../apis/backend';
 
-const Home = ({ handleCreateRoom, handleJoinRoom}) => {
+const Home = ({ handleCreateRoom, handleJoinRoom }) => {
   const [rooms, setRooms] = useState([]);
-  
+
   useEffect(() => {
     backend.get('/room/')
       .then(res => {
@@ -13,9 +13,17 @@ const Home = ({ handleCreateRoom, handleJoinRoom}) => {
       });
   }, []);
 
+  const handleRoomClick = r => {
+    if (r.private) {
+      // Popup password prompt.
+    } else {
+      handleJoinRoom(r.roomId, r.name, "");
+    }
+  }
+
   const renderRooms = () => {
     return rooms.length? rooms.map(r => (
-      <div style={{ position:"relative", backgroundColor:"#c2efc2",height:"130px",width:"100%",marginTop:"10px",borderRadius: "1rem"}}>
+      <div onClick={() => handleRoomClick(r)} style={{ position:"relative", backgroundColor:"#c2efc2",height:"130px",width:"100%",marginTop:"10px",borderRadius: "1rem"}}>
         <div style={{padding:"10px", fontSize:"large"}}>
           <div>Room Name: {r.name}</div>
           <div>Rules: Standard</div>
@@ -44,14 +52,14 @@ const Home = ({ handleCreateRoom, handleJoinRoom}) => {
           </form>
           { renderRooms() }
         </div>
-      </div> 
-      
+      </div>
+
       {/* <div style={{ textAlign: "center" }}>
         <h3 style={{ color: "#64b5f6", textShadow: "2px 2px 5px rgba(0,0,0,0.2)" }}><Link to="/">Monopoly</Link></h3>
         <button className="btn blue lighten-3" onClick={handleCreateRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Create Room</button>
         <button className="btn blue lighten-3" onClick={handleJoinRoom} style={{ margin: "1rem", borderRadius: "1rem" }}>Join Room</button>
       </div> */}
-    </> 
+    </>
   );
 };
 

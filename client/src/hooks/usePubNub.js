@@ -29,7 +29,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
         if (msg.message.text === "Game Started") {
           setIsPlaying(true);
           gameChannel.current = 'game--' + roomId.current;
-          pubnub.subscribe({ 
+          pubnub.subscribe({
             channels: [gameChannel.current],
             withPresence: true,
             error: error => {
@@ -53,14 +53,14 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
         } else if (msg.message.text === "Player Joined") {
           // Update players state with msg.message.players.
           setPlayers(msg.message.players);
-          
+
           const currentPlayer = new Player(msg.message.players[msg.message.players.length-1].email);
 
           setGamers(prevGamers => {
             currentPlayer.sprite = `sprite-${Object.keys(prevGamers).length}`;
             return { ...prevGamers, [msg.message.players[msg.message.players.length-1].email]: currentPlayer }
           });
-          
+
         } else if (msg.message.text === "Opened Trade") {
           setLeftTrades(new Set([]))
           setRightTrades(new Set([]));
@@ -84,7 +84,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
 
           setGamers(prevGamers => {
             let p1Inven = prevGamers[msg.message.p1].inventory.filter(item => !new Set([...msg.message.t1]).has(item.name));
-            msg.message.t2.forEach(item => { 
+            msg.message.t2.forEach(item => {
               const tile = board.filter(t => t.name === item )[0];
               p1Inven.push(new Deeds(tile.name, tile.type, tile.index, tile.color, getRent(tile), tile.src, tile.buildingCost, tile.house ));
             });
@@ -93,7 +93,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
               const tile = board.filter(t => t.name === item )[0];
               p2Inven.push(new Deeds(tile.name, tile.type, tile.index, tile.color, getRent(tile), tile.src, tile.buildingCost, tile.house ))
             });
-              
+
             return { ...prevGamers, [msg.message.p1]: { ...prevGamers[msg.message.p1], inventory: p1Inven, money: prevGamers[msg.message.p1].money + parseInt(msg.message.rightValue) - parseInt(msg.message.myStuffMoney) }, [msg.message.p2]: { ...prevGamers[msg.message.p2], inventory: p2Inven, money: prevGamers[msg.message.p2].money + parseInt(msg.message.myStuffMoney) - parseInt(msg.message.rightValue) } };
           });
 
@@ -162,14 +162,14 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           let pg = null;
           let phb = null;
           let nbi = null;
-          
-          
+
+
           const meow = async () => {
             await setGamers(prevGamers => {
               pg = prevGamers;
               return { ...prevGamers }
             });
-  
+
             await setHighestBid(prevHighestBid => {
               phb = prevHighestBid;
               return prevHighestBid;
@@ -248,7 +248,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           console.log("player moved", player);
           let currentIndex = msg.message.player.index;
           const destinationIndex = msg.message.destinationIndex;
-          
+
           let playerOrder = -1;
           setPlayers(prevPlayers => {
             prevPlayers.forEach((p, i) => { if (p.email === player.name) {
@@ -286,9 +286,9 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
 
               if (currentIndex === 0) {
                 // document.querySelector(`.${player.sprite}`).style.top = `${parseInt(top.slice(0, top.length-2)) + 30 }px`;
-                document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) - 95 }px`; 
+                document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) - 95 }px`;
               } else if (currentIndex >= 1 && currentIndex <= 8) {
-                document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) - 77 }px`; 
+                document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) - 77 }px`;
               } else if (currentIndex === 9) { //index 9 go to 10
                 if (playerOrder == 0) {
                   document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 30 }px`*/"815px";
@@ -298,10 +298,10 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
                   document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 155 }px`*/"5px";
                 } else if (playerOrder === 2) {
                   document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 25 }px`*/"895px";
-                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 77 }px`*/"40px"; 
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 77 }px`*/"40px";
                 } else if (playerOrder === 3) {
                   document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 25 }px`*/"895px";
-                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 67 }px`*/"85px"; 
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 67 }px`*/"85px";
                 }
               } else if (currentIndex === 10 ) { //index 10 go to 11
                 if (playerOrder == 0) {
@@ -312,11 +312,11 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
                   document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) + 65 }px`*/"65px";
                 } else if (playerOrder === 2) {
                   document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 125 }px`*/"735px";
-                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 40 }px`*/"10px"; 
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 40 }px`*/"10px";
                 } else if (playerOrder === 3) {
                   document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 125 }px`*/"775px";
-                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 80 }px`*/"10px"; 
-                } 
+                  document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 80 }px`*/"10px";
+                }
               } else if (currentIndex >= 11 && currentIndex <= 18) {
                 document.querySelector(`.${player.sprite}`).style.top = `${parseInt(top.slice(0, top.length-2)) - 76 }px`;
               } else if (currentIndex === 19) { //index 19 go to 20
@@ -339,13 +339,13 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
                     document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) + 105 }px`;
                   }
               } else if (currentIndex >= 21 && currentIndex <= 28) {
-                document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) + 75 }px`; 
+                document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) + 75 }px`;
               } else if (currentIndex === 29) { //index 29 go to 30
                 if (playerOrder == 0) {
-                  document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 55 }px`*/"835px";  
+                  document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 55 }px`*/"835px";
                 } else if (playerOrder == 1) {
                   document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 39 }px`*/"15px";
-                  document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 100 }px`*/"835px";  
+                  document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 100 }px`*/"835px";
                 } else if (playerOrder == 2) {
                   document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 50 }px`*/"65px";
                   document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 100 }px`*/"880px";
@@ -395,24 +395,23 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     return tile.house > 4? tile.rentHotel : tile[house+tile.house];
   }
 
-  const joinRoom = value => {
+  const joinRoom = (value, roomName, password) => {
     roomId.current = value;
     lobbyChannel.current = 'lobby--' + roomId.current;
-    
+
     pubnub.hereNow({
       channels: [lobbyChannel.current]
     }).then(response => {
       let pg = 0;
       setGamers(prevGamers => pg = prevGamers);
-      console.log("occupancy", response.totalOccupancy);
-      
+
       if (response.totalOccupancy < 4) {
         pubnub.subscribe({
           channels: [lobbyChannel.current],
           withPresence: true
         });
-        
-        backend.put('/room/join', { roomId: roomId.current })
+
+        backend.put('/room/join', { /*roomId: roomId.current*/ roomName: roomName, password: password })
           .then(res => {
             setCode(roomId.current);
             setPlayers(res.data.players);
@@ -420,7 +419,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
 
             pubnub.publish({ channel: lobbyChannel.current, message: { text: "Player Joined", players: res.data.players } });
             me.current = res.data.players[res.data.players.length-1].email;
-            
+
             let existingPlayers = {};
 
             for (let i = 0; i < res.data.players.length; ++i) {
@@ -466,14 +465,14 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
   }
 
   const handleCreateRoom = async form => {
-    roomId.current = shortid.generate().substring(0,5);
-    lobbyChannel.current =  'lobby--' + form.roomName;//roomId.current;
+    roomId.current = form.roomId;
+    lobbyChannel.current =  'lobby--' + roomId.current;
 
     pubnub.subscribe({
       channels: [lobbyChannel.current],
       withPresence: true,
     });
-    
+
     backend.post('/room/create', { ...form, roomId: roomId.current })
       .then(res => {
         setPlayers(res.data.players);
@@ -481,7 +480,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
         setIsWaiting(true);
 
         me.current = res.data.players[0].email;
-        
+
         const currentPlayer = new Player(me.current);
 
         currentPlayer.sprite = `sprite-0`;
@@ -490,29 +489,30 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
       });
   }
 
-  const handleJoinRoom = () => {
-    Swal.fire({
-      title: "Join a Game Lobby",
-      position: 'center',
-      input: 'text',
-      allowOutsideClick: false,
-      inputPlaceholder: 'Enter the room id',
-      showCancelButton: true,
-      confirmButtonColor: 'rgb(208,33,41)',
-      confirmButtonText: 'OK',
-      width: 500,
-      // padding: '0.7em',
-      customClass: {
-        heightAuto: false,
-        popup: 'popup-class',
-        confirmButton: 'join-button-class ',
-        cancelButton: 'join-button-class'
-      } 
-    }).then(result => {
-      if(result.value){
-        joinRoom(result.value);
-      }
-    });
+  const handleJoinRoom = (roomId, roomName, password) => {
+    // Swal.fire({
+    //   title: "Join a Game Lobby",
+    //   position: 'center',
+    //   input: 'text',
+    //   allowOutsideClick: false,
+    //   inputPlaceholder: 'Enter the room id',
+    //   showCancelButton: true,
+    //   confirmButtonColor: 'rgb(208,33,41)',
+    //   confirmButtonText: 'OK',
+    //   width: 500,
+    //   padding: '0.7em',
+    //   customClass: {
+    //     heightAuto: false,
+    //     popup: 'popup-class',
+    //     confirmButton: 'join-button-class ',
+    //     cancelButton: 'join-button-class'
+    //   }
+    // }).then(result => {
+    //   if(result.value){
+    //     joinRoom(result.value);
+    //   }
+    // });
+    joinRoom(roomId, roomName, password);
   }
 
   const handleMyStuffMoneyChange = money => {

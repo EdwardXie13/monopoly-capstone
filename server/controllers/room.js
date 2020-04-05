@@ -17,6 +17,7 @@ const Room = require('../models/room');
 router.get('/', passport.isLoggedIn(), (req, res, err) => {
     Room.find({} , (err, foundRooms) => {
         if (err) next(err);
+
         res.json(foundRooms);
     });
 });
@@ -44,20 +45,24 @@ router.post('/create', passport.isLoggedIn(), (req, res, next) => {
 
 // Join an existing room.
 router.put('/join', passport.isLoggedIn(), (req, res, next) => {
-    // 1, Find room with roomID.
-    // 2. Update room's players.
-    Room.findOne({ roomId: req.body.roomId }, (err, foundRoom) => {
-        if (err) next(err);
+  const { roomName, password } = req.body;
+  const query = { name: roomName };
 
-        Room.updateOne({ roomId: foundRoom.roomId, players: [...foundRoom.players, req.user] }, (err2, numberAffected, rawResponse) => {
-            if (err2) next(err2);
-            res.send({ roomId: foundRoom.roomId, players: [...foundRoom.players, req.user] });
-        });
+  Room.findOne(query, (findErr, findRes) => {
+    if (findErr) next(findErr);
+    if (password != findRes.password) res.status(401).send('Wrong password.');
+
+    const update = { players: [ ...findRes.players, req.user ] };
+
+    Room.updateOne(query, update, (updateErr) => {
+      if (updateErr) next(updateErr);
+      res.json(update);
     });
+  });
 });
 
 // Leave current room.
-router.put('/leave', (req, res, next) => {
+router.put('/leave', passport.isLoggedIn(), (req, res, next) => {
     Room.findOne({ name: req.body.roomName }, (err, foundRoom) => {
         if (err) next(err);
 
@@ -78,7 +83,7 @@ router.put('/leave', (req, res, next) => {
         } else {
           Room.updateOne(query, update, (updateErr) => {
             if (updateErr) next(updateErr);
-            res.json({ ...foundRoom, ...update });
+            res.json({ ...update });
           });
         }
     });

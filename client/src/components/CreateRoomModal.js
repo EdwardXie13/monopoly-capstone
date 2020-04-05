@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import shortid  from 'shortid';
 
 Modal.setAppElement('#create-room-modal');
 
@@ -13,10 +14,15 @@ const customStyles = {
     transform             : 'translate(-50%, -50%)'
   }
 };
- 
+
 const CreateRoomModal = ({ handleCreateRoom }) => {
   const [modalIsOpen,setIsOpen] = useState(false);
-  const [form, setForm] = useState({ roomName: "", private: false, password: "" });
+  const [form, setForm] = useState({
+    roomName: "",
+    private: false,
+    password: "",
+    roomId: shortid.generate().substring(0,5)
+  });
 
   const openModal = () => setIsOpen(true);
 
@@ -35,7 +41,7 @@ const CreateRoomModal = ({ handleCreateRoom }) => {
   const handleSubmitForm = () => {
     handleCreateRoom(form);
   }
- 
+
   return (
     <div>
       <a className="btn-floating btn-large waves-effect waves-light" onClick={openModal}><i class="material-icons">add</i></a>
