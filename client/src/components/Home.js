@@ -1,17 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext, forwardRef, useImperativeHandle } from 'react';
 
 import CreateRoomModal from './CreateRoomModal';
+// import HomeContext from '../contexts/HomeContext';
 import backend from '../apis/backend';
 
-const Home = ({ handleCreateRoom, handleJoinRoom }) => {
+const Home = forwardRef(({ pubnub, handleCreateRoom, handleJoinRoom, myRef }, ref) => {
+  // const { rooms, setRooms } = useContext(HomeContext);
   const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
+    // handleFetchRooms();
+    pubnub.subscribe({
+      channels: ["lobby"],
+      withPresence: true
+    });
+
     backend.get('/room/')
-      .then(res => {
-        setRooms(res.data);
-      });
+    .then(res => {
+      setRooms(res.data);
+    });
   }, []);
+
+  myRef.current = () => {
+    backend.get('/room/')
+    .then(res => {
+      setRooms(res.data);
+    });
+  }
+  // useImperativeHandle(ref, () => ({
+  //   handleFetchRooms() {
+  //     backend.get('/room/')
+  //     .then(res => {
+  //       setRooms(res.data);
+  //     });
+  //   }
+  // }));
 
   const handleRoomClick = r => {
     if (r.private) {
@@ -61,6 +84,6 @@ const Home = ({ handleCreateRoom, handleJoinRoom }) => {
       </div> */}
     </>
   );
-};
+});
 
 export default Home;

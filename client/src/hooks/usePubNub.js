@@ -9,7 +9,7 @@ import board from '../library/board/board';
 import RoomContext from '../contexts/RoomContext';
 import backend from '../apis/backend';
 
-const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark) => {
+const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef) => {
   const lobbyChannel = useRef(null);
   const gameChannel = useRef(null);
   const roomId = useRef(null);
@@ -31,23 +31,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           gameChannel.current = 'game--' + roomId.current;
           pubnub.subscribe({
             channels: [gameChannel.current],
-            withPresence: true,
-            error: error => {
-              Swal.fire({
-                position: 'center',
-                allowOutsideClick: false,
-                title: 'Error',
-                text: JSON.stringify(error),
-                width: 275,
-                padding: '0.7em',
-                customClass: {
-                  heightAuto: false,
-                  title: 'title-class',
-                  popup: 'popup-class',
-                  confirmButton: 'button-class'
-                }
-              });
-            }
+            withPresence: true
           });
           Swal.close();
         } else if (msg.message.text === "Player Joined") {
@@ -378,6 +362,9 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
               }
             }
           }
+        } else if (msg.message.text === "Fetch Rooms") {
+          // console.log("Home Ref is", homeRef);
+          homeRef.current();
         }
       }
     });
@@ -486,6 +473,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
         currentPlayer.sprite = `sprite-0`;
 
         setGamers({ ...gamers, [me.current]: currentPlayer });
+
+        handleFetchRooms();
       });
   }
 
@@ -594,6 +583,10 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
 
   const handlePieceMove = (player, destinationIndex, direction = "forward") => {
     pubnub.publish({ channel: gameChannel.current, message: { text: "Piece Move", player, destinationIndex, direction } });
+  }
+
+  const handleFetchRooms = () => {
+    pubnub.publish({ channel: "lobby", message: { text: "Fetch Rooms" } });
   }
 
   return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove];

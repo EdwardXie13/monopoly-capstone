@@ -4,11 +4,13 @@ import { Link } from 'react-router-dom';
 import '../styles/LobbyPage.css';
 import '../styles/RoomPage.css';
 import board from '../library/board/board';
+import backend from '../apis/backend';
 import usePubNub from '../hooks/usePubNub';
 import ReactDiceContext from '../contexts/ReactDiceContext';
 import RoomContext from '../contexts/RoomContext';
 import BiddingContext from '../contexts/BiddingContext';
 import SellingContext from '../contexts/SellingContext';
+/*import HomeContext from '../contexts/HomeContext';*/
 import boardImage from '../assets/boards/Classic copy.jpeg';
 import useGame from '../hooks/useGame';
 import useCard from '../hooks/useCard';
@@ -73,6 +75,8 @@ function useWindowSize() {
 }
 
 const Lobby = () => {
+  const homeRef = useRef();
+  // console.log("Home Ref is ", homeRef)
   const [gamers, setGamers] = useState({});
   const [player1, setPlayer1] = useState(new Player("Player 1"));
   const [player2, setPlayer2] = useState(new Player("Player 2"));
@@ -90,22 +94,38 @@ const Lobby = () => {
   const [activator, setActivator] = useState(null);
   const [loanShark, setLoanShark] = useState({ name: '' });
   const [initialRent, setInitialRent] = useState(0);
+  // const [rooms, setRooms] = useState([]);
   // const [finishedPlayer, setFinishedPlayer] = useState({ name: "" });
   const finishedPlayer = useRef({ name: '' });
   // const [isRolled, setIsRolled] = useState(false);
 
   const { players, code } = useContext(RoomContext);
+  // const { rooms, setRooms } = useContext(HomeContext);
   const { showManage, setShowManage, openBuild, setOpenBuild, rent, setRent, resolvePayment, setResolvePayment } = useContext(SellingContext);
   const { reactDice, isRolled, setIsRolled, double, setDouble, setReactDice } = useContext(ReactDiceContext);
   const { theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, /*modalIsOpen, setIsOpen, */trader, setTrader, myStuffMoney, setMyStuffMoney, leftTrades, setLeftTrades, rightSelect, setRightSelect, rightValue, setRightValue, rightTrades, setRightTrades, isConfirm, setIsConfirm } = useContext(TradeSyncContext);
   const { openBid, setOpenBid, name, setName } = useContext(BiddingContext);
-  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark);
+  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef);
 
 
   const [history, renderHistory, addToHistory] = useCard();
   const [rollEvent, payJail] = useGame(addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, handleSetActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent, handlePieceMove);
   const [width, height] = useWindowSize();
 
+  // Re-fetch rooms from database.
+  const handleFetchRooms = () => {
+    // pubnub.subscribe({
+    //   channels: ["lobby"],
+    //   withPresence: true
+    // });
+    //
+    // backend.get('/room/')
+    //   .then(res => {
+    //     setRooms(res.data);
+    //   });
+  }
+
+  // Handle bankrupted player's turn.
   if (Object.keys(gamers)[turnIdx] === me.current && me.current && gamers[me.current].bankrupt === true && isRolled) {
     handleNextTurn();
     setIsRolled(false);
@@ -120,7 +140,7 @@ const Lobby = () => {
 
   const renderHome = () => (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-      <Home handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom}></Home>
+      <Home myRef={homeRef} pubnub={pubnub} handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom}></Home>
     </div>
   );
 
