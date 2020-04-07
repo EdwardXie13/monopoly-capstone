@@ -106,7 +106,7 @@ const CreateRoomModal = ({ handleCreateRoom }) => {
               <p>
                 <label>
                   <input type="checkbox" class="filled-in" />
-                  <span style={{fontSize:"18pt", color:"black"}}>Uneven Bidding</span>
+                  <span style={{fontSize:"18pt", color:"black"}}>Uneven Building</span>
                 </label>
               </p>
             </div>
