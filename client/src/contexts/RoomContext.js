@@ -5,9 +5,10 @@ const RoomContext = React.createContext();
 export const RoomProvider = ({ children }) => {
     const [players, setPlayers] = useState([]);
     const [code, setCode] = useState('');
-    
+    const [roomName, setRoomName] = useState('');
+
     return (
-        <RoomContext.Provider value={{ players, setPlayers, code, setCode }}>
+        <RoomContext.Provider value={{ roomName, setRoomName, players, setPlayers, code, setCode }}>
             { children }
         </RoomContext.Provider>
     );

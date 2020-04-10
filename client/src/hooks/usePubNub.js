@@ -15,7 +15,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
   const roomId = useRef(null);
   const turnCounter = useRef(1);
   const me = useRef('');
-  const { players, setPlayers, setCode } = useContext(RoomContext);
+  const { players, setPlayers, setCode, roomName, setRoomName } = useContext(RoomContext);
 
   const pubnub = new PubNub({
     publishKey: "pub-c-a872a814-ff46-40a2-813c-482cdcef049b"/*'pub-c-7045c7b8-54ee-4831-81e0-35058c0eabff'*/,
@@ -365,6 +365,9 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
         } else if (msg.message.text === "Fetch Rooms") {
           // console.log("Home Ref is", homeRef);
           homeRef.current();
+        } else if (msg.message.text === "Player Leaved") {
+          console.log("A player has left", msg.message);
+          setPlayers(msg.message.players);
         }
       }
     });
@@ -385,6 +388,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
   const joinRoom = (value, roomName, password) => {
     roomId.current = value;
     lobbyChannel.current = 'lobby--' + roomId.current;
+    setRoomName(roomName);
 
     pubnub.hereNow({
       channels: [lobbyChannel.current]
@@ -420,7 +424,7 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             console.log("existing players", existingPlayers);
             setGamers({ ...existingPlayers/*, [me.current]: currentPlayer*/ });
 
-            if (/*response.totalOccupancy*/res.data.players.length === 2) {
+            if (/*response.totalOccupancy*/res.data.players.length === 3) {
               pubnub.publish({ channel: lobbyChannel.current, message: { text: "Game Started" } });
               gameChannel.current = 'game--' + roomId.current;
               pubnub.subscribe({ channels: [gameChannel.current], withPresence: true });
@@ -454,6 +458,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
   const handleCreateRoom = async form => {
     roomId.current = form.roomId;
     lobbyChannel.current =  'lobby--' + roomId.current;
+
+    setRoomName(form.roomName);
 
     pubnub.subscribe({
       channels: [lobbyChannel.current],
@@ -589,7 +595,17 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     pubnub.publish({ channel: "lobby", message: { text: "Fetch Rooms" } });
   }
 
-  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove];
+  const handleLeaveRoom = roomName => {
+    backend.put('/room/leave', { roomName: roomName, playerName: me.current })
+      .then(res => {
+        console.log('res', res);
+        setIsWaiting(false);
+        handleFetchRooms();
+        pubnub.publish({ channel: lobbyChannel.current, message: { text: "Player Leaved", players: res.data.players } });
+      });
+  }
+
+  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, handleLeaveRoom];
 }
 
 export default usePubNub;

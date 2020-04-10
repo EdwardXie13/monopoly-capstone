@@ -10,7 +10,6 @@ import ReactDiceContext from '../contexts/ReactDiceContext';
 import RoomContext from '../contexts/RoomContext';
 import BiddingContext from '../contexts/BiddingContext';
 import SellingContext from '../contexts/SellingContext';
-/*import HomeContext from '../contexts/HomeContext';*/
 import boardImage from '../assets/boards/Classic copy.jpeg';
 import useGame from '../hooks/useGame';
 import useCard from '../hooks/useCard';
@@ -99,13 +98,13 @@ const Lobby = () => {
   const finishedPlayer = useRef({ name: '' });
   // const [isRolled, setIsRolled] = useState(false);
 
-  const { players, code } = useContext(RoomContext);
+  const { players, code, roomName } = useContext(RoomContext);
   // const { rooms, setRooms } = useContext(HomeContext);
   const { showManage, setShowManage, openBuild, setOpenBuild, rent, setRent, resolvePayment, setResolvePayment } = useContext(SellingContext);
   const { reactDice, isRolled, setIsRolled, double, setDouble, setReactDice } = useContext(ReactDiceContext);
   const { theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, /*modalIsOpen, setIsOpen, */trader, setTrader, myStuffMoney, setMyStuffMoney, leftTrades, setLeftTrades, rightSelect, setRightSelect, rightValue, setRightValue, rightTrades, setRightTrades, isConfirm, setIsConfirm } = useContext(TradeSyncContext);
   const { openBid, setOpenBid, name, setName } = useContext(BiddingContext);
-  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef);
+  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, handleLeaveRoom] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef);
 
 
   const [history, renderHistory, addToHistory] = useCard();
@@ -155,13 +154,14 @@ const Lobby = () => {
             </span>
         );
     });
-}
+  }
 
   const renderRoom = () => (
     <div className="room-container">
         <div className="white-layer">
             <div className="room-title">Room: {code}</div>
             { renderPlayers() }
+            <button className="btn" onClick={() => handleLeaveRoom(roomName)}>Leave</button>
         </div>
     </div>
 );

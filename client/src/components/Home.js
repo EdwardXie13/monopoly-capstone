@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext, forwardRef, useImperativeHandle } from 'react';
 
 import CreateRoomModal from './CreateRoomModal';
-// import HomeContext from '../contexts/HomeContext';
 import backend from '../apis/backend';
 
 const Home = forwardRef(({ pubnub, handleCreateRoom, handleJoinRoom, myRef }, ref) => {

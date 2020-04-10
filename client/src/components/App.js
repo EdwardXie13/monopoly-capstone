@@ -22,13 +22,13 @@ import ProtectedRoute from './ProtectedRoute';
 
 const App = () => {
   useApp();
-  
+
   return (
     <Router history={history}>
       <Switch>
         <Route path="/signout" component={SignoutPage} />
         <Route path="/signup" component={SignupPage} />
-        <Route path="/signin" component={SigninPage} /> 
+        <Route path="/signin" component={SigninPage} />
         <ProtectedRoute path="/lobby" component={LobbyPage} />
         <ProtectedRoute path="/game" component={GamePage} />
         <ProtectedRoute path="/room" component={RoomPage} />
