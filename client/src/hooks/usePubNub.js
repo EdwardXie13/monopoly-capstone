@@ -33,7 +33,6 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             channels: [gameChannel.current],
             withPresence: true
           });
-          Swal.close();
         } else if (msg.message.text === "Player Joined") {
           // Update players state with msg.message.players.
           setPlayers(msg.message.players);
@@ -366,13 +365,38 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           // console.log("Home Ref is", homeRef);
           homeRef.current();
         } else if (msg.message.text === "Player Leaved") {
-          console.log("A player has left", msg.message);
           setPlayers(msg.message.players);
+
+          const playerLeft = msg.message.playerLeft;
+
+          setGamers(prevGamers => {
+            let newGamers = { ...prevGamers };
+            delete newGamers[playerLeft];
+            console.log("playerLEft", playerLeft);
+            console.log("new gamers", newGamers);
+            let i = 0;
+
+            for (let key in newGamers) {
+              newGamers[key].sprite = `sprite-${i++}`;
+            }
+            console.log()
+            return { ...newGamers };
+          });
         }
       }
     });
 
+    window.addEventListener("beforeunload", e => {
+      let rn = null;
+      setRoomName(prevRoomName => rn = prevRoomName);
+      handleLeaveRoom(rn);
+      // Unsub to room.
+    });
+
     return () => {
+      // let rn = null;
+      // setRoomName(prevRoomName => rn = prevRoomName);
+      // handleLeaveRoom(rn);
       pubnub.unsubscribeAll();
     }
   }, []);
@@ -383,6 +407,13 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     let house = 'rentHouse';
 
     return tile.house > 4? tile.rentHotel : tile[house+tile.house];
+  }
+
+  const handleStartGame = () => {
+    pubnub.publish({ channel: lobbyChannel.current, message: { text: "Game Started" } });
+    gameChannel.current = 'game--' + roomId.current;
+    pubnub.subscribe({ channels: [gameChannel.current], withPresence: true });
+    setIsPlaying(true);
   }
 
   const joinRoom = (value, roomName, password) => {
@@ -419,17 +450,15 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
               existingPlayers[p.email].sprite = `sprite-${i}`;
             }
 
-            // const currentPlayer = new Player(me.current);
-            // currentPlayer.sprite = `sprite-${res.data.players.length-1}`;
             console.log("existing players", existingPlayers);
-            setGamers({ ...existingPlayers/*, [me.current]: currentPlayer*/ });
+            setGamers({ ...existingPlayers });
 
-            if (/*response.totalOccupancy*/res.data.players.length === 3) {
-              pubnub.publish({ channel: lobbyChannel.current, message: { text: "Game Started" } });
-              gameChannel.current = 'game--' + roomId.current;
-              pubnub.subscribe({ channels: [gameChannel.current], withPresence: true });
-              setIsPlaying(true);
-            }
+            // if (res.data.players.length === 3) {
+            //   pubnub.publish({ channel: lobbyChannel.current, message: { text: "Game Started" } });
+            //   gameChannel.current = 'game--' + roomId.current;
+            //   pubnub.subscribe({ channels: [gameChannel.current], withPresence: true });
+            //   setIsPlaying(true);
+            // }
           });
       } else {
         console.log("else");
@@ -601,11 +630,11 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
         console.log('res', res);
         setIsWaiting(false);
         handleFetchRooms();
-        pubnub.publish({ channel: lobbyChannel.current, message: { text: "Player Leaved", players: res.data.players } });
+        pubnub.publish({ channel: lobbyChannel.current, message: { text: "Player Leaved", players: res.data.players, playerLeft: me.current } });
       });
   }
 
-  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, handleLeaveRoom];
+  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, handleLeaveRoom, handleStartGame];
 }
 
 export default usePubNub;
