@@ -2,7 +2,7 @@ import Swal from 'sweetalert2';
 import board from '../library/board/board';
 import useEffects from '../hooks/useEffects';
 
-const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, setActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent, handlePieceMove) => {
+const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, setActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent, handlePieceMove, handleCommunityChestUpdate) => {
   const monopolyRent = (i) => {
     if (board[i].color === "Brown") {
       //1 3
@@ -138,7 +138,7 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
     }
   }
 
-  const [communityEffect, chanceEffect] = useEffects(reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer);
+  const [communityEffect, chanceEffect] = useEffects(reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer, handleCommunityChestUpdate);
 
   const rollEvent = async (die1, die2, player, setIsRolled, setDouble) => { 
     if (player.bankrupt === false) {

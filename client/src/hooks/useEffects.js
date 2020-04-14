@@ -1,13 +1,27 @@
 import Swal from 'sweetalert2';
+import React from 'react';
 
 import board from '../library/board/board';
 import communityChest from '../library/cards/Community_Chest_Cards';
 import chance from '../library/cards/Chance_Cards';
-import Deeds from '../classes/Deeds.js';
+
 //player, money, location, inventory, index
-const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer) => {
+const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer, handleCommunityChestUpdate) => {
+  const displayCard = (src, ms) => {
+    const imageNode = document.createElement('IMG');
+    imageNode.setAttribute("src", src);
+    imageNode.setAttribute("style", "position:absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)");
+    document.querySelector('#board-container').appendChild(imageNode);
+
+    setTimeout(() => {
+      imageNode.remove();
+    }, ms);
+  }
+  
   const communityEffect = async(player) => {
-    const card = communityChest.pop();
+    const card = communityChest[communityChest.length - 1];
+    handleCommunityChestUpdate()
+    displayCard(card.src, 2000);
     switch(card.number) {
       case 15:
         console.log(card.text);

@@ -20,6 +20,7 @@ app.use(expressSession({ secret: process.env.SESSION_SECRET, resave: false, save
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.json());
+
 app.use('/api', controllers);
 
 const PORT = 8080;

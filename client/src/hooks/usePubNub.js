@@ -5,6 +5,8 @@ import Player from '../classes/Player';
 import shortid  from 'shortid';
 import Deeds from '../classes/Deeds';
 import board from '../library/board/board';
+import communityChest from '../library/cards/Community_Chest_Cards';
+import chance from '../library/cards/Chance_Cards';
 
 import RoomContext from '../contexts/RoomContext';
 import backend from '../apis/backend';
@@ -382,6 +384,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             console.log()
             return { ...newGamers };
           });
+        } else if (msg.message.text === "Update Community Cards") {
+          communityChest.unshift(communityChest.pop());
         }
       }
     });
@@ -634,7 +638,11 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
       });
   }
 
-  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, handleLeaveRoom, handleStartGame];
+  const handleCommunityChestUpdate = () => {
+    pubnub.publish({ channel: gameChannel.current, message: { text: "Update Community Cards" } });
+  }
+
+  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, handleLeaveRoom, handleStartGame, handleCommunityChestUpdate];
 }
 
 export default usePubNub;
