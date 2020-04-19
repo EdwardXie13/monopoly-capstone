@@ -21,6 +21,7 @@ import Deeds from '../classes/Deeds';
 import Home from './Home'
 import TradeSync from './TradeSync';
 import Bid from '../components/Bid';
+import SpriteButton from './SpriteButton';
 
 import Default from '../assets/cards/Default.png';
 import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
@@ -106,7 +107,7 @@ const Lobby = () => {
   const { theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, /*modalIsOpen, setIsOpen, */trader, setTrader, myStuffMoney, setMyStuffMoney, leftTrades, setLeftTrades, rightSelect, setRightSelect, rightValue, setRightValue, rightTrades, setRightTrades, isConfirm, setIsConfirm } = useContext(TradeSyncContext);
   const { openBid, setOpenBid, name, setName } = useContext(BiddingContext);
   const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, 
-    handleLeaveRoom, handleStartGame, handleCommunityChestUpdate] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef);
+    handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef);
 
 
   const [history, renderHistory, addToHistory] = useCard();
@@ -163,6 +164,7 @@ const Lobby = () => {
         <div className="white-layer">
             <div className="room-title">Room: {code}</div>
             { renderPlayers() }
+            <SpriteButton setGamers={setGamers} me={me} gamers={gamers} handleSpriteSelect={handleSpriteSelect} />
             <button className="btn" onClick={() => handleStartGame()}>Start Game</button>
             <button className="btn" onClick={() => handleLeaveRoom(roomName)}>Leave</button>
         </div>

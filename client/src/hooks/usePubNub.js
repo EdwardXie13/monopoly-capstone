@@ -7,6 +7,7 @@ import Deeds from '../classes/Deeds';
 import board from '../library/board/board';
 import communityChest from '../library/cards/Community_Chest_Cards';
 import chance from '../library/cards/Chance_Cards';
+import sprites from '../library/sprites/sprites';
 
 import RoomContext from '../contexts/RoomContext';
 import backend from '../apis/backend';
@@ -386,6 +387,11 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           });
         } else if (msg.message.text === "Update Community Cards") {
           communityChest.unshift(communityChest.pop());
+        } else if (msg.message.text === "Selected Sprite") {
+          const { newGamers, oldIdx, newIdx } = msg.message.data;
+          setGamers(newGamers);
+          sprites[oldIdx].picked = false;
+          sprites[newIdx].picked = true;
         }
       }
     });
@@ -642,7 +648,11 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     pubnub.publish({ channel: gameChannel.current, message: { text: "Update Community Cards" } });
   }
 
-  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, handleLeaveRoom, handleStartGame, handleCommunityChestUpdate];
+  const handleSpriteSelect = data => {
+    pubnub.publish({ channel: lobbyChannel.current, message: { text: "Selected Sprite", data } });
+  }
+
+  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect];
 }
 
 export default usePubNub;

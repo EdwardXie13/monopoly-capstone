@@ -49,6 +49,7 @@ export default class Player {
     this.c_JailCard = false;
     this.bidding = true;
     this.bankrupt = false;
+    this.spriteSrc = { srcUp: '', srcDown: '', srcleft: '', srcRight: '' };
     // this.inventory = [];
     if (name === "1@1.com") {
       this.inventory = [
