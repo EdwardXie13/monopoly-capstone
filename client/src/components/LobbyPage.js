@@ -142,18 +142,30 @@ const Lobby = () => {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+  const renderHome = () => (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <Home myRef={homeRef} pubnub={pubnub} handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom}></Home>
+    </div>
+=======
+>>>>>>> d7cd9aa7e3fac2b812d54c71f87e817f34189414
   const renderHome = (handleCreateRoom,handleJoinRoom) => (
         <div>
           <Home handleCreateRoom= {handleCreateRoom} handleJoinRoom={handleJoinRoom}></Home>
         </div>
 
         
+<<<<<<< HEAD
 =======
   const renderHome = () => (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
       <Home myRef={homeRef} pubnub={pubnub} handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom}></Home>
     </div>
 >>>>>>> 970801f448769f3c84d101e61b06205c1a9cfe22
+=======
+>>>>>>> f7bcd24ac81fc623a099d3220dedf2c3fb0120ea
+>>>>>>> d7cd9aa7e3fac2b812d54c71f87e817f34189414
   );
 
   const getCurrentPlayer = () => gamers[Object.keys(gamers)[turnIdx]];
