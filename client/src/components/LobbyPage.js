@@ -23,6 +23,7 @@ import TradeSync from './TradeSync';
 import Bid from '../components/Bid';
 import SpriteButton from './SpriteButton';
 
+
 import Default from '../assets/cards/Default.png';
 import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
 import BandORailroad from '../assets/cards/B and O Railroad.png';
@@ -140,10 +141,19 @@ const Lobby = () => {
     return <img src={src} style={{ position: "relative", height:window.innerHeight/2.5}}/>
   }
 
+<<<<<<< HEAD
   const renderHome = () => (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
       <Home myRef={homeRef} pubnub={pubnub} handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom}></Home>
     </div>
+=======
+  const renderHome = (handleCreateRoom,handleJoinRoom) => (
+        <div>
+          <Home handleCreateRoom= {handleCreateRoom} handleJoinRoom={handleJoinRoom}></Home>
+        </div>
+
+        
+>>>>>>> f7bcd24ac81fc623a099d3220dedf2c3fb0120ea
   );
 
   const getCurrentPlayer = () => gamers[Object.keys(gamers)[turnIdx]];
