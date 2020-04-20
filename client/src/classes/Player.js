@@ -35,11 +35,13 @@ export default class Player {
     this.name = name;
     this.location = "Go";
     this.index = 0;
+    this.sprite = "";
+    // if (name === "1@2.com") this.sprite = "onion-frog";
     // this.location = "Park Place";
     // this.index = 37;
-    // this.money = 1500;
+    this.money = 1500;
     // this.money = 10000;
-    this.money = 0;
+    // this.money = 0;
     this.jail = false;
     this.jailroll = 0;
     this.doubles = 0;
@@ -47,6 +49,7 @@ export default class Player {
     this.c_JailCard = false;
     this.bidding = true;
     this.bankrupt = false;
+    this.spriteSrc = { srcUp: '', srcDown: '', srcleft: '', srcRight: '' };
     // this.inventory = [];
     if (name === "1@1.com") {
       this.inventory = [

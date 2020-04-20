@@ -55,9 +55,6 @@ const BuildButton = ({ setIsRolled, handleDisownInventory, setInitialRent, initi
     setTempCost(0);
     let amountToPay = 0;
     if (rent > 0) { 
-      // rent = 1
-      // player.month = 100
-      // rent = 0
       amountToPay = player.money > rent? rent : player.money;
       setRent(rent - amountToPay);
       setInitialRent(initialRent + amountToPay);
@@ -100,8 +97,6 @@ const BuildButton = ({ setIsRolled, handleDisownInventory, setInitialRent, initi
         setIsRolled(true);
       }
     }
-    
-    // resolvePayment("paid debt");
   }
 
   const addBuildHouse = () => {
@@ -161,8 +156,8 @@ const BuildButton = ({ setIsRolled, handleDisownInventory, setInitialRent, initi
     if (prevMortgage === false) {
       if (selectedCard.type === "Property") {
         console.log("tempHouse", tempHouse);
-        const sign = selectedCard.mortgage? 1 : -1;
-        selectedCard.mortgage === true? setTempCost((selectedCard.buildingCost/2 *(houseState-tempHouse)))
+        const sign = selectedCard.mortgage? -1 : 1;
+        selectedCard.mortgage === true? setTempCost((selectedCard.buildingCost/2 *(houseState-tempHouse))) 
         : setTempCost( (selectedCard.buildingCost/2 *(houseState-tempHouse)) + sign * (player.inventory[selectedIndex].price/2) )
       } else {
         console.log("a")

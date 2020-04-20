@@ -2,36 +2,6 @@ import React from 'react';
 import Modal from 'react-modal';
 import '../styles/TradeButton.css';
 import Deeds from '../classes/Deeds';
-
-import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
-import BandORailroad from '../assets/cards/B and O Railroad.png';
-import BalticAvenue from '../assets/cards/Baltic Avenue.png';
-import Blank from '../assets/cards/Blank.png';
-import Boardwalk from '../assets/cards/Boardwalk.png';
-import ConnecticutAvenue from '../assets/cards/Connecticut Avenue.png';
-import ElectricCompany from '../assets/cards/Electric Company.png';
-import IllinoisAvenue from '../assets/cards/Illinois Avenue.png';
-import IndianaAvenue from '../assets/cards/Indiana Avenue.png';
-import KentuckyAvenue from '../assets/cards/Kentucky Avenue.png';
-import MarvinGardens from '../assets/cards/Marvin Gardens.png';
-import MediterraneanAvenue from '../assets/cards/Mediterranean Avenue.png';
-import NewYorkAvenue from '../assets/cards/New York Avenue.png';
-import NorthCarolinaAvenue from '../assets/cards/North Carolina Avenue.png';
-import OrientalAvenue from '../assets/cards/Oriental Avenue.png';
-import PacificAvenue from '../assets/cards/Pacific Avenue.png';
-import ParkPlace from '../assets/cards/Park Place.png';
-import PennsylvaniaAvenue from '../assets/cards/Pennsylvania Avenue.png';
-import PennsylvaniaRailroad from '../assets/cards/Pennsylvania Railroad.png';
-import ReadingRailroad from '../assets/cards/Reading Railroad.png';
-import ShortLineRailroad from '../assets/cards/Short Line Railroad.png';
-import StCharlesPlace from '../assets/cards/St Charles Place.png';
-import StJamesPlace from '../assets/cards/St James Place.png';
-import StatesAvenue from '../assets/cards/States Avenue.png';
-import TennesseeAvenue from '../assets/cards/Tennessee Avenue.png';
-import VentnorAvenue from '../assets/cards/Ventnor Avenue.png';
-import VermontAvenue from '../assets/cards/Vermont Avenue.png';
-import VirginiaAvenue from '../assets/cards/Virginia Avenue.png';
-import WaterWorks from '../assets/cards/Water Works.png';
  
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
 // Modal.setAppElement('#yourAppElement')

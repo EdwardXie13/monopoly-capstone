@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import '../styles/LobbyPage.css';
 import '../styles/RoomPage.css';
 import board from '../library/board/board';
+import backend from '../apis/backend';
 import usePubNub from '../hooks/usePubNub';
 import ReactDiceContext from '../contexts/ReactDiceContext';
 import RoomContext from '../contexts/RoomContext';
@@ -20,6 +21,7 @@ import Deeds from '../classes/Deeds';
 import Home from './Home'
 import TradeSync from './TradeSync';
 import Bid from '../components/Bid';
+import SpriteButton from './SpriteButton';
 
 
 import Default from '../assets/cards/Default.png';
@@ -51,9 +53,10 @@ import VentnorAvenue from '../assets/cards/Ventnor Avenue.png';
 import VermontAvenue from '../assets/cards/Vermont Avenue.png';
 import VirginiaAvenue from '../assets/cards/Virginia Avenue.png';
 import WaterWorks from '../assets/cards/Water Works.png';
-
 import FlyingChicken from '../assets/sprites/149/149_left.gif';
-
+import OnionFrog from '../assets/sprites/003/003_left.gif';
+import CrawlingMonkey from '../assets/sprites/059/059_left.gif';
+import BigHeadedSnake from '../assets/sprites/150/150_left.gif';
 import 'react-dice-complete/dist/react-dice-complete.css'
 import Dice from '../components/Dice';
 import Trade from './GamePage';
@@ -73,7 +76,10 @@ function useWindowSize() {
 }
 
 const Lobby = () => {
+  const homeRef = useRef();
+  // console.log("Home Ref is ", homeRef)
   const [gamers, setGamers] = useState({});
+  console.log(gamers);
   const [player1, setPlayer1] = useState(new Player("Player 1"));
   const [player2, setPlayer2] = useState(new Player("Player 2"));
   // const [player3, setPlayer3] = useState(new Player("Player 3"));
@@ -90,29 +96,41 @@ const Lobby = () => {
   const [activator, setActivator] = useState(null);
   const [loanShark, setLoanShark] = useState({ name: '' });
   const [initialRent, setInitialRent] = useState(0);
+  // const [rooms, setRooms] = useState([]);
   // const [finishedPlayer, setFinishedPlayer] = useState({ name: "" });
   const finishedPlayer = useRef({ name: '' });
   // const [isRolled, setIsRolled] = useState(false);
-  
-  const { players, code } = useContext(RoomContext);
+
+  const { players, code, roomName } = useContext(RoomContext);
+  // const { rooms, setRooms } = useContext(HomeContext);
   const { showManage, setShowManage, openBuild, setOpenBuild, rent, setRent, resolvePayment, setResolvePayment } = useContext(SellingContext);
   const { reactDice, isRolled, setIsRolled, double, setDouble, setReactDice } = useContext(ReactDiceContext);
   const { theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, /*modalIsOpen, setIsOpen, */trader, setTrader, myStuffMoney, setMyStuffMoney, leftTrades, setLeftTrades, rightSelect, setRightSelect, rightValue, setRightValue, rightTrades, setRightTrades, isConfirm, setIsConfirm } = useContext(TradeSyncContext);
   const { openBid, setOpenBid, name, setName } = useContext(BiddingContext);
-  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark);
-  console.log("turn", Object.keys(gamers)[turnIdx], me.current? gamers[me.current].bankrupt : null, isRolled);
+  const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, 
+    handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef);
+
 
   const [history, renderHistory, addToHistory] = useCard();
-  const [rollEvent, payJail] = useGame(addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, handleSetActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent);
+  const [rollEvent, payJail] = useGame(addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, handleSetActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent, handlePieceMove, handleCommunityChestUpdate);
   const [width, height] = useWindowSize();
-  // console.log("turn", Object.keys(gamers)[turnIdx]);
-  // console.log("isRolled", isRolled);
-  // console.log("double", me.current? gamers[me.current].doubles : null);
 
-  // console.log("turn", Object.keys(gamers)[turnIdx]);
-  // console.log(Object.keys(gamers)[turnIdx] === me.current, me.current !== null, me.current? gamers[me.current].bankrupt === true : null)
+  // Re-fetch rooms from database.
+  const handleFetchRooms = () => {
+    // pubnub.subscribe({
+    //   channels: ["lobby"],
+    //   withPresence: true
+    // });
+    //
+    // backend.get('/room/')
+    //   .then(res => {
+    //     setRooms(res.data);
+    //   });
+  }
+
+  // Handle bankrupted player's turn.
   if (Object.keys(gamers)[turnIdx] === me.current && me.current && gamers[me.current].bankrupt === true && isRolled) {
-    handleNextTurn(); 
+    handleNextTurn();
     setIsRolled(false);
   };
 
@@ -121,15 +139,21 @@ const Lobby = () => {
         return <img src={Default} style={{ position: "relative", height:window.innerHeight/2.5}}/>
     }
     return <img src={src} style={{ position: "relative", height:window.innerHeight/2.5}}/>
-    // style={{ position: "absolute", top:"2px",left: "5px", width:"17.5%" }} 
   }
 
+<<<<<<< HEAD
   const renderHome = (handleCreateRoom,handleJoinRoom) => (
         <div>
           <Home handleCreateRoom= {handleCreateRoom} handleJoinRoom={handleJoinRoom}></Home>
         </div>
 
         
+=======
+  const renderHome = () => (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <Home myRef={homeRef} pubnub={pubnub} handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom}></Home>
+    </div>
+>>>>>>> 970801f448769f3c84d101e61b06205c1a9cfe22
   );
 
   const getCurrentPlayer = () => gamers[Object.keys(gamers)[turnIdx]];
@@ -141,20 +165,23 @@ const Lobby = () => {
                 <img className="player-avatar" src="https://icons.iconarchive.com/icons/papirus-team/papirus-status/512/avatar-default-icon.png" />
                 <div className="player-name">{player.email}</div>
             </span>
-        );  
+        );
     });
-}
+  }
 
   const renderRoom = () => (
     <div className="room-container">
         <div className="white-layer">
             <div className="room-title">Room: {code}</div>
             { renderPlayers() }
+            <SpriteButton setGamers={setGamers} me={me} gamers={gamers} handleSpriteSelect={handleSpriteSelect} />
+            <button className="btn" onClick={() => handleStartGame()}>Start Game</button>
+            <button className="btn" onClick={() => handleLeaveRoom(roomName)}>Leave</button>
         </div>
     </div>
 );
 
-  const renderGame = () => ( 
+  const renderGame = () => (
     <div className="row" style={{ width: "inherit" }}>
       <div className="col s12" style={{ display: "flex", flexDirection: "row"}}>
         <div style={{ position: "relative", height: "100%", top:"5px", right: "2px" }} >
@@ -172,14 +199,16 @@ const Lobby = () => {
         </div>
 
         <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
-          <img src={boardImage} style={{zIndex:"2",width: "auto", height: window.innerHeight, marginBottom: "0px"}} />
-          <img src={FlyingChicken} id="image" style={{ position: "absolute", width: "32px", height: "32px", top: "810px", left: "830px" }}/>
-          
+          <img src={boardImage} style={{zIndex:"2",width: "auto", height: "937px", marginBottom: "0px"}} />
+          <img src={FlyingChicken} className="sprite-0" style={{ position: "absolute", width: "32px", height: "32px", top: "840px", left: "835px" }} />
+          <img src={OnionFrog} className="sprite-1" style={{ position: "absolute", width: "32px", height: "32px", top: "840px", left: "870px" }} />
+          <img src={CrawlingMonkey} className="sprite-2" style={{ position: "absolute", width: "32px", height: "32px", top: "870px", left: "835px" }} />
+          <img src={BigHeadedSnake} className="sprite-3" style={{ position: "absolute", width: "32px", height: "32px", top: "870px", left: "870px" }} />
           <div style={{position:"absolute", zIndex:"0",width:"60%",height:"30%",left:"20%",top:"40%"}}>
             <div style={{position:"absolute",top:"25%",left:"23%",zIndex:"3"}}>
               <Dice utilityDice={utilityDice} setUtilityDice={setUtilityDice} rollEvent={rollEvent} turnIdx={turnIdx} gamers={gamers} handleDiceRoll={handleDiceRoll} handleSyncRoll={handleSyncRoll} me={me} ></Dice>
             </div>
-                  
+
             <div style={{position:"absolute",top:"48%",left:"0%"}}>
               {/* <div class="waves-effect waves-light btn-large" onClick={() => { tradeWindow() }}>Trade</div> */}
               <TradeButton setLeftTrades={setLeftTrades} setRightTrades={setRightTrades} theirStuff={theirStuff} setTheirStuff={setTheirStuff} myStuff={myStuff} setMyStuff={setMyStuff} selected={selected} setSelected={setSelected} modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} me={me} gamers={gamers} handleOpenTrade={handleOpenTrade} handleMyStuffMoneyChange={handleMyStuffMoneyChange} handleLeftTradesChange={handleLeftTradesChange} handleSelectorChange={handleSelectorChange} handleRightValueChange={handleRightValueChange} handleRightTradesChange={handleRightTradesChange} handleConfirm={handleConfirm} />
@@ -195,44 +224,44 @@ const Lobby = () => {
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { rollEvent(player1) }}>Roll Dice</div> */}
                 <div class="waves-effect waves-light btn-large" onClick={async () => {
                   await payJail(gamers[me.current]);
-                  await setIsRolled(true); 
-                  reactDice.rollAll([2 ,1]);
+                  await setIsRolled(true);
+                  reactDice.rollAll([1,1]);
                   }} disabled={ gamers[me.current].bankrupt || (Object.keys(gamers)[turnIdx] !== me.current) || (isRolled && /*gamers[me.current].doubles*/ double === 0) } >Roll Dice</div>
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { console.log(reactDice.diceContainer.dice[0].state) }}>Roll Dice</div> */}
               </div>
             <div style={{position:"absolute",backgroundColor:"gray",right:"25%",bottom:"5%"}}>
-              <a class="waves-effect waves-light btn-large end-button"  onClick={() => { handleNextTurn(); setIsRolled(false); }} disabled={!isRolled} >   End Turn </a>
+              <a class="waves-effect waves-light btn-large end-button"  onClick={() => { handleNextTurn(); setIsRolled(false); }} disabled={!isRolled} > End Turn </a>
             </div>
           </div>
-          
-          <div id="AtlanticAvenue" onMouseEnter={() => setImageSource(AtlanticAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="BandORailroad" onMouseEnter={() => setImageSource(BandORailroad)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="BalticAvenue" onMouseEnter={() => setImageSource(BalticAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="Boardwalk" onMouseEnter={() => setImageSource(Boardwalk)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="ConnecticutAvenue" onMouseEnter={() => setImageSource(ConnecticutAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="ElectricCompany" onMouseEnter={() => setImageSource(ElectricCompany)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="IllinoisAvenue" onMouseEnter={() => setImageSource(IllinoisAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="IndianaAvenue" onMouseEnter={() => setImageSource(IndianaAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="KentuckyAvenue" onMouseEnter={() => setImageSource(KentuckyAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="MarvinGardens" onMouseEnter={() => setImageSource(MarvinGardens)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="MediterraneanAvenue" onMouseEnter={() => setImageSource(MediterraneanAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="NewYorkAvenue" onMouseEnter={() => setImageSource(NewYorkAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="NorthCarolinaAvenue" onMouseEnter={() => setImageSource(NorthCarolinaAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="OrientalAvenue" onMouseEnter={() => setImageSource(OrientalAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="PacificAvenue" onMouseEnter={() => setImageSource(PacificAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="ParkPlace" onMouseEnter={() => setImageSource(ParkPlace)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="PennsylvaniaAvenue" onMouseEnter={() => setImageSource(PennsylvaniaAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="PennsylvaniaRailroad" onMouseEnter={() => setImageSource(PennsylvaniaRailroad)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="ReadingRailroad" onMouseEnter={() => setImageSource(ReadingRailroad)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="ShortLineRailroad" onMouseEnter={() => setImageSource(ShortLineRailroad)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="StCharlesPlace" onMouseEnter={() => setImageSource(StCharlesPlace)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="StJamesPlace" onMouseEnter={() => setImageSource(StJamesPlace)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="StatesAvenue" onMouseEnter={() => setImageSource(StatesAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="TennesseeAvenue" onMouseEnter={() => setImageSource(TennesseeAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="VentnorAvenue" onMouseEnter={() => setImageSource(VentnorAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="VermontAvenue" onMouseEnter={() => setImageSource(VermontAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="VirginiaAvenue" onMouseEnter={() => setImageSource(VirginiaAvenue)} onMouseLeave={() => setImageSource('')}></div> 
-          <div id="WaterWorks" onMouseEnter={() => setImageSource(WaterWorks)} onMouseLeave={() => setImageSource('')}></div> 
+
+          <div id="AtlanticAvenue" onMouseEnter={() => setImageSource(AtlanticAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="BandORailroad" onMouseEnter={() => setImageSource(BandORailroad)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="BalticAvenue" onMouseEnter={() => setImageSource(BalticAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="Boardwalk" onMouseEnter={() => setImageSource(Boardwalk)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="ConnecticutAvenue" onMouseEnter={() => setImageSource(ConnecticutAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="ElectricCompany" onMouseEnter={() => setImageSource(ElectricCompany)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="IllinoisAvenue" onMouseEnter={() => setImageSource(IllinoisAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="IndianaAvenue" onMouseEnter={() => setImageSource(IndianaAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="KentuckyAvenue" onMouseEnter={() => setImageSource(KentuckyAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="MarvinGardens" onMouseEnter={() => setImageSource(MarvinGardens)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="MediterraneanAvenue" onMouseEnter={() => setImageSource(MediterraneanAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="NewYorkAvenue" onMouseEnter={() => setImageSource(NewYorkAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="NorthCarolinaAvenue" onMouseEnter={() => setImageSource(NorthCarolinaAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="OrientalAvenue" onMouseEnter={() => setImageSource(OrientalAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="PacificAvenue" onMouseEnter={() => setImageSource(PacificAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="ParkPlace" onMouseEnter={() => setImageSource(ParkPlace)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="PennsylvaniaAvenue" onMouseEnter={() => setImageSource(PennsylvaniaAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="PennsylvaniaRailroad" onMouseEnter={() => setImageSource(PennsylvaniaRailroad)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="ReadingRailroad" onMouseEnter={() => setImageSource(ReadingRailroad)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="ShortLineRailroad" onMouseEnter={() => setImageSource(ShortLineRailroad)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="StCharlesPlace" onMouseEnter={() => setImageSource(StCharlesPlace)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="StJamesPlace" onMouseEnter={() => setImageSource(StJamesPlace)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="StatesAvenue" onMouseEnter={() => setImageSource(StatesAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="TennesseeAvenue" onMouseEnter={() => setImageSource(TennesseeAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="VentnorAvenue" onMouseEnter={() => setImageSource(VentnorAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="VermontAvenue" onMouseEnter={() => setImageSource(VermontAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="VirginiaAvenue" onMouseEnter={() => setImageSource(VirginiaAvenue)} onMouseLeave={() => setImageSource('')}></div>
+          <div id="WaterWorks" onMouseEnter={() => setImageSource(WaterWorks)} onMouseLeave={() => setImageSource('')}></div>
         </div>
         <Card renderHistory={renderHistory} style={{ position: "absolute",  height:"50%"}}></Card>
       </div>
@@ -249,7 +278,7 @@ const Lobby = () => {
   return (
     <div style={{  minHeight: "100vh", width: "100%", display: "flex", flexDirection: "column", justifyContent: "space-around", margin: "0" }}>
       {
-        conditionalRender() 
+        conditionalRender()
         // renderGame()
       }
     </div>
