@@ -1,2 +1,4 @@
 node_modules
 .env
+start.bat
+client/src/assets/sprites/asdas.py

@@ -40,5 +40,6 @@
 }
 
 .sprite-container {
+    width: 50px;
     margin: 1px 20px;
 }
