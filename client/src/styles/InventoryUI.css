@@ -1,0 +1,14 @@
+.parent_container {
+  display: flex;
+  background-color: lightgray;
+}
+  
+.flex-container_vert > div {
+  background-color: #f1f1f1;
+  width: 45px;
+  margin: 2px;
+  text-align: center;
+  line-height: 40px;
+  font-size: 9px;
+  font-weight: bold;
+}

@@ -37,8 +37,6 @@ export default class Player {
     this.index = 0;
     this.sprite = "";
     // if (name === "1@2.com") this.sprite = "onion-frog";
-    // this.location = "Park Place";
-    // this.index = 37;
     this.money = 1500;
     // this.money = 10000;
     // this.money = 0;
@@ -50,17 +48,17 @@ export default class Player {
     this.bidding = true;
     this.bankrupt = false;
     this.spriteSrc = { srcUp: '', srcDown: '', srcleft: '', srcRight: '' };
-    // this.inventory = [];
-    if (name === "1@1.com") {
-      this.inventory = [
-        new Deeds("Mediterranean Avenue", "Property", 1, "Brown" , 2, MediterraneanAvenue, 50, 60, false),
-        new Deeds("Baltic Avenue", "Property", 3, "Brown", 4, BalticAvenue, 50, 60, false),
-        new Deeds("Oriental Avenue", "Property", 6, "LightBlue", 6, OrientalAvenue, 50, 100, false)]
-    } else { this.inventory = [
-      new Deeds("Vermont Avenue", "Property", 8, "LightBlue", 6, VermontAvenue, 50, 100, false),
-      new Deeds("Connecticut Avenue", "Property", 9, "LightBlue", 8, ConnecticutAvenue, 50, 120, false),
-      new Deeds("St. Charles Place", "Property", 11, "Pink", 10, StCharlesPlace, 100, 140, false)]
-    }
+    this.inventory = [];
+    // if (name === "1@1.com") {
+    //   this.inventory = [
+    //     new Deeds("Mediterranean Avenue", "Property", 1, "Brown" , 2, MediterraneanAvenue, 50, 60, false),
+    //     new Deeds("Baltic Avenue", "Property", 3, "Brown", 4, BalticAvenue, 50, 60, false),
+    //     new Deeds("Oriental Avenue", "Property", 6, "LightBlue", 6, OrientalAvenue, 50, 100, false)]
+    // } else { this.inventory = [
+    //   new Deeds("Vermont Avenue", "Property", 8, "LightBlue", 6, VermontAvenue, 50, 100, false),
+    //   new Deeds("Connecticut Avenue", "Property", 9, "LightBlue", 8, ConnecticutAvenue, 50, 120, false),
+    //   new Deeds("St. Charles Place", "Property", 11, "Pink", 10, StCharlesPlace, 100, 140, false)]
+    // }
   }
   // setLocation(location, index) {
   //   this.location = location;

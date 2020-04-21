@@ -1,7 +1,7 @@
 import React from 'react';
+import InventoryUI from '../components/InventoryUI';
 
 const Card = ({ renderHistory }) => {
-
   return (
     <div className="col s12 m6" >
       <div className="card blue-grey darken-1" style ={{ borderRadius: "5px", overflow:"auto", display: "block", height:"99%"}}>
@@ -11,7 +11,7 @@ const Card = ({ renderHistory }) => {
         
         <div className="card-action">
           <a href="#" onClick={""}>Player 1</a><br/>
-          <div style={{backgroundColor:"white", borderRadius: "10px", width:"100%", height:"80px", padding:"15px", marginTop:"10px", marginBottom:"15px"}}></div>
+          <div style={{backgroundColor:"white", borderRadius: "10px", width:"100%", height:"80px", padding:"15px", marginTop:"10px", marginBottom:"15px"}}> </div>
           <a href="#">Player 2</a><br/>
           <div style={{backgroundColor:"white", borderRadius: "10px", width:"100%", height:"80px", padding:"15px", marginTop:"10px", marginBottom:"15px"}}></div>
           <a href="#">Player 3</a><br/>
