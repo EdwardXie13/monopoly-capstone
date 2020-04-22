@@ -78,7 +78,6 @@ const Lobby = () => {
   const homeRef = useRef();
   // console.log("Home Ref is ", homeRef)
   const [gamers, setGamers] = useState({});
-  console.log(gamers);
   const [player1, setPlayer1] = useState(new Player("Player 1"));
   const [player2, setPlayer2] = useState(new Player("Player 2"));
   // const [player3, setPlayer3] = useState(new Player("Player 3"));
@@ -101,13 +100,14 @@ const Lobby = () => {
   // const [isRolled, setIsRolled] = useState(false);
 
   const { players, code, roomName } = useContext(RoomContext);
+
   // const { rooms, setRooms } = useContext(HomeContext);
   const { showManage, setShowManage, openBuild, setOpenBuild, rent, setRent, resolvePayment, setResolvePayment } = useContext(SellingContext);
   const { reactDice, isRolled, setIsRolled, double, setDouble, setReactDice } = useContext(ReactDiceContext);
   const { theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, /*modalIsOpen, setIsOpen, */trader, setTrader, myStuffMoney, setMyStuffMoney, leftTrades, setLeftTrades, rightSelect, setRightSelect, rightValue, setRightValue, rightTrades, setRightTrades, isConfirm, setIsConfirm } = useContext(TradeSyncContext);
   const { openBid, setOpenBid, name, setName } = useContext(BiddingContext);
   const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, 
-    handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef);
+    handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect, handleFetchPlayers] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef);
 
 
   const [history, renderHistory, addToHistory] = useCard();
@@ -152,11 +152,27 @@ const Lobby = () => {
     return players.map(player => {
         return (
             <span>
-                <img className="player-avatar" src="https://icons.iconarchive.com/icons/papirus-team/papirus-status/512/avatar-default-icon.png" />
-                <div className="player-name">{player.email}</div>
+                {/* <img className="player-avatar" src="https://icons.iconarchive.com/icons/papirus-team/papirus-status/512/avatar-default-icon.png" /> */}
+                <div className="player-name">Player: {player.email}</div>
+                <div>{player.ready? "READY" : "NOT READY"}</div>
             </span>
         );
     });
+  }
+
+  const getReadyStatus = () => {
+    const meRef = players? players.find(p => p.email === me.current) : null;
+    return meRef? meRef.ready : false;
+  }
+
+  console.log(getReadyStatus());
+
+  const handleReady = () => {
+    backend.put('/room/update', { ready: !getReadyStatus(), roomId: code })
+      .then(res => {
+        console.log("updated room", res.data);
+        handleFetchPlayers();
+      });
   }
 
   const renderRoom = () => (
@@ -165,7 +181,8 @@ const Lobby = () => {
             <div className="room-title">Room: {code}</div>
             { renderPlayers() }
             <SpriteButton setGamers={setGamers} me={me} gamers={gamers} handleSpriteSelect={handleSpriteSelect} />
-            <button className="btn" onClick={() => handleStartGame()}>Start Game</button>
+            <button className="btn" onClick={handleReady}>{getReadyStatus()? "Unready" : "Ready"}</button>
+            {/* <button className="btn" onClick={() => handleStartGame()}>Start Game</button> */}
             <button className="btn" onClick={() => handleLeaveRoom(roomName)}>Leave</button>
         </div>
     </div>

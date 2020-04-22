@@ -38,4 +38,19 @@ router.post('/signout', (req, res) => {
     res.status(200).json({ message: "Logout Successful!" });
 });
 
+router.put('/', passport.isLoggedIn(), (req, res, next) => {
+  const query = { email: req.user.email };
+
+  User.findOne(query, (err, findResult) => {
+      if (err) next(err);
+
+      const update = { ready: req.body.ready };
+
+      User.updateOne(query, update, updateErr => {
+        if (updateErr) next(updateErr);
+        res.json(update);
+      })
+  })
+})
+
 module.exports = router;

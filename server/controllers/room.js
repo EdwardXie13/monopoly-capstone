@@ -14,12 +14,23 @@ const Room = require('../models/room');
 // ----------------------------------------------------------------------------------------------
 
 // Get all the existing rooms.
-router.get('/', passport.isLoggedIn(), (req, res, err) => {
+router.get('/', passport.isLoggedIn(), (req, res, next) => {
     Room.find({} , (err, foundRooms) => {
         if (err) next(err);
 
         res.json(foundRooms);
     });
+});
+
+// Get one room
+router.get('/id', passport.isLoggedIn(), (req, res, next) => {
+  const id = req.query.id;
+
+  Room.find({ roomId: id }, (findErr, findRes) => {
+    if (findErr) next(findErr);
+
+    res.json(findRes);
+  });
 });
 
 // Creates new room.
@@ -60,6 +71,31 @@ router.put('/join', passport.isLoggedIn(), (req, res, next) => {
     });
   });
 });
+
+router.put('/update', passport.isLoggedIn(), (req, res, next) => {
+  const { roomId, ready } = req.body;
+  const query = { roomId: roomId };
+
+  Room.findOne(query, (findErr, findRes) => {
+    if (findErr) next(findErr);
+
+    const newPlayers = findRes.players.map(player => {
+      if (player.email === req.user.email) {
+        return { ...player, ready: ready };
+      } else {
+        return player;
+      }
+    });
+
+    const update = { players: newPlayers };
+
+    Room.updateOne(query, update, updateErr => {
+      if (updateErr) next(updateErr);
+
+      res.json(update);
+    });
+  });
+})
 
 // Leave current room.
 router.put('/leave', passport.isLoggedIn(), (req, res, next) => {

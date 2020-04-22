@@ -392,6 +392,12 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           setGamers(newGamers);
           sprites[oldIdx].picked = false;
           sprites[newIdx].picked = true;
+        } else if (msg.message.text === "Fetch Players") {
+          backend.get('/room/id', { params: { id: roomId.current } })
+            .then(res => {
+              console.log("new players", res.data[0].players);
+              setPlayers(res.data[0].players);
+            });
         }
       }
     });
@@ -652,7 +658,11 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     pubnub.publish({ channel: lobbyChannel.current, message: { text: "Selected Sprite", data } });
   }
 
-  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect];
+  const handleFetchPlayers = () => {
+    pubnub.publish({ channel: lobbyChannel.current, message: { text: "Fetch Players" } });
+  }
+
+  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect, handleFetchPlayers];
 }
 
 export default usePubNub;
