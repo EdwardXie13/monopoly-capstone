@@ -1,8 +1,7 @@
 import Modal from 'react-modal';
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import sprites from '../library/sprites/sprites';
-import RoomContext from '../contexts/RoomContext';
 
 const customStyles = {
     content : {
@@ -18,16 +17,15 @@ const customStyles = {
     }
 };
 
-const SpriteButton = ({ setGamers, me, gamers, handleSpriteSelect }) => {
-    const [modalIsOpen,setIsOpen] = useState(false);
+const SpriteButton = ({ setGamers, me, gamers, handleSpriteSelect, openSprite, setOpenSprite, disabled, handleOpenSpriteWindow, style, children }) => {
+    // const [modalIsOpen,setIsOpen] = useState(false);
     const [selection, setSelection] = useState('');
-    // const { players, setPlayers } = useContext(RoomContext);
-    // console.log(players);
-    console.log(gamers);
 
-    const openModal = () => setIsOpen(true);
+    useEffect(() => {}, [openSprite]);
 
-    const closeModal = () => setIsOpen(false);
+    const openModal = () => setOpenSprite(true);
+
+    const closeModal = () => setOpenSprite(false);
 
     const renderSprites = () => {
         return sprites.map((s, idx) => {
@@ -70,10 +68,11 @@ const SpriteButton = ({ setGamers, me, gamers, handleSpriteSelect }) => {
 
     return (
         <div>
-            <button className="btn" onClick={openModal}>Pick Your Sprite</button>
-            <Modal isOpen={modalIsOpen} onRequestClose={closeModal} contentLabel="Pick Your Sprite" style={customStyles}>
+            <button style={style} className="btn" disabled={disabled} onClick={handleOpenSpriteWindow}>Pick Sprites</button>
+            <Modal isOpen={openSprite} onRequestClose={closeModal} contentLabel="Pick Your Sprite" style={customStyles}>
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
                     { renderSprites() }
+                    { children }
                 </div>
             </Modal>
         </div>

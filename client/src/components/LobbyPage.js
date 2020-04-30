@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import '../styles/LobbyPage.css';
 import '../styles/RoomPage.css';
 import board from '../library/board/board';
+import chanceCards from '../library/cards/Chance_Cards';
+import communityCards from '../library/cards/Community_Chest_Cards';
 import backend from '../apis/backend';
 import usePubNub from '../hooks/usePubNub';
 import ReactDiceContext from '../contexts/ReactDiceContext';
@@ -78,6 +80,7 @@ const Lobby = () => {
   const homeRef = useRef();
   // console.log("Home Ref is ", homeRef)
   const [gamers, setGamers] = useState({});
+  console.log(gamers);
   const [player1, setPlayer1] = useState(new Player("Player 1"));
   const [player2, setPlayer2] = useState(new Player("Player 2"));
   // const [player3, setPlayer3] = useState(new Player("Player 3"));
@@ -94,6 +97,7 @@ const Lobby = () => {
   const [activator, setActivator] = useState(null);
   const [loanShark, setLoanShark] = useState({ name: '' });
   const [initialRent, setInitialRent] = useState(0);
+  const [openSprite, setOpenSprite] = useState(false);
   // const [rooms, setRooms] = useState([]);
   // const [finishedPlayer, setFinishedPlayer] = useState({ name: "" });
   const finishedPlayer = useRef({ name: '' });
@@ -107,7 +111,7 @@ const Lobby = () => {
   const { theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, /*modalIsOpen, setIsOpen, */trader, setTrader, myStuffMoney, setMyStuffMoney, leftTrades, setLeftTrades, rightSelect, setRightSelect, rightValue, setRightValue, rightTrades, setRightTrades, isConfirm, setIsConfirm } = useContext(TradeSyncContext);
   const { openBid, setOpenBid, name, setName } = useContext(BiddingContext);
   const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, 
-    handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect, handleFetchPlayers] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef);
+    handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect, handleFetchPlayers, handleOpenSpriteWindow] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef, setOpenSprite);
 
 
   const [history, renderHistory, addToHistory] = useCard();
@@ -175,18 +179,29 @@ const Lobby = () => {
       });
   }
 
+  const everyOneReady = () => {
+    return players.length > 1 && players.every(p => p.ready === true);
+  }
+
   const renderRoom = () => (
     <div className="room-container">
         <div className="white-layer">
             <div className="room-title">Room: {code}</div>
             { renderPlayers() }
-            <SpriteButton setGamers={setGamers} me={me} gamers={gamers} handleSpriteSelect={handleSpriteSelect} />
+            <SpriteButton style={players[0].email !== me.current? {display: "none"} : null} disabled={!everyOneReady()} setGamers={setGamers} me={me} gamers={gamers} handleSpriteSelect={handleSpriteSelect} openSprite={openSprite} setOpenSprite={setOpenSprite} handleOpenSpriteWindow={handleOpenSpriteWindow}>
+              {players[0].email === me.current && <button className="btn" onClick={() => handleStartGame()} disabled={!everyOneReady()}>Start Game</button> }
+            </SpriteButton>
             <button className="btn" onClick={handleReady}>{getReadyStatus()? "Unready" : "Ready"}</button>
-            {/* <button className="btn" onClick={() => handleStartGame()}>Start Game</button> */}
             <button className="btn" onClick={() => handleLeaveRoom(roomName)}>Leave</button>
         </div>
     </div>
 );
+
+const onSaveGame = () => {
+  backend.post('/save', { roomCode: roomId.current, gamers: JSON.stringify(gamers), chanceCards: chanceCards, communityCards: communityCards, turnIdx: turnIdx })
+    .then(() => console.log('meowwwwww'))
+    .catch(() => console.log('wooooooooff'));
+}
 
   const renderGame = () => (
     <div className="row" style={{ width: "inherit" }}>
@@ -200,6 +215,7 @@ const Lobby = () => {
                 <label for="msg"><b>Message</b></label>
                 <textarea placeholder="Type message.." name="msg" required></textarea>
                 <button type="button" class="btn">Send</button>
+                <button onClick={onSaveGame}>Save</button>
               </form>
             </div>
           </div>
@@ -207,10 +223,10 @@ const Lobby = () => {
 
         <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
           <img src={boardImage} style={{zIndex:"2",width: "auto", height: "937px", marginBottom: "0px"}} />
-          <img src={FlyingChicken} className="sprite-0" style={{ position: "absolute", width: "32px", height: "32px", top: "840px", left: "835px" }} />
-          <img src={OnionFrog} className="sprite-1" style={{ position: "absolute", width: "32px", height: "32px", top: "840px", left: "870px" }} />
-          <img src={CrawlingMonkey} className="sprite-2" style={{ position: "absolute", width: "32px", height: "32px", top: "870px", left: "835px" }} />
-          <img src={BigHeadedSnake} className="sprite-3" style={{ position: "absolute", width: "32px", height: "32px", top: "870px", left: "870px" }} />
+          <img src={/*FlyingChicken*/Object.values(gamers)[0].spriteSrc.srcUp} className="sprite-0" style={{ position: "absolute", width: "32px", height: "32px", top: "840px", left: "835px" }} />
+          <img src={/*OnionFrog*/ Object.values(gamers)[1].spriteSrc.srcUp} className="sprite-1" style={{ position: "absolute", width: "32px", height: "32px", top: "840px", left: "870px" }} />
+          {Object.keys(gamers).length > 2 && <img src={CrawlingMonkey} className="sprite-2" style={{ position: "absolute", width: "32px", height: "32px", top: "870px", left: "835px" }} />}
+          {Object.keys(gamers).length > 3 && <img src={BigHeadedSnake} className="sprite-3" style={{ position: "absolute", width: "32px", height: "32px", top: "870px", left: "870px" }} />}
           <div style={{position:"absolute", zIndex:"0",width:"60%",height:"30%",left:"20%",top:"40%"}}>
             <div style={{position:"absolute",top:"25%",left:"23%",zIndex:"3"}}>
               <Dice utilityDice={utilityDice} setUtilityDice={setUtilityDice} rollEvent={rollEvent} turnIdx={turnIdx} gamers={gamers} handleDiceRoll={handleDiceRoll} handleSyncRoll={handleSyncRoll} me={me} ></Dice>
