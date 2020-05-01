@@ -24,6 +24,7 @@ import Home from './Home'
 import TradeSync from './TradeSync';
 import Bid from '../components/Bid';
 import SpriteButton from './SpriteButton';
+import Swal from 'sweetalert2'
 
 import Default from '../assets/cards/Default.png';
 import AtlanticAvenue from '../assets/cards/Atlantic Avenue.png';
@@ -111,7 +112,7 @@ const Lobby = () => {
   const { theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, /*modalIsOpen, setIsOpen, */trader, setTrader, myStuffMoney, setMyStuffMoney, leftTrades, setLeftTrades, rightSelect, setRightSelect, rightValue, setRightValue, rightTrades, setRightTrades, isConfirm, setIsConfirm } = useContext(TradeSyncContext);
   const { openBid, setOpenBid, name, setName } = useContext(BiddingContext);
   const [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, 
-    handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect, handleFetchPlayers, handleOpenSpriteWindow] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef, setOpenSprite);
+    handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect, handleFetchPlayers, handleOpenSpriteWindow, handleLoadGame] = usePubNub(setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, setTrader, setMyStuffMoney, setLeftTrades, setRightSelect, setRightValue, setRightTrades, setIsConfirm, turnIdx, setTurnIdx, setBiddingTurnIdx, setOpenBid, setHighestBid, setReactDice, setIsOpen, setMyStuff, setTheirStuff, setName, setRent, setOpenBuild, setActivator, finishedPlayer, setLoanShark, homeRef, setOpenSprite);
 
 
   const [history, renderHistory, addToHistory] = useCard();
@@ -193,12 +194,41 @@ const Lobby = () => {
             </SpriteButton>
             <button className="btn" onClick={handleReady}>{getReadyStatus()? "Unready" : "Ready"}</button>
             <button className="btn" onClick={() => handleLeaveRoom(roomName)}>Leave</button>
+            <button onClick={() => {
+              Swal.fire({
+                title: 'Enter save code',
+                input: 'text',
+                inputAttributes: {
+                  autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Load',
+                showLoaderOnConfirm: true,
+                preConfirm: (login) => {
+                  return fetch(`/api/save/${login}`)
+                    .then(response => {
+                      if (!response.ok) {
+                        throw new Error(response.statusText)
+                      }
+                      return response.json()
+                    })
+                    .catch(error => {
+                      Swal.showValidationMessage(
+                        `Request failed: ${error}`
+                      )
+                    })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+              }).then((result) => {
+                handleLoadGame(result.value);
+              })
+            }}>Load</button>
         </div>
     </div>
 );
 
 const onSaveGame = () => {
-  backend.post('/save', { roomCode: roomId.current, gamers: JSON.stringify(gamers), chanceCards: chanceCards, communityCards: communityCards, turnIdx: turnIdx })
+  backend.post('/save', { roomCode: roomId.current, gamers: JSON.stringify(gamers), chanceCards: chanceCards, communityCards: communityCards, turnIdx: turnIdx, board: board })
     .then(() => console.log('meowwwwww'))
     .catch(() => console.log('wooooooooff'));
 }

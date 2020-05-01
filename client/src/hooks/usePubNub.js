@@ -231,7 +231,6 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           }
         } else if (msg.message.text === "Piece Move") {
           let player = msg.message.player;
-          console.log("player moved", player);
           let currentIndex = msg.message.player.index;
           const destinationIndex = msg.message.destinationIndex;
 
@@ -401,6 +400,37 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
         } else if (msg.message.text === "Open Sprite Window") {
           console.log("Open Sprite Window")
           setOpenSprite(true);
+        } else if (msg.message.text === "Load Game") {
+          setIsPlaying(true);
+          const newGamers = JSON.parse(msg.message.data.gamers);
+          setGamers(newGamers);
+
+          setTurnIdx(msg.message.data.turnIdx);
+
+          for (let i = 0; i < board.length; ++i) {
+            board[i] = msg.message.data.board[i];
+          }
+          
+          for (let i = 0; i < communityChest.length; ++i) {
+            communityChest[i] = msg.message.data.communityCards[i];
+          }
+
+          for (let i = 0; i < chance.length; ++i) {
+            chance[i] = msg.message.data.chanceCards[i];
+          }
+
+          // let player = newGamers[me.current];
+
+          // let playerOrder = -1;
+          // setPlayers(prevPlayers => {
+          //   prevPlayers.forEach((p, i) => { if (p.email === player.name) {
+          //     playerOrder = i;
+          //     return;
+          //   } });
+          //   return prevPlayers;
+          // });
+
+          // movePieceOwO(newGamers[me.current], 0, newGamers[me.current].index, playerOrder);
         }
       }
     });
@@ -419,6 +449,129 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
       pubnub.unsubscribeAll();
     }
   }, []);
+
+  const movePieceOwO = (player, currentIndex, destinationIndex, playerOrder) => {
+    if (destinationIndex === 30) {
+      console.log("destination is Jail")
+      if (playerOrder === 0) {
+        document.querySelector(`.${player.sprite}`).style.top = "810px";
+        document.querySelector(`.${player.sprite}`).style.left = "40px";
+      } else if (playerOrder === 1) {
+        document.querySelector(`.${player.sprite}`).style.top = "810px";
+        document.querySelector(`.${player.sprite}`).style.left = "95px";
+      } else if (playerOrder === 2) {
+        document.querySelector(`.${player.sprite}`).style.top = "860px";
+        document.querySelector(`.${player.sprite}`).style.left = "40px";
+      } else if (playerOrder === 3) {
+        document.querySelector(`.${player.sprite}`).style.top = "860px";
+        document.querySelector(`.${player.sprite}`).style.left = "95px";
+      }
+    } else {
+      // playerOrder = 1;
+      // player.sprite = "onion-frog";
+      for (; currentIndex !== destinationIndex; currentIndex = (currentIndex+1) % 40) {
+        // Left 0-9
+        // Up 10-19
+        // Right 20-29
+        // Down 30-39
+        let top = document.querySelector(`.${player.sprite}`).style.top;
+        let left = document.querySelector(`.${player.sprite}`).style.left;
+
+        if (currentIndex === 0) {
+          // document.querySelector(`.${player.sprite}`).style.top = `${parseInt(top.slice(0, top.length-2)) + 30 }px`;
+          document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) - 95 }px`;
+        } else if (currentIndex >= 1 && currentIndex <= 8) {
+          document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) - 77 }px`;
+        } else if (currentIndex === 9) { //index 9 go to 10
+          if (playerOrder == 0) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 30 }px`*/"815px";
+            document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 120 }px`*/"5px";
+          } else if (playerOrder === 1) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 10 }px`*/"860px";
+            document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 155 }px`*/"5px";
+          } else if (playerOrder === 2) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 25 }px`*/"895px";
+            document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 77 }px`*/"40px";
+          } else if (playerOrder === 3) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 25 }px`*/"895px";
+            document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 67 }px`*/"85px";
+          }
+        } else if (currentIndex === 10 ) { //index 10 go to 11
+          if (playerOrder == 0) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 83 }px`*/"735px";
+            document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) + 65 }px`*/"65px";
+          } else if (playerOrder === 1) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 83 }px`*/"775px";
+            document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) + 65 }px`*/"65px";
+          } else if (playerOrder === 2) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 125 }px`*/"735px";
+            document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 40 }px`*/"10px";
+          } else if (playerOrder === 3) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 125 }px`*/"775px";
+            document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 80 }px`*/"10px";
+          }
+        } else if (currentIndex >= 11 && currentIndex <= 18) {
+          document.querySelector(`.${player.sprite}`).style.top = `${parseInt(top.slice(0, top.length-2)) - 76 }px`;
+        } else if (currentIndex === 19) { //index 19 go to 20
+          if (playerOrder == 0) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 60 }px`*/"65px";
+          } else if (playerOrder === 1) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 100 }px`*/"65px";
+            document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) - 39 }px`*/"30px";
+          } else if (playerOrder === 2) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 150 }px`*/"15px";
+            document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) + 60 }px`*/"65px";
+          } else if (playerOrder === 3) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 150 }px`*/"15px";
+            document.querySelector(`.${player.sprite}`).style.left = /*`${parseInt(left.slice(0, left.length-2)) + 20 }px`*/"30px";
+          }
+        } else if (currentIndex === 20) { //index 20 go to 21
+            if (playerOrder === 0 || playerOrder === 2) {
+              document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) + 100 }px`;
+            } else if (playerOrder === 1 || playerOrder === 3) {
+              document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) + 105 }px`;
+            }
+        } else if (currentIndex >= 21 && currentIndex <= 28) {
+          document.querySelector(`.${player.sprite}`).style.left = `${parseInt(left.slice(0, left.length-2)) + 75 }px`;
+        } else if (currentIndex === 29) { //index 29 go to 30
+          if (playerOrder == 0) {
+            document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 55 }px`*/"835px";
+          } else if (playerOrder == 1) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) - 39 }px`*/"15px";
+            document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 100 }px`*/"835px";
+          } else if (playerOrder == 2) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 50 }px`*/"65px";
+            document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 100 }px`*/"880px";
+          } else if (playerOrder == 3) {
+            document.querySelector(`.${player.sprite}`).style.top = /*`${parseInt(top.slice(0, top.length-2)) + 45 }px`*/"15px";
+            document.querySelector(`.${player.sprite}`).style.left = /*` ${parseInt(left.slice(0, left.length-2)) + 150 }px`*/"880px";
+          }
+        } else if (currentIndex === 30) { //index 30 go to 31
+          if (playerOrder === 0 || playerOrder === 2) {
+            document.querySelector(`.${player.sprite}`).style.top = `${parseInt(top.slice(0, top.length-2)) + 100 }px`;
+          } else if (playerOrder === 1 || playerOrder === 3) {
+            document.querySelector(`.${player.sprite}`).style.top = `${parseInt(top.slice(0, top.length-2)) + 115 }px`;
+          }
+        } else if (currentIndex >= 31 && currentIndex <= 38) {
+          document.querySelector(`.${player.sprite}`).style.top = `${parseInt(top.slice(0, top.length-2)) + 75 }px`;
+        } else if (currentIndex === 39) {
+          if (playerOrder == 0) {
+            document.querySelector(`.${player.sprite}`).style.top = "840px";
+            document.querySelector(`.${player.sprite}`).style.left = "835px";
+          } else if (playerOrder == 1) {
+            document.querySelector(`.${player.sprite}`).style.top = "840px";
+            document.querySelector(`.${player.sprite}`).style.left = "870px";
+          } else if (playerOrder == 2) {
+            document.querySelector(`.${player.sprite}`).style.top = "870px";
+            document.querySelector(`.${player.sprite}`).style.left = "835px";
+          } else if (playerOrder == 3) {
+            document.querySelector(`.${player.sprite}`).style.top = "870px";
+            document.querySelector(`.${player.sprite}`).style.left = "870px";
+          }
+        }
+      }
+    }
+  }
 
   const getRent = tile => {
     if (!tile.house) return tile.rentNormal;
@@ -669,7 +822,11 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
     pubnub.publish({ channel: lobbyChannel.current, message: { text: "Open Sprite Window" } });
   }
 
-  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect, handleFetchPlayers, handleOpenSpriteWindow];
+  const handleLoadGame = data => {
+    pubnub.publish({ channel: lobbyChannel.current, message: { text: "Load Game", data } });
+  }
+
+  return [pubnub, handleCreateRoom, handleJoinRoom, gameChannel, roomId, turnCounter, me, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm, handleYes, handleNextTurn, handleDeclineBidding, handleAcceptBidding, handleDiceRoll, handleBuyProp, handleSyncRoll, handlePlayerChange, handleSetPropName, handleOpenBuildWindow, handleSetActivator, handleSetFinishedPlayer, handleDisownInventory, handlePieceMove, handleLeaveRoom, handleStartGame, handleCommunityChestUpdate, handleSpriteSelect, handleFetchPlayers, handleOpenSpriteWindow, handleLoadGame];
 }
 
 export default usePubNub;
