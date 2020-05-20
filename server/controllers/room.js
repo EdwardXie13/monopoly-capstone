@@ -62,6 +62,8 @@ router.put('/join', passport.isLoggedIn(), (req, res, next) => {
   Room.findOne(query, (findErr, findRes) => {
     if (findErr) next(findErr);
     if (password != findRes.password) res.status(401).send('Wrong password.');
+    console.log(findRes.players, req.user);
+    if (findRes.players.filter(p => p.email === req.user.email).length > 0) return res.status(500).send('Already inside room.');
 
     const update = { players: [ ...findRes.players, req.user ] };
 
@@ -103,24 +105,27 @@ router.put('/leave', passport.isLoggedIn(), (req, res, next) => {
         if (err) next(err);
 
         const { roomName, playerName } = req.body;
-
-        const filtered = foundRoom.players.filter(player => {
-          return player.email != playerName;
-        });
-        const query = { name: roomName };
-        const update = { players: filtered };
-
-        if (update.players.length == 0) {
-          // Delete the room.
-          Room.deleteOne({ name: req.body.roomName }, (deleteErr, deleteRes) => {
-            if (deleteErr) next(deleteErr);
-            res.send({});
+        
+        if (foundRoom === null) res.json({});
+        else {
+          const filtered = foundRoom.players.filter(player => {
+            return player.email != playerName;
           });
-        } else {
-          Room.updateOne(query, update, (updateErr) => {
-            if (updateErr) next(updateErr);
-            res.json({ ...update });
-          });
+          const query = { name: roomName };
+          const update = { players: filtered };
+  
+          if (update.players.length == 0) {
+            // Delete the room.
+            Room.deleteOne({ name: req.body.roomName }, (deleteErr, deleteRes) => {
+              if (deleteErr) next(deleteErr);
+              res.send({});
+            });
+          } else {
+            Room.updateOne(query, update, (updateErr) => {
+              if (updateErr) next(updateErr);
+              res.json({ ...update });
+            });
+          }
         }
     });
 });

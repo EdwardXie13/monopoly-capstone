@@ -1,7 +1,7 @@
 import React from 'react';
 import InventoryUI from '../components/InventoryUI';
 
-const Card = ({ renderHistory }) => {
+const Card = ({ renderHistory, gamers }) => {
   return (
     <div className="col s12 m6" >
       <div className="card blue-grey darken-1" style ={{ borderRadius: "5px", overflow:"auto", display: "block", height:"99%"}}>
@@ -10,12 +10,14 @@ const Card = ({ renderHistory }) => {
         </div>
         
         <div className="card-action">
-          <a href="#" onClick={""}>Player 1</a><br/>
-          <div style={{backgroundColor:"white", borderRadius: "10px", width:"100%", height:"80px", padding:"15px", marginTop:"10px", marginBottom:"15px"}}> </div>
-          <a href="#">Player 2</a><br/>
-          <div style={{backgroundColor:"white", borderRadius: "10px", width:"100%", height:"80px", padding:"15px", marginTop:"10px", marginBottom:"15px"}}></div>
-          <a href="#">Player 3</a><br/>
-          <a href="#">Player 4</a><br/>
+          <a href="#" onClick={""}>{Object.keys(gamers)[0]}</a><br/>
+          <InventoryUI money = {Object.values(gamers)[0].money} inventory={ Object.values(gamers)[0].inventory } />
+          <a href="#">{Object.keys(gamers)[1]}</a><br/>
+          <InventoryUI money = {Object.values(gamers)[1].money} inventory={ Object.values(gamers)[1].inventory } />
+          {Object.keys(gamers).length > 2 && (<><a href="#">{Object.keys(gamers)[2]}</a><br/>
+          <InventoryUI money = {Object.values(gamers)[2].money} inventory={ Object.values(gamers)[2].inventory } /></>)}
+          {Object.keys(gamers).length > 3 && (<><a href="#">{Object.keys(gamers)[3]}</a><br/>
+          <InventoryUI money = {Object.values(gamers)[3].money} inventory={ Object.values(gamers)[3].inventory } /></>)}
         </div>
 
         <div className="card-content white-text">

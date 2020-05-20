@@ -31,6 +31,11 @@ const SpriteButton = ({ setGamers, me, gamers, handleSpriteSelect, openSprite, s
         return sprites.map((s, idx) => {
             return (
                 <div className="sprite-container" onClick={ () => {
+                        
+                        // for (let key in gamers) {
+                        //     if (gamers[key].spriteSrc.srcUp === s.srcUp) return;
+                        // }
+
                         let i = 0
                         for(; i < sprites.length && selection.length > 0; ++i) {
                             if (sprites[i].srcDown === selection) {
@@ -56,8 +61,8 @@ const SpriteButton = ({ setGamers, me, gamers, handleSpriteSelect, openSprite, s
                         });
 
                     }} >
-                    <input className="sprite-selection" type="radio" id={s.name} name="character" value={s.srcDown} />
-                    <label htmlFor={s.name} style={ s.picked? { backgroundColor: 'yellow' } : null }>
+                    <input className="sprite-selection" type="radio" id={s.srcDown} name="character" value={s.srcDown} />
+                    <label htmlFor={s.srcDown} style={ s.picked? { backgroundColor: 'yellow' } : null }>
                         <img className="sprite-img" src={s.srcDown} />
                         <div>{s.name}</div>
                     </label>

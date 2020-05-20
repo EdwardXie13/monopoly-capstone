@@ -49,12 +49,12 @@ export default class Player {
     this.bankrupt = false;
     this.spriteSrc = { srcUp: '', srcDown: '', srcleft: '', srcRight: '' };
     this.inventory = [];
-    // if (name === "1@1.com") {
-    //   this.inventory = [
-    //     new Deeds("Mediterranean Avenue", "Property", 1, "Brown" , 2, MediterraneanAvenue, 50, 60, false),
-    //     new Deeds("Baltic Avenue", "Property", 3, "Brown", 4, BalticAvenue, 50, 60, false),
-    //     new Deeds("Oriental Avenue", "Property", 6, "LightBlue", 6, OrientalAvenue, 50, 100, false)]
-    // } else { this.inventory = [
+    if (name === "1@1.com") {
+      this.inventory = [
+        new Deeds("Mediterranean Avenue", "Property", 1, "Brown" , 2, MediterraneanAvenue, 50, 60, false),
+        new Deeds("Baltic Avenue", "Property", 3, "Brown", 4, BalticAvenue, 50, 60, false),
+        new Deeds("Oriental Avenue", "Property", 6, "LightBlue", 6, OrientalAvenue, 50, 100, false)]
+    }// else { this.inventory = [
     //   new Deeds("Vermont Avenue", "Property", 8, "LightBlue", 6, VermontAvenue, 50, 100, false),
     //   new Deeds("Connecticut Avenue", "Property", 9, "LightBlue", 8, ConnecticutAvenue, 50, 120, false),
     //   new Deeds("St. Charles Place", "Property", 11, "Pink", 10, StCharlesPlace, 100, 140, false)]

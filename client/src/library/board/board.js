@@ -403,7 +403,7 @@ export default [
     src: AtlanticAvenue
   },
   {
-    name: "Ventor Avenue",
+    name: "Ventnor Avenue",
     color: "Yellow",
     type: "Property",
     index: 27,

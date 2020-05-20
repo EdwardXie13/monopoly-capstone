@@ -6,16 +6,17 @@ import communityChest from '../library/cards/Community_Chest_Cards';
 import chance from '../library/cards/Chance_Cards';
 
 //player, money, location, inventory, index
-const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer, handleCommunityChestUpdate) => {
+const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer, handleCommunityChestUpdate, handleChanceUpdate, handleDisplayCard) => {
   const displayCard = (src, ms) => {
-    const imageNode = document.createElement('IMG');
-    imageNode.setAttribute("src", src);
-    imageNode.setAttribute("style", "position:absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)");
-    document.querySelector('#board-container').appendChild(imageNode);
+    handleDisplayCard(src, ms);
+    // const imageNode = document.createElement('IMG');
+    // imageNode.setAttribute("src", src);
+    // imageNode.setAttribute("style", "position:absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)");
+    // document.querySelector('#board-container').appendChild(imageNode);
 
-    setTimeout(() => {
-      imageNode.remove();
-    }, ms);
+    // setTimeout(() => {
+    //   imageNode.remove();
+    // }, ms);
   }
   
   const communityEffect = async(player) => {
@@ -100,6 +101,7 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
         console.log(card.text);
         //go to jail
         player.jail = true;
+        player.location = "Jail";
         break;
       case 4:
         console.log(card.text);
@@ -131,7 +133,9 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
   }
 
   const chanceEffect = async (player) => {
-    const card = chance.pop()
+    const card = chance[chance.length - 1];
+    handleChanceUpdate()
+    displayCard(card.src, 2000);
     switch(card.number) {
       case 15:
         console.log(card.text);

@@ -24,6 +24,9 @@ const Bid = ({ me, player, openBid, setOpenBid, handleDeclineBidding, handleAcce
   }
 
   const accept = e => {
+    console.log("newBid", newBid);
+    console.log("player money", player.money);
+    console.log("hgihest bid amount", highestBid.amount);
     if (newBid <= player.money && newBid > highestBid.amount) {
       handleAcceptBidding(newBid, me.current); // newBid > highestBid
       setOpenBid(false);

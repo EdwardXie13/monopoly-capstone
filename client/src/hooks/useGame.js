@@ -2,7 +2,7 @@ import Swal from 'sweetalert2';
 import board from '../library/board/board';
 import useEffects from '../hooks/useEffects';
 
-const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, setActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent, handlePieceMove, handleCommunityChestUpdate) => {
+const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerChange, reactDice, setUtilityDice, handleSetPropName, gamers, me, setShowManage, setOpenBuild, setRent, setResolvePayment, handleOpenBuildWindow, setActivator, finishedPlayer, handleSetFinishedPlayer, setInitialRent, handlePieceMove, handleCommunityChestUpdate, handleChanceUpdate, handleDisplayCard) => {
   const monopolyRent = (i) => {
     if (board[i].color === "Brown") {
       //1 3
@@ -136,9 +136,10 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
         await payRent(player, 100, "Board");
       }
     }
+    handlePlayerChange(player.name, gamers[player.name].money, player.location, player.inventory, player.index);
   }
 
-  const [communityEffect, chanceEffect] = useEffects(reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer, handleCommunityChestUpdate);
+  const [communityEffect, chanceEffect] = useEffects(reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer, handleCommunityChestUpdate, handleChanceUpdate, handleDisplayCard);
 
   const rollEvent = async (die1, die2, player, setIsRolled, setDouble) => { 
     if (player.bankrupt === false) {
@@ -151,6 +152,7 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
             setDouble(0);
             setIsRolled(true);
             player.jail = true;
+            handlePlayerChange(player.name, gamers[player.name].money, "Jail", player.inventory, 30);
           }
           else {
             player.doubles++;
@@ -169,6 +171,7 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
       }
       else if (player.jail === true) {
         if (die1 === die2) {
+          console.log('OWO');
           addToHistory(`${player.name} has freed been from jail`);
           player.jail = false;
           player.jailroll = 0;
@@ -221,10 +224,11 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
           handlePlayerChange(player.name, gamers[player.name].money - 50, player.location, player.inventory, player.index);
           addToHistory(`${player.name} paid $50 to get out of jail`);
           resolve("done");
+        } else {
+          resolve("done");
         }
       })
     }
-    else resolve("done");
   })
 
   const movePlayer = async (die1, die2, player, setIsRolled, setDouble) => {
@@ -238,6 +242,7 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
     }
     // player.setLocation( board[((player.index+die1 + die2)%40)].name, ((player.index+die1 + die2)%40));
 
+    console.log("handlePieceMove: ", player, (player.index+die1 + die2)%40)
     handlePieceMove(player, (player.index+die1 + die2)%40);
     player.location = board[((player.index + die1 + die2)%40)].name;
     player.index = (player.index+die1 + die2)%40;
@@ -262,6 +267,7 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
     //     await payRent(player, 100, "Board");
     //   }
     // }
+
     checkPlayer(player, die1, die2, setIsRolled, setDouble);
   }
   

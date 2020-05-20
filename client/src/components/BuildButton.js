@@ -42,6 +42,7 @@ const BuildButton = ({ setIsRolled, handleDisownInventory, setInitialRent, initi
       player.money -= tempCost;
       setHouseState(tempHouse);
       setTempCost(0);
+      handlePlayerChange(player.name, player.money, player.location, player.inventory, player.index)
     }
   }
 
@@ -280,7 +281,7 @@ const BuildButton = ({ setIsRolled, handleDisownInventory, setInitialRent, initi
  
   return (
     <div>
-      <button className='waves-effect waves-light btn-large' disabled ={player.bankrupt} onClick={openModal}>Build</button>
+      <button className='waves-effect waves-light btn-large' disabled ={player.bankrupt} onClick={openModal}>Manage</button>
       <Modal
         isOpen={openBuild}
         onRequestClose={closeModal}
