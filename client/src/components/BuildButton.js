@@ -5,7 +5,7 @@ import '../styles/BuildButton.css';
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
 // Modal.setAppElement('#yourAppElement')
  
-const BuildButton = ({ setIsRolled, handleDisownInventory, setInitialRent, initialRent, gamers, player, showManage, setShowManage, openBuild, setOpenBuild, rent, setRent, resolvePayment, handlePlayerChange, activator, setActivator, handleSetFinishedPlayer, loanShark }) => {
+const BuildButton = ({disabled, setIsRolled, handleDisownInventory, setInitialRent, initialRent, gamers, player, showManage, setShowManage, openBuild, setOpenBuild, rent, setRent, resolvePayment, handlePlayerChange, activator, setActivator, handleSetFinishedPlayer, loanShark }) => {
   // const [openBuild,setOpenBuild] = React.useState(false);
   const [leftSideCards, setLeftSideCards] = React.useState([]);
   const [rightSideCard, setRightSideCard] = React.useState({});
@@ -37,6 +37,7 @@ const BuildButton = ({ setIsRolled, handleDisownInventory, setInitialRent, initi
 
   const confirmBuild = (tempCost) => {
     const selectedCard = player.inventory[selectedIndex];
+    console.log(tempCost);
     if (player.money >= tempCost) {
       selectedCard.house = tempHouse;
       player.money -= tempCost;
@@ -148,7 +149,7 @@ const BuildButton = ({ setIsRolled, handleDisownInventory, setInitialRent, initi
     const selectedCard = player.inventory[selectedIndex];
 
     setTempCost(selectedCard.buildingCost * (tempHouse-houseState) )
-
+    console.log("plasdas", player)
     console.log("o.o: ", selectedCard.buildingCost, tempHouse, houseState)
   }
 
@@ -281,7 +282,7 @@ const BuildButton = ({ setIsRolled, handleDisownInventory, setInitialRent, initi
  
   return (
     <div>
-      <button className='waves-effect waves-light btn-large' disabled ={player.bankrupt} onClick={openModal}>Manage</button>
+      <button className='waves-effect waves-light btn-large' disabled ={disabled} onClick={openModal}>Manage</button>
       <Modal
         isOpen={openBuild}
         onRequestClose={closeModal}

@@ -139,7 +139,7 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
     handlePlayerChange(player.name, gamers[player.name].money, player.location, player.inventory, player.index);
   }
 
-  const [communityEffect, chanceEffect] = useEffects(reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer, handleCommunityChestUpdate, handleChanceUpdate, handleDisplayCard);
+  const [communityEffect, chanceEffect] = useEffects(reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer, handleCommunityChestUpdate, handleChanceUpdate, handleDisplayCard, handlePieceMove);
 
   const rollEvent = async (die1, die2, player, setIsRolled, setDouble) => { 
     if (player.bankrupt === false) {
@@ -221,7 +221,7 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
           handlePieceMove(player, 10);
           player.location = "Just Visiting";
           player.index = 10;
-          handlePlayerChange(player.name, gamers[player.name].money - 50, player.location, player.inventory, player.index);
+          handlePlayerChange(player.name, gamers[player.name].money, player.location, player.inventory, player.index);
           addToHistory(`${player.name} paid $50 to get out of jail`);
           resolve("done");
         } else {
@@ -284,8 +284,14 @@ const useGame = (addToHistory, setOpenBid, setName, handleBuyProp, handlePlayerC
       }).then((result) => {
         if (result.value === true) {
           // player.money -= board[player.index].price;
-          board[player.index].owner = player;
-          handleBuyProp(player.index, player);
+          // const newPlayer = { ...player };
+          // newPlayer.spriteSrc.srcUp = '';
+          // newPlayer.spriteSrc.srcDown = '';
+          // newPlayer.spriteSrc.srcleft = '';
+          // newPlayer.spriteSrc.srcRight = '';
+
+          board[player.index].owner = player/*{ ...player, spriteSrc: {} }*/;
+          handleBuyProp(player.index, player/*{ ...player, spriteSrc: {} }*/);
           addToHistory(`${player.name} has acquired ${board[player.index].name}`);
         }
         else {

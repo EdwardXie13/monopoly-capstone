@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import '../styles/LobbyPage.css';
 import '../styles/RoomPage.css';
 import board from '../library/board/board';
+import sprites from '../library/sprites/sprites';
 import chanceCards from '../library/cards/Chance_Cards';
 import communityCards from '../library/cards/Community_Chest_Cards';
 import backend from '../apis/backend';
@@ -91,7 +92,7 @@ const Lobby = () => {
   const [imageSource, setImageSource] = useState('');
   const [turnIdx, setTurnIdx] = useState(0);
   const [biddingTurnIdx, setBiddingTurnIdx] = useState(turnIdx);
-  const [highestBid, setHighestBid] = useState({ amount: -Infinity, player: { name: '' } });
+  const [highestBid, setHighestBid] = useState({ amount: -1, player: { name: '' } });
   const [utilityDice, setUtilityDice] = useState(false);
   const [activator, setActivator] = useState(null);
   const [loanShark, setLoanShark] = useState({ name: '' });
@@ -170,7 +171,7 @@ const Lobby = () => {
     return meRef? meRef.ready : false;
   }
 
-  console.log(getReadyStatus());
+  console.log("check disable", (Object.keys(gamers)[turnIdx] !== me.current))
 
   const handleReady = () => {
     backend.put('/room/update', { ready: !getReadyStatus(), roomId: code })
@@ -221,6 +222,7 @@ const Lobby = () => {
                 allowOutsideClick: () => !Swal.isLoading()
               }).then((result) => {
                 if (result.value) {
+                  console.log("loading game now...")
                   handleLoadGame(result.value);
                 }
               })
@@ -230,6 +232,16 @@ const Lobby = () => {
 );
 
 const onSaveGame = () => {
+  for (let key in gamers) {
+    // gamers[key].spriteSrc.srcUp = '';
+    // gamers[key].spriteSrc.srcDown = '';
+    // gamers[key].spriteSrc.srcRight = '';
+    for (let i = 0; i < sprites.length; ++i) {
+      if (sprites[i].srcDown === gamers[key].spriteSrc.srcDown) {
+        gamers[key].spriteSrc = i;
+      }
+    }
+  }
   backend.post('/save', { roomCode: roomId.current, gamers: JSON.stringify(gamers), chanceCards: chanceCards, communityCards: communityCards, turnIdx: turnIdx, board: board })
     .then(() => console.log('meowwwwww'))
     .catch(() => console.log('wooooooooff'));
@@ -245,10 +257,11 @@ const countHouse = deedName => {
   return 0;
 }
 
-const renderHouse = (count, flexDirection) => {
+const renderHouse = (count, flexDirection, deedName) => {
   return count === 5? (
     <div  style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection, height: "inherit" }}>{<img src={hotel} style={{ width: "30px", height: "auto" }} />}</div>
   ) : (
+    count > 0 &&
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection, height: "inherit" }}>
       <div><img src={house} style={{ width: "25px", height: "auto" }} /></div>
       <div style = {{fontWeight: "900"}}>x{count}</div>
@@ -274,7 +287,7 @@ const renderHouse = (count, flexDirection) => {
           </div>
         </div>
 
-        <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: window.innerHeight, top:"5px",left: "5px" }}>
+        <div id="board-container" style={{position: "relative", display:"inline-block",width: "auto", height: "937px", top:"5px",left: "5px" }}>
           <img src={boardImage} style={{zIndex:"2",width: "auto", height: "937px", marginBottom: "0px"}} />
           <img src={Object.values(gamers)[0].spriteSrc.srcUp} className="sprite-0" style={{ position: "absolute", width: "32px", height: "32px", top: "840px", left: "835px" }} />
           <img src={ Object.values(gamers)[1].spriteSrc.srcUp} className="sprite-1" style={{ position: "absolute", width: "32px", height: "32px", top: "840px", left: "870px" }} />
@@ -286,13 +299,12 @@ const renderHouse = (count, flexDirection) => {
             </div>
 
             <div style={{position:"absolute",top:"48%",left:"0%"}}>
-              {/* <div class="waves-effect waves-light btn-large" onClick={() => { tradeWindow() }}>Trade</div> */}
-              <TradeButton setLeftTrades={setLeftTrades} setRightTrades={setRightTrades} theirStuff={theirStuff} setTheirStuff={setTheirStuff} myStuff={myStuff} setMyStuff={setMyStuff} selected={selected} setSelected={setSelected} modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} me={me} gamers={gamers} handleOpenTrade={handleOpenTrade} handleMyStuffMoneyChange={handleMyStuffMoneyChange} handleLeftTradesChange={handleLeftTradesChange} handleSelectorChange={handleSelectorChange} handleRightValueChange={handleRightValueChange} handleRightTradesChange={handleRightTradesChange} handleConfirm={handleConfirm} />
+              <TradeButton disabled={ gamers[me.current].bankrupt || (Object.keys(gamers)[turnIdx] !== me.current) } setLeftTrades={setLeftTrades} setRightTrades={setRightTrades} theirStuff={theirStuff} setTheirStuff={setTheirStuff} myStuff={myStuff} setMyStuff={setMyStuff} selected={selected} setSelected={setSelected} modalIsOpen={modalIsOpen} setIsOpen={setIsOpen} me={me} gamers={gamers} handleOpenTrade={handleOpenTrade} handleMyStuffMoneyChange={handleMyStuffMoneyChange} handleLeftTradesChange={handleLeftTradesChange} handleSelectorChange={handleSelectorChange} handleRightValueChange={handleRightValueChange} handleRightTradesChange={handleRightTradesChange} handleConfirm={handleConfirm} />
               <TradeSync setLeftTrades={setLeftTrades} setRightTrades={setRightTrades} setTheirStuff={setTheirStuff} setMyStuff={setMyStuff} setSelected={setSelected} handleOpenTrade={handleOpenTrade} handleLeftTradesChange={handleLeftTradesChange} handleRightTradesChange={handleRightTradesChange} setIsConfirm={setIsConfirm} openTrade={openTrade} trader={trader} gamers={gamers} myStuffMoney={myStuffMoney} leftTrades={leftTrades} handleMyStuffMoneyChange={handleMyStuffMoneyChange} handleRightValueChange={handleRightValueChange} handleSelectorChange={handleSelectorChange} rightSelect={rightSelect} rightValue={rightValue} rightTrades={rightTrades} isConfirm={isConfirm} handleYes={handleYes} />
               <Bid me={me} player={getCurrentPlayer()} openBid={openBid} setOpenBid={setOpenBid} handleDeclineBidding={handleDeclineBidding} handleAcceptBidding={handleAcceptBidding} highestBid={highestBid} />
             </div>
               <div style={{position:"absolute",top:"48%",right:"0%"}}>
-                <BuildButton setIsRolled={setIsRolled} handleDisownInventory={handleDisownInventory} setInitialRent={setInitialRent} initialRent={initialRent} loanShark={loanShark} gamers={gamers} handleSetFinishedPlayer={handleSetFinishedPlayer} activator={activator} setActivator={setActivator} handlePlayerChange={handlePlayerChange} resolvePayment={resolvePayment} setRent={setRent} rent={rent} openBuild={openBuild} setOpenBuild={setOpenBuild} showManage={showManage} setShowManage={setShowManage} player={gamers[me.current]} />
+                <BuildButton disabled={ gamers[me.current].bankrupt || (Object.keys(gamers)[turnIdx] !== me.current) } setIsRolled={setIsRolled} handleDisownInventory={handleDisownInventory} setInitialRent={setInitialRent} initialRent={initialRent} loanShark={loanShark} gamers={gamers} handleSetFinishedPlayer={handleSetFinishedPlayer} activator={activator} setActivator={setActivator} handlePlayerChange={handlePlayerChange} resolvePayment={resolvePayment} setRent={setRent} rent={rent} openBuild={openBuild} setOpenBuild={setOpenBuild} showManage={showManage} setShowManage={setShowManage} player={gamers[me.current]} disabled={ gamers[me.current].bankrupt || (Object.keys(gamers)[turnIdx] !== me.current)}/>
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { buildWindow() }}>Build</div> */}
               </div>
 
@@ -301,7 +313,7 @@ const renderHouse = (count, flexDirection) => {
                 <div class="waves-effect waves-light btn-large" onClick={async () => {
                   await payJail(gamers[me.current]);
                   await setIsRolled(true);
-                  reactDice.rollAll([5,6]);
+                  reactDice.rollAll();
                   }} disabled={ gamers[me.current].bankrupt || (Object.keys(gamers)[turnIdx] !== me.current) || (isRolled && /*gamers[me.current].doubles*/ double === 0) } >Roll Dice</div>
                 {/* <div class="waves-effect waves-light btn-large" onClick={() => { console.log(reactDice.diceContainer.dice[0].state) }}>Roll Dice</div> */}
               </div>

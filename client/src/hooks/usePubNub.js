@@ -36,6 +36,14 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             channels: [gameChannel.current],
             withPresence: true
           });
+
+          let seeds = [];
+
+          for (let i = 0; i < 16; ++i) {
+            seeds.push(Math.random());
+          }
+
+          pubnub.publish({ channel: gameChannel.current, message: { text: "Shuffle decks", seed: seeds } });
         } else if (msg.message.text === "Player Joined") {
           // Update players state with msg.message.players.
           setPlayers(msg.message.players);
@@ -124,7 +132,8 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
             if (me.current !== phb.player.name && me.current === Object.keys(pg)[newBidIdx]) setOpenBid(true);
 
             newMe = pg[me.current];
-            if (me.current === phb.player.name) {
+            console.log("me", me.current, "previous highest", phb, "turn + 1: ", Object.keys(pg)[newBidIdx]);
+            if (me.current === phb.player.name && Object.keys(pg)[newBidIdx] === me.current) {
               console.log("previous inventory", newMe.inventory);
               //name, type, index, color, rent, src, buildingCost, price, mortgage
               const tile = board.filter(t => t.name === msg.message.propName)[0];
@@ -183,12 +192,11 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           meow();
         } else if (msg.message.text === "Bidding Ended") {
           let highestBidder = null;
-
           setGamers(prevGamers => { return { ...prevGamers, [msg.message.newMe.name]: msg.message.newMe } });
           
           setHighestBid(phb => {
             highestBidder = phb;
-            return { amount: -Infinity, player: { name: '' } }
+            return { amount: -1, player: { name: '' } }
           });
 
           setName(prevName => {
@@ -218,7 +226,19 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           board[msg.message.boardIdx].owner = msg.message.owner;
           const tile = board[msg.message.boardIdx];
           const price = tile.type !== "Tile"? tile.price : 0;
-          setGamers(prevGamers => { return { ...prevGamers, [msg.message.owner.name]: { ...prevGamers[msg.message.owner.name], money: prevGamers[msg.message.owner.name].money - price, location: board[msg.message.boardIdx].name, inventory: [...prevGamers[msg.message.owner.name].inventory, new Deeds(tile.name, tile.type, tile.index, tile.color, tile.rentNormal, tile.src, tile.buildingCost, tile.price, tile.mortgaged)] } } })
+
+          setGamers(prevGamers => { 
+            return {
+              ...prevGamers, 
+              [msg.message.owner.name]: { 
+                ...prevGamers[msg.message.owner.name], 
+                money: prevGamers[msg.message.owner.name].money - price, 
+                location: board[msg.message.boardIdx].name, 
+                inventory: [...prevGamers[msg.message.owner.name].inventory, 
+                  new Deeds(tile.name, tile.type, tile.index, tile.color, tile.rentNormal, tile.src, tile.buildingCosts, tile.price, tile.mortgaged)] 
+              } 
+            } 
+          })
         } else if (msg.message.text === "Sync Roll") {
           let rDice = null;
 
@@ -471,6 +491,11 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
           });
 
           const newGamers = JSON.parse(msg.message.data.gamers);
+          
+          for (let key in newGamers) {
+            newGamers[key].spriteSrc = sprites[newGamers[key].spriteSrc];
+          }
+
           setGamers(newGamers);
 
           setTurnIdx(msg.message.data.turnIdx);
@@ -518,6 +543,24 @@ const usePubNub = (setIsPlaying, setIsWaiting, gamers, setGamers, setOpenTrade, 
 
             return prevHistory;
           });
+        } else if (msg.message.text === "Shuffle decks") {
+          console.log("shuffling decks")
+          console.log("seed", msg.message.seed);
+
+          function shuffle(a) {
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(msg.message.seed[i] * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+          }
+
+          shuffle(chance);
+          shuffle(communityChest);
+          console.log(chance);
+          console.log(communityChest);
+          // chance.sort(() => msg.message.seed - 0.5)
+          // communityChest.sort(() => msg.message.seed - 0.5)
         }
       }
     });

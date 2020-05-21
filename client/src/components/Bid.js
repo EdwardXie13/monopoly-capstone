@@ -24,10 +24,13 @@ const Bid = ({ me, player, openBid, setOpenBid, handleDeclineBidding, handleAcce
   }
 
   const accept = e => {
-    console.log("newBid", newBid);
+    console.log("newBid", parseInt(newBid));
     console.log("player money", player.money);
-    console.log("hgihest bid amount", highestBid.amount);
-    if (newBid <= player.money && newBid > highestBid.amount) {
+    console.log("hgihest bid amount", parseInt(highestBid.amount));
+    console.log(parseInt(newBid) <= player.money, parseInt(newBid) > parseInt(highestBid.amount))
+    
+    if (parseInt(newBid) <= player.money && parseInt(newBid) > parseInt(highestBid.amount)) {
+      console.log("milk and tiddies")
       handleAcceptBidding(newBid, me.current); // newBid > highestBid
       setOpenBid(false);
     } else {

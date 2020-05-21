@@ -6,7 +6,7 @@ import Deeds from '../classes/Deeds';
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
 // Modal.setAppElement('#yourAppElement')
  
-const TradeButton = ({ setLeftTrades, setRightTrades, theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, modalIsOpen, setIsOpen, me , gamers, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm }) => {
+const TradeButton = ({ disabled, setLeftTrades, setRightTrades, theirStuff, setTheirStuff, myStuff, setMyStuff, selected, setSelected, modalIsOpen, setIsOpen, me , gamers, handleOpenTrade, handleMyStuffMoneyChange, handleLeftTradesChange, handleSelectorChange, handleRightValueChange, handleRightTradesChange, handleConfirm }) => {
   var subtitle;
   // const [modalIsOpen,setIsOpen] = React.useState(false);
   const [myInventory, setMyInventory] = React.useState([]);
@@ -107,7 +107,7 @@ const TradeButton = ({ setLeftTrades, setRightTrades, theirStuff, setTheirStuff,
  
   return (
     <div>
-      <button className='waves-effect waves-light btn-large' disabled ={gamers[me.current].bankrupt} onClick={openModal}>Trade</button>
+      <button className='waves-effect waves-light btn-large' disabled ={disabled} onClick={openModal}>Trade</button>
       <Modal
         isOpen={modalIsOpen}
         shouldCloseOnOverlayClick={false}

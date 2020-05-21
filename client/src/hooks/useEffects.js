@@ -6,7 +6,7 @@ import communityChest from '../library/cards/Community_Chest_Cards';
 import chance from '../library/cards/Chance_Cards';
 
 //player, money, location, inventory, index
-const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer, handleCommunityChestUpdate, handleChanceUpdate, handleDisplayCard) => {
+const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setOpenBid, setName, handleSetPropName, monopolyRent, railroadRent, payRent, gamers, handlePlayerChange, me, setActivator, handleSetFinishedPlayer, checkPlayer, handleCommunityChestUpdate, handleChanceUpdate, handleDisplayCard, handlePieceMove) => {
   const displayCard = (src, ms) => {
     handleDisplayCard(src, ms);
     // const imageNode = document.createElement('IMG');
@@ -102,6 +102,7 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
         //go to jail
         player.jail = true;
         player.location = "Jail";
+        handlePieceMove(player, 30);
         break;
       case 4:
         console.log(card.text);
@@ -127,6 +128,7 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
         console.log(card.text);
         //Advance to 'GO' (Collect $200)
         player.money += 200;
+        handlePieceMove(player, 0);
         break;
       
     }
@@ -167,21 +169,21 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
       case 13:
         console.log(card.text);
         //Advance to Boardwalk
+        handlePieceMove(player, 39);
         player.location = "Boardwalk";
         player.index = 39;
-
         getRent(player);
         break;
       case 12:
         console.log(card.text);
         //Take a trip to Reading Railroad. If you pass 'GO' collect $200
+        handlePieceMove(player, 5);
         if (player.index > 7)
           // player.setMoney(200);
           player.money += 200;
         // player.setLocation("Reading Railroad", 5);
         player.location = "Reading Railroad";
         player.index = 5;
-        
         if (board[player.index].owned === false) {
           if (player.money >= board[player.index].price) {
             promptUnowned(player);
@@ -218,10 +220,12 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
         //go to jail
         // player.setJail(true);
         player.jail = true;
+        handlePieceMove(player, 30);
         break;
       case 8:
         console.log(card.text);
         //Go Back 3 Spaces
+        handlePieceMove(player, player.index-3);
         player.location = board[player.index-3].name;
         player.index = player.index-3;
         checkPlayer(player);
@@ -239,9 +243,10 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
         player.money += 50;
         break;
       case 5:
-        console.log(card.text);
+        console.log("BORR", player)
         //Advance token to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay the owner twice the rental to which they are otherwise entitled
         if (player.index === 36) {
+          handlePieceMove(player, 5);
           console.log("RRR");
           player.location = "Reading Railroad";
           player.index = 5;
@@ -262,10 +267,10 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
         }
         else if (player.index === 7) {
           console.log("PRR");
+          handlePieceMove(player, 15);
           // player.setLocation("Pennsylvania Railroad", 15);
           player.location = "Pennsylvania Railroad";
           player.index = 15;
-          
           if (board[player.index].owned === false) {
             if (player.money >= board[player.index].price) {
               promptUnowned(player);
@@ -281,11 +286,10 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
           }
         }
         else if (player.index === 22){
-          console.log("BORR")
+          handlePieceMove(player, 25);
           // player.setLocation("B. & O. Railroad", 25);
           player.location = "B. & O. Railroad";
           player.index = 25;
-
           if (board[player.index].owned === false) {
             if (player.money >= board[player.index].price) {
               promptUnowned(player);
@@ -303,12 +307,72 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
         //cant get advance to short line
         break;
       case 4:
-        console.log(card.text);
-        //copy paste case 5 when done since same
+        console.log("BORR", player)
+        if (player.index === 36) {
+          console.log("RRR");
+          handlePieceMove(player, 5);
+          player.location = "Reading Railroad";
+          player.index = 5;
+          player.money += 200;
+          if (board[player.index].owned === false) {
+            if (player.money >= board[player.index].price) {
+              promptUnowned(player);
+            } else {
+              addToHistory("bidding begins");
+              setName(board[player.index].name);
+              handleSetPropName(board[player.index].name);
+              setOpenBid(true);
+            }
+          } else {
+            let rent = 2 * railroadRent(player);
+            await payRent(player, rent, board[player.index].owner);
+          }
+        }
+        else if (player.index === 7) {
+          // player.setLocation("Pennsylvania Railroad", 15);
+          handlePieceMove(player, 15);
+          player.location = "Pennsylvania Railroad";
+          player.index = 15;
+          if (board[player.index].owned === false) {
+            if (player.money >= board[player.index].price) {
+              promptUnowned(player);
+            } else {
+              addToHistory("bidding begins");
+              setName(board[player.index].name);
+              handleSetPropName(board[player.index].name);
+              setOpenBid(true);
+            }
+          } else {
+            let rent = 2 * railroadRent(player);
+            await payRent(player, rent, board[player.index].owner);
+          }
+        }
+        else if (player.index === 22){
+          // player.setLocation("B. & O. Railroad", 25);
+          handlePieceMove(player, 25);
+          player.location = "B. & O. Railroad";
+          player.index = 25;
+          if (board[player.index].owned === false) {
+            if (player.money >= board[player.index].price) {
+              promptUnowned(player);
+            } else {
+              addToHistory("bidding begins");
+              setName(board[player.index].name);
+              handleSetPropName(board[player.index].name);
+              setOpenBid(true);
+            }
+          } else {
+            let rent = 2 * railroadRent(player);
+            await payRent(player, rent, board[player.index].owner);
+          }
+        }
+        //cant get advance to short line
+        break;
       case 3:
         console.log(card.text);
         //Advance to the nearest Utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total ten times the amount thrown
         if (player.index === 36|| player. index === 7) {
+          handlePieceMove(player, 12);
           // player.setLocation("Electric Company", 12)
           player.location = "Electric Company";
           player.index = 12;
@@ -321,6 +385,7 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
           }
         }
         else if (player.index === 22) {
+          handlePieceMove(player, 28);
           // player.setLocation("Water Works", 28)
           player.location = "Water works";
           player.index = 28;
@@ -338,8 +403,9 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
         //Advance to St. Charles Place. If you pass 'GO' collect $200
         if (player.index > 21)
           player.money += 200;
-        player.location = "St. Charles Place";
-        player.index = 11;
+          handlePieceMove(player, 11);
+          player.location = "St. Charles Place";
+          player.index = 11;
         getRent(player);
         break;
       case 1:
@@ -347,15 +413,16 @@ const useEffects = (reactDice, setUtilityDice, handleBuyProp, addToHistory, setO
         //Advance to Illinois Avenue. If you pass 'GO' collect $200
         if (player.index > 35)
           player.money += 200;
+        handlePieceMove(player, 24);
         player.location = "Illinois Avenue";
         player.index = 24;
-
         getRent(player);
         break;
       case 0:
         console.log(card.text);
         //Advance to Go (Collect $200)
         player.money += 200;
+        handlePieceMove(player, 0);
         player.location = "Go";
         player.index = 0;
         break;

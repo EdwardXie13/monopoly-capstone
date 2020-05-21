@@ -17,10 +17,9 @@ const customStyles = {
     }
 };
 
-const SpriteButton = ({ setGamers, me, gamers, handleSpriteSelect, openSprite, setOpenSprite, disabled, handleOpenSpriteWindow, style, children }) => {
-    // const [modalIsOpen,setIsOpen] = useState(false);
-    const [selection, setSelection] = useState('');
 
+const SpriteButton = ({ setGamers, me, gamers, handleSpriteSelect, openSprite, setOpenSprite, disabled, handleOpenSpriteWindow, style, children }) => {
+    const [selection, setSelection] = useState('');
     useEffect(() => {}, [openSprite]);
 
     const openModal = () => setOpenSprite(true);
@@ -31,11 +30,6 @@ const SpriteButton = ({ setGamers, me, gamers, handleSpriteSelect, openSprite, s
         return sprites.map((s, idx) => {
             return (
                 <div className="sprite-container" onClick={ () => {
-                        
-                        // for (let key in gamers) {
-                        //     if (gamers[key].spriteSrc.srcUp === s.srcUp) return;
-                        // }
-
                         let i = 0
                         for(; i < sprites.length && selection.length > 0; ++i) {
                             if (sprites[i].srcDown === selection) {

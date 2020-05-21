@@ -5,14 +5,23 @@ const Save = require('../models/save');
 // @Route POST /api/save/
 router.post('/', (req, res, next) => {
     const { roomCode, gamers, chanceCards, communityCards, turnIdx, board } = req.body;
-    console.log(req.body);
-    // if (!roomCode || !gamers || !cards || !turnIdx) 
-    //     res.status(500).send('Request body missing stuff.');
 
-    Save.create({ roomCode, gamers, chanceCards, communityCards, turnIdx, board }, (error, result) => {
-        if (error) next(error);
-        res.json(result);
-    });
+    Save.findOne({ roomCode }, (error, result) => {
+       if (error) return res.status(500).send(error);
+       
+       if (result) {
+        Save.updateOne({ roomCode }, { roomCode, gamers, chanceCards, communityCards, turnIdx, board }, (error, result) => {
+            if (error) return res.status(500).send(error);
+            res.json(result);
+        })
+       } else {   
+        Save.create({ roomCode, gamers, chanceCards, communityCards, turnIdx, board }, (error, result) => {
+            if (error) next(error);
+            res.json(result);
+        });
+       }
+    })
+
 });
 
 // @Route GET /api/save/{roomCode}
